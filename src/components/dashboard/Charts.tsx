@@ -1,14 +1,18 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import Plot from 'react-plotly.js';
+import { useGetRequestsOverTimeQuery, useGetRequestsByStatusQuery } from '../../services/dashboardApi';
 
 const Charts: React.FC = () => {
   const { t } = useTranslation();
+  const [days, setDays] = useState(7);
+  const { data: requestsData, isLoading: isLoadingTimeData, error: timeDataError } = useGetRequestsOverTimeQuery({ days });
+  const { data: statusData, isLoading: isLoadingStatusData, error: statusDataError } = useGetRequestsByStatusQuery();
   
-  const lineData = [
+  const lineData = requestsData ? [
     {
-      x: [t('dashboard.charts.mon'), t('dashboard.charts.tue'), t('dashboard.charts.wed'), t('dashboard.charts.thu'), t('dashboard.charts.fri'), t('dashboard.charts.sat'), t('dashboard.charts.sun')],
-      y: [450, 520, 480, 610, 590, 400, 420],
+      x: requestsData.data.map(item => item.day),
+      y: requestsData.data.map(item => item.count),
       type: 'scatter' as const,
       mode: 'lines+markers' as const,
       name: t('dashboard.charts.requests'),
@@ -20,7 +24,20 @@ const Charts: React.FC = () => {
       fill: 'tozeroy' as const,
       fillcolor: 'rgba(82, 102, 116, 0.05)'
     }
-  ];
+  ] : [];
+
+  const pieData = statusData ? [
+    {
+      values: statusData.data.breakdown.map(item => item.count),
+      labels: statusData.data.breakdown.map(item => item.label),
+      type: 'pie' as const,
+      hole: 0.7,
+      marker: {
+        colors: statusData.data.breakdown.map(item => item.color)
+      },
+      textinfo: 'none' as const
+    }
+  ] : [];
 
   const lineLayout = {
     margin: {
@@ -44,19 +61,6 @@ const Charts: React.FC = () => {
     height: 300
   };
 
-  const pieData = [
-    {
-      values: [1240, 850, 420],
-      labels: [t('dashboard.charts.completed'), t('dashboard.charts.inProgress'), t('dashboard.charts.pending')],
-      type: 'pie' as const,
-      hole: 0.7,
-      marker: {
-        colors: ['#10B981', '#3B82F6', '#F59E0B']
-      },
-      textinfo: 'none' as const
-    }
-  ];
-
   const pieLayout = {
     margin: {
       t: 0,
@@ -75,15 +79,47 @@ const Charts: React.FC = () => {
     displayModeBar: false
   };
 
+  const handleDaysChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
+    setDays(Number(e.target.value));
+  };
+
+  const isLoading = isLoadingTimeData || isLoadingStatusData;
+  const hasError = timeDataError || statusDataError;
+
+  if (isLoading) {
+    return (
+      <div className="flex justify-center items-center h-64">
+        <p className="text-slate-500 text-lg font-bold">Loading chart data...</p>
+      </div>
+    );
+  }
+
+  if (hasError) {
+    const error = timeDataError || statusDataError;
+    const errorMessage = error && 'status' in error ? 
+      (error.data as { message?: string })?.message || 'Failed to load chart data' :
+      (error as { message?: string })?.message || 'An error occurred';
+    
+    return (
+      <div className="flex justify-center items-center h-64">
+        <p className="text-error text-lg font-bold">Error: {errorMessage}</p>
+      </div>
+    );
+  }
+
   return (
     <section id="charts-grid" className="grid grid-cols-1 lg:grid-cols-3 gap-6">
       {/* Requests Over Time */}
       <div className="lg:col-span-2 bg-white p-6 rounded-2xl border border-slate-100 tradingview-shadow">
         <div className="flex justify-between items-center mb-6">
           <h4 className="font-bold text-slate-800">{t('dashboard.charts.requestsOverTime')}</h4>
-          <select className="bg-slate-50 border border-slate-200 text-xs rounded-lg px-2 py-1 outline-none">
-            <option>{t('dashboard.charts.last7Days')}</option>
-            <option>{t('dashboard.charts.last30Days')}</option>
+          <select 
+            value={days}
+            onChange={handleDaysChange}
+            className="bg-slate-50 border border-slate-200 text-xs rounded-lg px-2 py-1 outline-none"
+          >
+            <option value={7}>{t('dashboard.charts.last7Days')}</option>
+            <option value={30}>{t('dashboard.charts.last30Days')}</option>
           </select>
         </div>
         <div id="requests-line-chart">
@@ -108,27 +144,18 @@ const Charts: React.FC = () => {
           />
         </div>
         <div className="mt-4 space-y-2">
-          <div className="flex justify-between items-center text-xs">
-            <span className="flex items-center gap-2">
-              <i className="fa-solid fa-circle text-emerald-500 text-[8px]"></i>
-              {t('dashboard.charts.completed')}
-            </span>
-            <span className="font-bold">1,240</span>
-          </div>
-          <div className="flex justify-between items-center text-xs">
-            <span className="flex items-center gap-2">
-              <i className="fa-solid fa-circle text-blue-500 text-[8px]"></i>
-              {t('dashboard.charts.inProgress')}
-            </span>
-            <span className="font-bold">850</span>
-          </div>
-          <div className="flex justify-between items-center text-xs">
-            <span className="flex items-center gap-2">
-              <i className="fa-solid fa-circle text-amber-500 text-[8px]"></i>
-              {t('dashboard.charts.pending')}
-            </span>
-            <span className="font-bold">420</span>
-          </div>
+          {statusData?.data.breakdown.map((item, index) => (
+            <div key={index} className="flex justify-between items-center text-xs">
+              <span className="flex items-center gap-2">
+                <i 
+                  className="fa-solid fa-circle text-[8px]" 
+                  style={{ color: item.color }}
+                ></i>
+                {item.label}
+              </span>
+              <span className="font-bold">{item.count.toLocaleString()}</span>
+            </div>
+          ))}
         </div>
       </div>
     </section>
