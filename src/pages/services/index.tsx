@@ -7,23 +7,9 @@ import { ViewServiceModal } from '../../components/services/ViewServiceModal';
 import { MapFormModal } from '../../components/services/MapFormModal';
 import { ViewFormModal } from '../../components/services/ViewFormModal';
 import LanguageSwitcher from '../../components/LanguageSwitcher';
-import NotificationDropdown from '../../components/common/NotificationDropdown';
+import NotificationDropdown, { Notification } from '../../components/common/NotificationDropdown';
 import { useGetServicesQuery, useGetServiceByIdQuery, useGetServiceStatsQuery } from '../../services/servicesApi';
 import { Service } from '../../services/servicesApi';
-
-interface Notification {
-  id: string;
-  title: string;
-  message: string;
-  time: string;
-  isRead: boolean;
-  icon: string;
-  iconColor: string;
-  actions?: {
-    label: string;
-    variant: 'primary' | 'secondary';
-  }[];
-}
 
 interface MapFormData {
   formName: string;

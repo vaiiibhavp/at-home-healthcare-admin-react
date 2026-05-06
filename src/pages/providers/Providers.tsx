@@ -3,24 +3,10 @@ import { Link } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
 import Sidebar from '../../components/dashboard/Sidebar';
 import LanguageSwitcher from '../../components/LanguageSwitcher';
-import NotificationDropdown from '../../components/common/NotificationDropdown';
+import NotificationDropdown, { Notification } from '../../components/common/NotificationDropdown';
 import PaginationComponent from '../../components/ui/PaginationComponent';
 import { useGetProvidersQuery, useGetProviderByIdQuery, useDeactivateProviderMutation, useActivateProviderMutation, useBulkDeactivateProvidersMutation, useExportProvidersCSVMutation } from '../../services/providersApi';
 import { Provider as APIProvider } from '../../types/provider';
-
-interface Notification {
-  id: string;
-  title: string;
-  message: string;
-  time: string;
-  isRead: boolean;
-  icon: string;
-  iconColor: string;
-  actions?: {
-    label: string;
-    variant: 'primary' | 'secondary';
-  }[];
-}
 
 // Local interface for UI compatibility
 interface Provider {

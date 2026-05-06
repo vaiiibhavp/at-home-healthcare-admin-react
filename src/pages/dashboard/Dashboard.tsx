@@ -6,21 +6,7 @@ import KPICards from '../../components/dashboard/KPICards';
 import Charts from '../../components/dashboard/Charts';
 import RecentActivity from '../../components/dashboard/RecentActivity';
 import LanguageSwitcher from '../../components/LanguageSwitcher';
-import NotificationDropdown from '../../components/common/NotificationDropdown';
-
-interface Notification {
-  id: string;
-  title: string;
-  message: string;
-  time: string;
-  isRead: boolean;
-  icon: string;
-  iconColor: string;
-  actions?: {
-    label: string;
-    variant: 'primary' | 'secondary';
-  }[];
-}
+import NotificationDropdown, { Notification } from '../../components/common/NotificationDropdown';
 
 const Dashboard: React.FC = () => {
   const { t } = useTranslation();

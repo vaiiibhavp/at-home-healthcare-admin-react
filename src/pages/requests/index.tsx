@@ -4,22 +4,8 @@ import { RequestDetailModal } from './RequestDetailModal';
 import { RequestData } from './RequestTypes';
 import LanguageSwitcher from '../../components/LanguageSwitcher';
 import Sidebar from '../../components/dashboard/Sidebar';
-import NotificationDropdown from '../../components/common/NotificationDropdown';
+import NotificationDropdown, { Notification } from '../../components/common/NotificationDropdown';
 import PaginationComponent from '../../components/ui/PaginationComponent';
-
-interface Notification {
-  id: string;
-  title: string;
-  message: string;
-  time: string;
-  isRead: boolean;
-  icon: string;
-  iconColor: string;
-  actions?: {
-    label: string;
-    variant: 'primary' | 'secondary';
-  }[];
-}
 
 interface ApiResponse {
   status: number;

@@ -6,23 +6,9 @@ import DoctorsTable from '../../components/doctors/DoctorsTable';
 import Modal from '../../components/doctors/Modal';
 import Toast from '../../components/doctors/Toast';
 import LanguageSwitcher from '../../components/LanguageSwitcher';
-import NotificationDropdown from '../../components/common/NotificationDropdown';
+import NotificationDropdown, { Notification } from '../../components/common/NotificationDropdown';
 import { useGetDoctorsQuery } from '../../services/doctorsApi';
 import { Doctor } from '../../types/doctor';
-
-interface Notification {
-  id: string;
-  title: string;
-  message: string;
-  time: string;
-  isRead: boolean;
-  icon: string;
-  iconColor: string;
-  actions?: {
-    label: string;
-    variant: 'primary' | 'secondary';
-  }[];
-}
 
 const Doctors: React.FC = () => {
   const { t } = useTranslation('common');

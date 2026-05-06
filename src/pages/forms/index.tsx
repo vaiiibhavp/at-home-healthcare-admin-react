@@ -8,21 +8,7 @@ import { Service } from './FormTypes';
 import { useGetFormMappingsQuery } from '../../services/formMappingsApi';
 import LanguageSwitcher from '../../components/LanguageSwitcher';
 import Sidebar from '../../components/dashboard/Sidebar';
-import NotificationDropdown from '../../components/common/NotificationDropdown';
-
-interface Notification {
-  id: string;
-  title: string;
-  message: string;
-  time: string;
-  isRead: boolean;
-  icon: string;
-  iconColor: string;
-  actions?: {
-    label: string;
-    variant: 'primary' | 'secondary';
-  }[];
-}
+import NotificationDropdown, { Notification } from '../../components/common/NotificationDropdown';
 
 const Forms: React.FC = () => {
   const { t } = useTranslation();

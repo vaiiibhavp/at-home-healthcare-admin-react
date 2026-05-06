@@ -1,7 +1,7 @@
 import React, { useState, useRef, useEffect } from 'react';
 import { useTranslation } from 'react-i18next';
 
-interface Notification {
+export interface Notification {
   id: string;
   title: string;
   message: string;
