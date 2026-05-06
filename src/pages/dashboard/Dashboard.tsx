@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useNavigate } from 'react-router-dom';
 import Sidebar from '../../components/dashboard/Sidebar';
@@ -7,10 +7,12 @@ import Charts from '../../components/dashboard/Charts';
 import RecentActivity from '../../components/dashboard/RecentActivity';
 import LanguageSwitcher from '../../components/LanguageSwitcher';
 import NotificationDropdown from '../../components/common/NotificationDropdown';
+import { useExportDashboardQuery } from '../../services/dashboardApi';
 
 const Dashboard: React.FC = () => {
   const { t } = useTranslation();
   const navigate = useNavigate();
+  const { data: exportData, isLoading: isExporting, error: exportError } = useExportDashboardQuery();
   
   const handleViewRequest = () => {
     navigate('/requests');
@@ -20,6 +22,40 @@ const Dashboard: React.FC = () => {
     console.log('Notification action:', notificationId, action);
     // Handle navigation or other actions based on notification type
   };
+
+  const handleExportReport = async () => {
+    try {
+      if (exportData) {
+        // Create a blob with the export data
+        const jsonString = JSON.stringify(exportData, null, 2);
+        const blob = new Blob([jsonString], { type: 'application/json' });
+        
+        // Create download link
+        const url = window.URL.createObjectURL(blob);
+        const link = document.createElement('a');
+        link.href = url;
+        link.download = `dashboard-export-${new Date().toISOString().split('T')[0]}.json`;
+        document.body.appendChild(link);
+        link.click();
+        document.body.removeChild(link);
+        window.URL.revokeObjectURL(url);
+      }
+    } catch (error) {
+      console.error('Export failed:', error);
+      alert('Failed to export report. Please try again.');
+    }
+  };
+
+  // Handle export errors
+  useEffect(() => {
+    if (exportError) {
+      const errorMessage = 'status' in exportError ? 
+        (exportError.data as { message?: string })?.message || 'Failed to export dashboard data' :
+        (exportError as { message?: string })?.message || 'An error occurred';
+      
+      alert(`Export error: ${errorMessage}`);
+    }
+  }, [exportError]);
 
   return (
     <div className="flex h-[1024px] overflow-hidden">
@@ -56,8 +92,11 @@ const Dashboard: React.FC = () => {
             </div>
             <div className="flex gap-3">
               <button
-                className="px-4 py-2 bg-white border border-slate-200 rounded-lg text-sm font-semibold text-slate-700 hover:bg-slate-50 transition-colors flex items-center gap-2">
-                <i className="fa-solid fa-download"></i> {t('dashboard.exportReport') || 'Export Report'}
+                onClick={handleExportReport}
+                disabled={isExporting || !exportData}
+                className="px-4 py-2 bg-white border border-slate-200 rounded-lg text-sm font-semibold text-slate-700 hover:bg-slate-50 transition-colors flex items-center gap-2 disabled:opacity-50 disabled:cursor-not-allowed">
+                <i className={`fa-solid ${isExporting ? 'fa-spinner fa-spin' : 'fa-download'}`}></i> 
+                {isExporting ? 'Exporting...' : (t('dashboard.exportReport') || 'Export Report')}
               </button>
               <button
                 onClick={handleViewRequest}
