@@ -8,7 +8,7 @@ import { Service } from './FormTypes';
 import { useGetFormMappingsQuery } from '../../services/formMappingsApi';
 import LanguageSwitcher from '../../components/LanguageSwitcher';
 import Sidebar from '../../components/dashboard/Sidebar';
-import NotificationDropdown, { Notification } from '../../components/common/NotificationDropdown';
+import NotificationDropdown from '../../components/common/NotificationDropdown';
 
 const Forms: React.FC = () => {
   const { t } = useTranslation();
@@ -48,41 +48,9 @@ const Forms: React.FC = () => {
     };
   }, [firstPageData, secondPageData]);
   
-  const [notifications, setNotifications] = useState<Notification[]>([
-    {
-      id: '1',
-      title: t('notifications.newDoctorRegistration'),
-      message: t('notifications.newDoctorMessage', { name: 'Dr. Sarah Jenkins', specialty: 'Cardiology', rpps: '#82910' }),
-      time: '2 mins ago',
-      isRead: false,
-      icon: 'fa-user-plus',
-      iconColor: 'text-blue-500',
-      actions: [
-        { label: t('notifications.viewProfile'), variant: 'primary' },
-        { label: t('notifications.dismiss'), variant: 'secondary' }
-      ]
-    },
-    {
-      id: '2',
-      title: t('notifications.monthlyAuditReport'),
-      message: t('notifications.auditReportMessage'),
-      time: '3 hours ago',
-      isRead: true,
-      icon: 'fa-file-export',
-      iconColor: 'text-slate-500'
-    }
-  ]);
-
   const handleNotificationAction = (notificationId: string, action: string) => {
-    if (action === t('notifications.viewProfile')) {
-      console.log('View profile for notification:', notificationId);
-    } else if (action === t('notifications.dismiss')) {
-      setNotifications(notifications.filter(n => n.id !== notificationId));
-    }
-  };
-
-  const markAllAsRead = () => {
-    setNotifications(notifications.map(n => ({ ...n, isRead: true })));
+    console.log('Notification action:', notificationId, action);
+    // Handle navigation or other actions based on notification type
   };
 
   // Transform API data to Service interface
@@ -174,9 +142,7 @@ const Forms: React.FC = () => {
           </div>
           <div className="flex items-center gap-4">
             <NotificationDropdown
-              notifications={notifications}
               onNotificationAction={handleNotificationAction}
-              onMarkAllAsRead={markAllAsRead}
             />
             <div className="h-8 w-[1px] bg-slate-200"></div>
             <div className="ml-2">

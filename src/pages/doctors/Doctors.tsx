@@ -6,7 +6,7 @@ import DoctorsTable from '../../components/doctors/DoctorsTable';
 import Modal from '../../components/doctors/Modal';
 import Toast from '../../components/doctors/Toast';
 import LanguageSwitcher from '../../components/LanguageSwitcher';
-import NotificationDropdown, { Notification } from '../../components/common/NotificationDropdown';
+import NotificationDropdown from '../../components/common/NotificationDropdown';
 import { useGetDoctorsQuery } from '../../services/doctorsApi';
 import { Doctor } from '../../types/doctor';
 
@@ -18,18 +18,11 @@ const Doctors: React.FC = () => {
   const { data: doctorsData, isLoading, error } = useGetDoctorsQuery({ page: 1, size: 50 });
   const doctors = doctorsData?.data?.doctors || [];
   
-  const [notifications, setNotifications] = useState<Notification[]>([]);
-
   const handleNotificationAction = (notificationId: string, action: string) => {
-    // Handle notification actions here
     console.log('Notification action:', notificationId, action);
+    // Handle navigation or other actions based on notification type
   };
 
-  const markAllAsRead = () => {
-    // Mark all notifications as read
-    setNotifications(notifications.map(n => ({ ...n, isRead: true })));
-  };
-  
   const [modalState, setModalState] = useState<{
     isOpen: boolean;
     type: 'approve' | 'reject' | null;
@@ -116,9 +109,7 @@ const Doctors: React.FC = () => {
           </div>
           <div className="flex items-center gap-4">
             <NotificationDropdown
-              notifications={notifications}
               onNotificationAction={handleNotificationAction}
-              onMarkAllAsRead={markAllAsRead}
             />
             <div className="h-8 w-[1px] bg-slate-200"></div>
             <div className="ml-2">
