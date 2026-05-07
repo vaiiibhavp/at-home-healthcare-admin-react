@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { RequestData } from './RequestTypes';
+import { RequestData } from '../RequestTypes';
 
 interface RequestDetailModalProps {
   isOpen: boolean;
@@ -114,24 +114,24 @@ export const RequestDetailModal: React.FC<RequestDetailModalProps> = ({
     return events;
   }, [request]);
 
-  if (!isOpen || !request) return null;
-
   const getStatusChipClass = (status: string): string => {
     const statusClasses = {
       pending: 'status-chip bg-blue-50 text-blue-600 border-blue-200',
       completed: 'status-chip bg-emerald-50 text-emerald-600 border-emerald-200',
       inprogress: 'status-chip bg-blue-50 text-blue-600 border-blue-200',
-      returned: 'status-chip bg-amber-50 text-amber-600 border-amber-200'
+      returned: 'status-chip bg-amber-50 text-amber-600 border-amber-200',
+      draft: 'status-chip bg-slate-50 text-slate-600 border-slate-200'
     };
     return statusClasses[status as keyof typeof statusClasses] || 'status-chip bg-slate-50 text-slate-600 border-slate-200';
   };
 
   const getStatusText = (status: string): string => {
     const statusTexts = {
-      pending: 'Submitted',
-      completed: 'Completed',
-      inprogress: 'In Progress',
-      returned: 'Returned'
+      pending: 'SUBMITTED',
+      completed: 'SIGNED',
+      inprogress: 'AWAITING SIGNATURE',
+      returned: 'RETURNED',
+      draft: 'NOT STARTED'
     };
     return statusTexts[status as keyof typeof statusTexts] || status;
   };
@@ -143,7 +143,6 @@ export const RequestDetailModal: React.FC<RequestDetailModalProps> = ({
     setTimeout(() => setShowToast(false), 3000);
   };
 
-  
   // Function to fetch audit logs when audit modal is opened
   const handleOpenAuditModal = async () => {
     if (!request || !fetchAuditLogs) return;
@@ -164,6 +163,8 @@ export const RequestDetailModal: React.FC<RequestDetailModalProps> = ({
       setShowAuditModal(true);
     }
   };
+
+  if (!isOpen || !request) return null;
 
   return (
     <>
@@ -227,10 +228,9 @@ export const RequestDetailModal: React.FC<RequestDetailModalProps> = ({
                     <p className="text-[11px] font-mono text-primary mt-1">RPPS: {request.doctorId?.rppsNumber || 'N/A'}</p>
                   </div>
                 </div>
-                <div className="mt-4 pt-4 border-t border-slate-50 flex justify-between items-center">
-                  <button className="text-xs font-bold text-primary hover:underline">View Full Profile</button>
+                <div className="mt-4 pt-4 border-t border-slate-50 flex justify-end items-center">
                   <button className="text-slate-400 hover:text-primary">
-                    <i className="fa-solid fa-envelope"></i>
+                    <i className="fa-solid fa-phone"></i>
                   </button>
                 </div>
               </div>
@@ -271,221 +271,174 @@ export const RequestDetailModal: React.FC<RequestDetailModalProps> = ({
                 <h3 className="text-[10px] font-bold text-slate-400 uppercase tracking-widest mb-4">
                   Service Details
                 </h3>
-                <div className="space-y-3">
-                  <div className="flex justify-between">
-                    <span className="text-xs text-slate-500">Service</span>
-                    <span className="text-xs font-bold text-slate-900">{request.serviceName || request.serviceType || 'Unknown Service'}</span>
+                <div className="flex items-center gap-4">
+                  <div className="w-14 h-14 bg-slate-100 rounded-xl flex items-center justify-center text-slate-400 text-xl font-bold">
+                    <i className="fa-solid fa-stethoscope"></i>
                   </div>
-                  <div className="flex justify-between">
-                    <span className="text-xs text-slate-500">Description</span>
-                    <span className="text-xs font-bold text-slate-900">{request.serviceId?.description || 'No Description'}</span>
+                  <div>
+                    <p className="text-sm font-bold text-slate-900">{request.serviceName || 'Unknown Service'}</p>
+                    <p className="text-xs text-slate-500">{request.serviceId?.description || 'No description available'}</p>
+                    <p className="text-[11px] font-mono text-primary mt-1">
+                      Category: {request.serviceId?.category || 'General'}
+                    </p>
                   </div>
-                  <div className="flex justify-between">
-                    <span className="text-xs text-slate-500">Priority</span>
-                    <span className="text-xs font-bold text-slate-900 capitalize">{request.priorityLevel || 'Normal'}</span>
-                  </div>
-                  <div className="flex justify-between">
-                    <span className="text-xs text-slate-500">Provider</span>
-                    <div className="flex items-center gap-2">
-                      <span className="text-xs font-bold text-primary">{request.assignedProviderName || 'Not Assigned'}</span>
-                      {request.assignedProviderName && <i className="fa-solid fa-circle-check text-[10px] text-emerald-500"></i>}
-                    </div>
-                  </div>
-                                  </div>
+                </div>
+                <div className="mt-4 pt-4 border-t border-slate-50 flex justify-end items-center">
+                  <button className="text-slate-400 hover:text-primary">
+                    <i className="fa-solid fa-info-circle"></i>
+                  </button>
+                </div>
               </div>
             </section>
 
-            {/* Form Preview & Timeline */}
-            <section className="grid grid-cols-1 lg:grid-cols-12 gap-6 pb-8">
-              {/* Form Preview */}
-              <div className="lg:col-span-8 bg-white rounded-2xl border border-slate-200 tradingview-shadow flex flex-col overflow-hidden">
-                <div className="p-5 border-b border-slate-100 bg-slate-50/50">
-                  <div className="flex items-center justify-between mb-3">
-                    <div className="flex items-center gap-3">
-                      <i className="fa-solid fa-file-waveform text-primary"></i>
-                      <h3 className="text-sm font-bold text-slate-800">Form: Laboratory Prescription V2.1</h3>
-                    </div>
-                    <div className="flex gap-2">
-                      <button className="p-2 hover:bg-slate-200 rounded-lg text-slate-400 transition-all">
-                        <i className="fa-solid fa-magnifying-glass-plus"></i>
-                      </button>
-                      <button className="p-2 hover:bg-slate-200 rounded-lg text-slate-400 transition-all">
-                        <i className="fa-solid fa-expand"></i>
-                      </button>
+            {/* Prescription Section */}
+            <section className="bg-white p-8 rounded-2xl border border-slate-200 tradingview-shadow">
+              <div className="max-w-2xl mx-auto bg-white border border-slate-200 p-10 shadow-sm space-y-8">
+                <div className="flex justify-between items-start border-b pb-6">
+                  <div>
+                    <h2 className="text-xl font-bold text-slate-900">MEDICAL PRESCRIPTION</h2>
+                    <p className="text-xs text-slate-500">ID: {request.requestId || 'N/A'}</p>
+                  </div>
+                  <div className="text-right">
+                    <p className="text-xs font-bold text-slate-800">At-Home Healthcare</p>
+                    <p className="text-[10px] text-slate-500">Digital Health Network</p>
+                  </div>
+                </div>
+                <div className="grid grid-cols-2 gap-8 text-xs">
+                  <div>
+                    <p className="font-bold text-slate-400 uppercase mb-2">Patient</p>
+                    <p className="text-slate-900 font-medium">{request.patientName || request.patient || 'Unknown Patient'}</p>
+                    <p className="text-slate-500 mt-1">DOB: {request.patientId?.dateOfBirth ? new Date(request.patientId.dateOfBirth).toLocaleDateString('en-US', { 
+                      month: '2-digit', 
+                      day: '2-digit', 
+                      year: 'numeric'
+                    }) : 'Not Available'}</p>
+                  </div>
+                  <div>
+                    <p className="font-bold text-slate-400 uppercase mb-2">Prescriber</p>
+                    <p className="text-slate-900 font-medium">{request.doctorName || request.doctor?.name || 'Unknown Doctor'}</p>
+                    <p className="text-slate-500 mt-1">License: #{request.doctorId?.rppsNumber || 'N/A'}</p>
+                  </div>
+                </div>
+                <div className="space-y-4">
+                  <p className="text-xs font-bold text-slate-400 uppercase">Analysis Requested</p>
+                  <div className="p-4 bg-slate-50 rounded-lg">
+                    <div className="flex items-start gap-3">
+                      <div className="w-4 h-4 rounded border-2 border-primary flex items-center justify-center mt-0.5">
+                        <i className="fa-solid fa-file-medical text-[10px] text-primary"></i>
+                      </div>
+                      <div className="flex-1">
+                        <p className="text-xs text-slate-800 font-medium leading-relaxed">
+                          {request.patientId?.medicalDescription || 'No medical description available'}
+                        </p>
+                      </div>
                     </div>
                   </div>
-                  <div className="flex items-center justify-between">
-                    <div className="flex items-center gap-2">
-                      <span className="text-[10px] font-bold text-slate-400 uppercase">Form Status:</span>
-                      <span className={`px-2 py-1 text-[10px] font-bold rounded-lg ${
-                        request.status === 'completed' ? 'bg-emerald-50 text-emerald-600 border border-emerald-200' :
-                        request.status === 'inprogress' ? 'bg-blue-50 text-blue-600 border border-blue-200' :
-                        request.status === 'pending' ? 'bg-amber-50 text-amber-600 border border-amber-200' :
-                        request.status === 'returned' ? 'bg-amber-50 text-amber-600 border border-amber-200' :
-                        request.status === 'draft' ? 'bg-gray-50 text-gray-600 border border-gray-200' :
-                        'bg-slate-50 text-slate-600 border border-slate-200'
-                      }`}>
-                        {request.status === 'completed' ? 'SIGNED' :
-                         request.status === 'inprogress' ? 'AWAITING SIGNATURE' :
-                         request.status === 'pending' ? 'SUBMITTED' :
-                         request.status === 'returned' ? 'RETURNED' :
-                         request.status === 'draft' ? 'NOT STARTED' : 'Unknown'}
-                      </span>
+                </div>
+                <div className="pt-8 flex justify-end">
+                  <div className="text-center">
+                    <div className="w-48 h-12 border-b-2 border-slate-200 flex items-center justify-center italic text-primary font-serif">
+                      {request.doctorName || request.doctor?.name || 'Unknown Doctor'}
                     </div>
-                    <div className="flex items-center gap-3 text-[10px] text-slate-500">
-                      <span>
-                        <i className="fa-solid fa-calendar-check mr-1"></i>
-                        Updated: {request.updatedAt ? new Date(request.updatedAt).toLocaleDateString('en-US', { 
+                    <p className="text-[10px] text-slate-400 mt-2">
+                      {request.digitalSignature?.signedAt 
+                        ? `Digitally Signed on ${new Date(request.digitalSignature.signedAt).toLocaleDateString('en-US', { 
+                            month: '2-digit', 
+                            day: '2-digit', 
+                            year: 'numeric'
+                          })}` 
+                        : request.status === 'completed' 
+                          ? 'Digitally Signed'
+                          : 'Awaiting Signature'
+                      }
+                    </p>
+                  </div>
+                </div>
+              </div>
+            </section>
+
+            {/* Timeline & Actions */}
+            <div className="lg:col-span-4 space-y-6">
+              {/* Status Timeline */}
+              <div className="bg-white p-6 rounded-2xl border border-slate-200 tradingview-shadow">
+                <h3 className="text-[10px] font-bold text-slate-400 uppercase tracking-widest mb-6">
+                  Request Lifecycle
+                </h3>
+                <div className="relative space-y-8 pl-4">
+                  <div className="timeline-line"></div>
+                  {timelineEvents.map((event, index) => (
+                    <div key={index} className="flex gap-4 items-start relative">
+                      <div className={`timeline-dot ${event.isActive ? (event.isCompleted ? 'active bg-primary text-white border-primary shadow-lg shadow-primary/20' : 'active border-primary text-primary animate-pulse') : ''} pt-0.5 pb-0.5`}>
+                        <i className={`fa-solid ${event.icon} text-xs`}></i>
+                      </div>
+                      <div className={`${!event.isActive ? 'opacity-40' : ''}`}>
+                        <p className="text-sm font-bold text-slate-900">{event.status}</p>
+                        <p className="text-xs text-slate-500">{event.date}</p>
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              </div>
+
+              {/* Admin Controls */}
+              <div className="bg-white p-6 rounded-2xl border border-slate-200 tradingview-shadow">
+                <h3 className="text-[10px] font-bold text-slate-400 uppercase tracking-widest mb-4">
+                  Admin Controls
+                </h3>
+                <div className="space-y-3">
+                  <button className="w-full px-4 py-3 bg-primary/5 text-primary rounded-xl text-sm font-bold flex items-center justify-center gap-2 hover:bg-primary/10 transition-all">
+                    <i className="fa-solid fa-edit"></i> Edit Request
+                  </button>
+                  <button className="w-full px-4 py-3 bg-white border border-slate-200 rounded-xl text-sm font-bold text-slate-600 hover:bg-slate-50 flex items-center justify-center gap-2 transition-all">
+                    <i className="fa-solid fa-forward"></i> Forward Request
+                  </button>
+                  <button 
+                    onClick={() => setShowResetModal(true)}
+                    className="w-full px-4 py-3 bg-white border border-slate-200 rounded-xl text-sm font-bold text-slate-600 hover:bg-slate-50 flex items-center justify-center gap-2 transition-all"
+                  >
+                    <i className="fa-solid fa-undo"></i> Reset Status
+                  </button>
+                  <div className="h-px bg-slate-100 my-2"></div>
+                  <button className="w-full px-4 py-3 bg-danger/5 text-danger rounded-xl text-sm font-bold flex items-center justify-center gap-2 hover:bg-danger/10 transition-all">
+                    <i className="fa-solid fa-ban"></i> Cancel Request
+                  </button>
+                </div>
+              </div>
+
+              {/* Internal Notes */}
+              <div className="bg-white p-6 rounded-2xl border border-slate-200 tradingview-shadow">
+                <div className="flex items-center justify-between mb-4">
+                  <h3 className="text-[10px] font-bold text-slate-400 uppercase tracking-widest">
+                    Internal Notes
+                  </h3>
+                  <button className="text-primary text-[10px] font-bold hover:underline">+ ADD NOTE</button>
+                </div>
+                <div className="space-y-4">
+                  {request.initialNotes ? (
+                    <div className="p-3 bg-slate-50 rounded-lg">
+                      <p className="text-xs text-slate-700 leading-relaxed">
+                        {request.initialNotes}
+                      </p>
+                      <p className="text-[10px] text-slate-400 mt-2">
+                        By {request.createdBy?.fName && request.createdBy?.lName ? `${request.createdBy.fName} ${request.createdBy.lName}` : request.createdBy?.email || 'Unknown User'} • 
+                        {request.createdAt ? new Date(request.createdAt).toLocaleDateString('en-US', { 
                           month: 'short', 
                           day: 'numeric', 
                           hour: '2-digit',
                           minute: '2-digit'
-                        }) : 'Unknown Date'} by {request.updatedBy?.fName && request.updatedBy?.lName ? `${request.updatedBy.fName} ${request.updatedBy.lName}` : request.updatedBy?.email || 'Unknown User'}
-                      </span>
+                        }) : 'Unknown Date'}
+                      </p>
                     </div>
-                  </div>
-                </div>
-                <div className="p-8 bg-slate-100/30 flex-1 min-h-[500px]">
-                  <div className="max-w-2xl mx-auto bg-white border border-slate-200 p-10 shadow-sm space-y-8">
-                    <div className="flex justify-between items-start border-b pb-6">
-                      <div>
-                        <h2 className="text-xl font-bold text-slate-900">MEDICAL PRESCRIPTION</h2>
-                        <p className="text-xs text-slate-500">ID: {request.requestId || 'N/A'}</p>
-                      </div>
-                      <div className="text-right">
-                        <p className="text-xs font-bold text-slate-800">At-Home Healthcare</p>
-                        <p className="text-[10px] text-slate-500">Digital Health Network</p>
-                      </div>
+                  ) : (
+                    <div className="p-3 bg-slate-50 rounded-lg">
+                      <p className="text-xs text-slate-400 italic">
+                        No internal notes available
+                      </p>
                     </div>
-                    <div className="grid grid-cols-2 gap-8 text-xs">
-                      <div>
-                        <p className="font-bold text-slate-400 uppercase mb-2">Patient</p>
-                        <p className="text-slate-900 font-medium">{request.patientName || request.patient || 'Unknown Patient'}</p>
-                        <p className="text-slate-500 mt-1">DOB: {request.patientId?.dateOfBirth ? new Date(request.patientId.dateOfBirth).toLocaleDateString('en-US', { 
-                          month: '2-digit', 
-                          day: '2-digit', 
-                          year: 'numeric'
-                        }) : 'Not Available'}</p>
-                      </div>
-                      <div>
-                        <p className="font-bold text-slate-400 uppercase mb-2">Prescriber</p>
-                        <p className="text-slate-900 font-medium">{request.doctorName || request.doctor?.name || 'Unknown Doctor'}</p>
-                        <p className="text-slate-500 mt-1">License: #{request.doctorId?.rppsNumber || 'N/A'}</p>
-                      </div>
-                    </div>
-                    <div className="space-y-4">
-                      <p className="text-xs font-bold text-slate-400 uppercase">Analysis Requested</p>
-                      <div className="p-4 bg-slate-50 rounded-lg">
-                        <div className="flex items-start gap-3">
-                          <div className="w-4 h-4 rounded border-2 border-primary flex items-center justify-center mt-0.5">
-                            <i className="fa-solid fa-file-medical text-[10px] text-primary"></i>
-                          </div>
-                          <div className="flex-1">
-                            <p className="text-xs text-slate-800 font-medium leading-relaxed">
-                              {request.patientId?.medicalDescription || 'No medical description available'}
-                            </p>
-                          </div>
-                        </div>
-                      </div>
-                    </div>
-                    <div className="pt-8 flex justify-end">
-                      <div className="text-center">
-                        <div className="w-48 h-12 border-b-2 border-slate-200 flex items-center justify-center italic text-primary font-serif">
-                          {request.doctorName || request.doctor?.name || 'Unknown Doctor'}
-                        </div>
-                        <p className="text-[10px] text-slate-400 mt-2">
-                          {request.digitalSignature?.signedAt 
-                            ? `Digitally Signed on ${new Date(request.digitalSignature.signedAt).toLocaleDateString('en-US', { 
-                                month: '2-digit', 
-                                day: '2-digit', 
-                                year: 'numeric'
-                              })}` 
-                            : request.status === 'completed' 
-                              ? 'Digitally Signed'
-                              : 'Awaiting Signature'
-                          }
-                        </p>
-                      </div>
-                    </div>
-                  </div>
+                  )}
                 </div>
               </div>
-
-              {/* Timeline & Actions */}
-              <div className="lg:col-span-4 space-y-6">
-                {/* Status Timeline */}
-                <div className="bg-white p-6 rounded-2xl border border-slate-200 tradingview-shadow">
-                  <h3 className="text-[10px] font-bold text-slate-400 uppercase tracking-widest mb-6">
-                    Request Lifecycle
-                  </h3>
-                  <div className="relative space-y-8 pl-4">
-                    <div className="timeline-line"></div>
-                    {timelineEvents.map((event, index) => (
-                      <div key={index} className="flex gap-4 items-start relative">
-                        <div className={`timeline-dot ${event.isActive ? (event.isCompleted ? 'active bg-primary text-white border-primary shadow-lg shadow-primary/20' : 'active border-primary text-primary animate-pulse') : ''} pt-0.5 pb-0.5`}>
-                          <i className={`fa-solid ${event.icon} text-xs`}></i>
-                        </div>
-                        <div className={`${!event.isActive ? 'opacity-40' : ''}`}>
-                          <p className="text-sm font-bold text-slate-900">{event.status}</p>
-                          <p className="text-xs text-slate-500">{event.date}</p>
-                        </div>
-                      </div>
-                    ))}
-                  </div>
-                </div>
-
-                {/* Admin Controls */}
-                <div className="bg-white p-6 rounded-2xl border border-slate-200 tradingview-shadow">
-                  <h3 className="text-[10px] font-bold text-slate-400 uppercase tracking-widest mb-4">
-                    Admin Controls
-                  </h3>
-                  <div className="space-y-3">
-                    <button className="w-full px-4 py-3 bg-white border border-slate-200 text-slate-600 rounded-xl text-sm font-bold flex items-center justify-center gap-2 hover:bg-slate-50 transition-all">
-                      <i className="fa-solid fa-rotate-left"></i> Reset Status
-                    </button>
-                    <div className="h-px bg-slate-100 my-2"></div>
-                    <button className="w-full px-4 py-3 bg-danger/5 text-danger rounded-xl text-sm font-bold flex items-center justify-center gap-2 hover:bg-danger/10 transition-all">
-                      <i className="fa-solid fa-ban"></i> Cancel Request
-                    </button>
-                  </div>
-                </div>
-                
-                {/* Internal Notes */}
-                <div className="bg-white p-6 rounded-2xl border border-slate-200 tradingview-shadow">
-                  <div className="flex items-center justify-between mb-4">
-                    <h3 className="text-[10px] font-bold text-slate-400 uppercase tracking-widest">
-                      Internal Notes
-                    </h3>
-                    <button className="text-primary text-[10px] font-bold hover:underline">+ ADD NOTE</button>
-                  </div>
-                  <div className="space-y-4">
-                    {request.initialNotes ? (
-                      <div className="p-3 bg-slate-50 rounded-lg">
-                        <p className="text-xs text-slate-700 leading-relaxed">
-                          {request.initialNotes}
-                        </p>
-                        <p className="text-[10px] text-slate-400 mt-2">
-                          By {request.createdBy?.fName && request.createdBy?.lName ? `${request.createdBy.fName} ${request.createdBy.lName}` : request.createdBy?.email || 'Unknown User'} • 
-                          {request.createdAt ? new Date(request.createdAt).toLocaleDateString('en-US', { 
-                            month: 'short', 
-                            day: 'numeric', 
-                            hour: '2-digit',
-                            minute: '2-digit'
-                          }) : 'Unknown Date'}
-                        </p>
-                      </div>
-                    ) : (
-                      <div className="p-3 bg-slate-50 rounded-lg">
-                        <p className="text-xs text-slate-400 italic">
-                          No internal notes available
-                        </p>
-                      </div>
-                    )}
-                  </div>
-                </div>
-
-                              </div>
-            </section>
+            </div>
           </div>
         </div>
       </div>
@@ -509,17 +462,16 @@ export const RequestDetailModal: React.FC<RequestDetailModalProps> = ({
               </div>
               <div className="space-y-1">
                 <label className="text-[10px] font-bold text-slate-400 uppercase">Reset To Status</label>
-                <select className="w-full bg-slate-50 border border-slate-200 rounded-xl px-4 py-3 text-sm outline-none focus:ring-2 focus:ring-primary/20">
-                  <option>Select status...</option>
-                  <option>Draft</option>
+                <select className="w-full bg-white border border-slate-200 rounded-lg px-3 py-2 text-sm outline-none focus:ring-2 focus:ring-primary/20">
                   <option>Submitted</option>
-                  <option>Provider Assigned</option>
+                  <option>In Progress</option>
+                  <option>Draft</option>
                 </select>
               </div>
               <div className="space-y-1">
-                <label className="text-[10px] font-bold text-slate-400 uppercase">Reason</label>
+                <label className="text-[10px] font-bold text-slate-400 uppercase">Reason for Reset *</label>
                 <textarea 
-                  placeholder="Explain the reason for reset..." 
+                  placeholder="Explain the reason for resetting the status..." 
                   className="w-full bg-slate-50 border border-slate-200 rounded-xl px-4 py-3 text-sm outline-none focus:ring-2 focus:ring-primary/20 h-24"
                 />
               </div>

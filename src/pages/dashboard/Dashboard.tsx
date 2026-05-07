@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useEffect } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useNavigate } from 'react-router-dom';
 import Sidebar from '../../components/dashboard/Sidebar';
@@ -7,65 +7,55 @@ import Charts from '../../components/dashboard/Charts';
 import RecentActivity from '../../components/dashboard/RecentActivity';
 import LanguageSwitcher from '../../components/LanguageSwitcher';
 import NotificationDropdown from '../../components/common/NotificationDropdown';
-
-interface Notification {
-  id: string;
-  title: string;
-  message: string;
-  time: string;
-  isRead: boolean;
-  icon: string;
-  iconColor: string;
-  actions?: {
-    label: string;
-    variant: 'primary' | 'secondary';
-  }[];
-}
+import { useExportDashboardQuery } from '../../services/dashboardApi';
 
 const Dashboard: React.FC = () => {
   const { t } = useTranslation();
   const navigate = useNavigate();
+  const { data: exportData, isLoading: isExporting, error: exportError } = useExportDashboardQuery();
   
-  const [notifications, setNotifications] = useState<Notification[]>([
-    {
-      id: '1',
-      title: t('notifications.newDoctorRegistration'),
-      message: t('notifications.newDoctorMessage', { name: 'Dr. Sarah Jenkins', specialty: 'Cardiology', rpps: '#82910' }),
-      time: '2 mins ago',
-      isRead: false,
-      icon: 'fa-user-plus',
-      iconColor: 'text-blue-500',
-      actions: [
-        { label: t('notifications.viewProfile'), variant: 'primary' },
-        { label: t('notifications.dismiss'), variant: 'secondary' }
-      ]
-    },
-    {
-      id: '2',
-      title: t('notifications.monthlyAuditReport'),
-      message: t('notifications.auditReportMessage'),
-      time: '3 hours ago',
-      isRead: true,
-      icon: 'fa-file-export',
-      iconColor: 'text-slate-500'
-    }
-  ]);
-
-  const handleNotificationAction = (notificationId: string, action: string) => {
-    if (action === t('notifications.viewProfile')) {
-      console.log('View profile for notification:', notificationId);
-    } else if (action === t('notifications.dismiss')) {
-      setNotifications(notifications.filter(n => n.id !== notificationId));
-    }
-  };
-
-  const markAllAsRead = () => {
-    setNotifications(notifications.map(n => ({ ...n, isRead: true })));
-  };
-
   const handleViewRequest = () => {
     navigate('/requests');
   };
+
+  const handleNotificationAction = (notificationId: string, action: string) => {
+    console.log('Notification action:', notificationId, action);
+    // Handle navigation or other actions based on notification type
+  };
+
+  const handleExportReport = async () => {
+    try {
+      if (exportData) {
+        // Create a blob with the export data
+        const jsonString = JSON.stringify(exportData, null, 2);
+        const blob = new Blob([jsonString], { type: 'application/json' });
+        
+        // Create download link
+        const url = window.URL.createObjectURL(blob);
+        const link = document.createElement('a');
+        link.href = url;
+        link.download = `dashboard-export-${new Date().toISOString().split('T')[0]}.json`;
+        document.body.appendChild(link);
+        link.click();
+        document.body.removeChild(link);
+        window.URL.revokeObjectURL(url);
+      }
+    } catch (error) {
+      console.error('Export failed:', error);
+      alert('Failed to export report. Please try again.');
+    }
+  };
+
+  // Handle export errors
+  useEffect(() => {
+    if (exportError) {
+      const errorMessage = 'status' in exportError ? 
+        (exportError.data as { message?: string })?.message || 'Failed to export dashboard data' :
+        (exportError as { message?: string })?.message || 'An error occurred';
+      
+      alert(`Export error: ${errorMessage}`);
+    }
+  }, [exportError]);
 
   return (
     <div className="flex h-[1024px] overflow-hidden">
@@ -85,9 +75,7 @@ const Dashboard: React.FC = () => {
           </div>
           <div className="flex items-center gap-4">
             <NotificationDropdown
-              notifications={notifications}
               onNotificationAction={handleNotificationAction}
-              onMarkAllAsRead={markAllAsRead}
             />
             <div className="h-8 w-[1px] bg-slate-200 mx-2"></div>
             <LanguageSwitcher />
@@ -104,8 +92,11 @@ const Dashboard: React.FC = () => {
             </div>
             <div className="flex gap-3">
               <button
-                className="px-4 py-2 bg-white border border-slate-200 rounded-lg text-sm font-semibold text-slate-700 hover:bg-slate-50 transition-colors flex items-center gap-2">
-                <i className="fa-solid fa-download"></i> {t('dashboard.exportReport') || 'Export Report'}
+                onClick={handleExportReport}
+                disabled={isExporting || !exportData}
+                className="px-4 py-2 bg-white border border-slate-200 rounded-lg text-sm font-semibold text-slate-700 hover:bg-slate-50 transition-colors flex items-center gap-2 disabled:opacity-50 disabled:cursor-not-allowed">
+                <i className="fa-solid fa-download"></i> 
+                {t('dashboard.exportReport') || 'Export Report'}
               </button>
               <button
                 onClick={handleViewRequest}

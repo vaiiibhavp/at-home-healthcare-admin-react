@@ -10,20 +10,6 @@ import NotificationDropdown from '../../components/common/NotificationDropdown';
 import { useGetDoctorsQuery } from '../../services/doctorsApi';
 import { Doctor } from '../../types/doctor';
 
-interface Notification {
-  id: string;
-  title: string;
-  message: string;
-  time: string;
-  isRead: boolean;
-  icon: string;
-  iconColor: string;
-  actions?: {
-    label: string;
-    variant: 'primary' | 'secondary';
-  }[];
-}
-
 const Doctors: React.FC = () => {
   const { t } = useTranslation('common');
   const navigate = useNavigate();
@@ -32,18 +18,11 @@ const Doctors: React.FC = () => {
   const { data: doctorsData, isLoading, error } = useGetDoctorsQuery({ page: 1, size: 50 });
   const doctors = doctorsData?.data?.doctors || [];
   
-  const [notifications, setNotifications] = useState<Notification[]>([]);
-
   const handleNotificationAction = (notificationId: string, action: string) => {
-    // Handle notification actions here
     console.log('Notification action:', notificationId, action);
+    // Handle navigation or other actions based on notification type
   };
 
-  const markAllAsRead = () => {
-    // Mark all notifications as read
-    setNotifications(notifications.map(n => ({ ...n, isRead: true })));
-  };
-  
   const [modalState, setModalState] = useState<{
     isOpen: boolean;
     type: 'approve' | 'reject' | null;
@@ -130,9 +109,7 @@ const Doctors: React.FC = () => {
           </div>
           <div className="flex items-center gap-4">
             <NotificationDropdown
-              notifications={notifications}
               onNotificationAction={handleNotificationAction}
-              onMarkAllAsRead={markAllAsRead}
             />
             <div className="h-8 w-[1px] bg-slate-200"></div>
             <div className="ml-2">
