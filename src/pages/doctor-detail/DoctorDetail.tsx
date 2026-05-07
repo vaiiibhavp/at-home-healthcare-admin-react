@@ -32,6 +32,7 @@ const DoctorDetail: React.FC<DoctorDetailProps> = ({ isApproved: propIsApproved 
   const [updateInternalNotes] = useUpdateInternalNotesMutation();
   
   const isApproved = doctor?.status === 'approved' || propIsApproved || searchParams.get('approved') === 'true';
+  const isInactive = doctor?.status === 'inactive';
 
   const [modalState, setModalState] = useState({
     isOpen: false,
@@ -240,10 +241,16 @@ const DoctorDetail: React.FC<DoctorDetailProps> = ({ isApproved: propIsApproved 
             <div className={`flex items-center gap-2 px-3 py-1 rounded-full text-xs font-bold ${
               isApproved 
                 ? 'bg-emerald-50 text-emerald-700 border border-emerald-100' 
+                : isInactive
+                ? 'bg-slate-50 text-slate-700 border border-slate-100'
                 : 'bg-amber-50 text-amber-700 border border-amber-100'
             }`}>
-              <i className={`fa-solid ${isApproved ? 'fa-check' : 'fa-clock'}`}></i> 
-              {isApproved ? t('doctors.approved') : t('doctors.pendingApproval')}
+              <i className={`fa-solid ${
+                isApproved ? 'fa-check' : 
+                isInactive ? 'fa-pause' : 
+                'fa-clock'
+              }`}></i> 
+              {isApproved ? t('doctors.approved') : isInactive ? 'Inactive' : t('doctors.pendingApproval')}
             </div>
           </div>
         </header>
@@ -334,7 +341,7 @@ const DoctorDetail: React.FC<DoctorDetailProps> = ({ isApproved: propIsApproved 
           {/* Right Column: Approval Panel */}
           <section className="lg:w-1/3 space-y-6">
             {/* Action Card - Only show for pending approval */}
-            {!isApproved && (
+            {!isApproved && !isInactive && (
               <div className="bg-white rounded-2xl border border-slate-200 tradingview-shadow p-6">
                 <h3 className="text-lg font-bold text-slate-900 mb-4">{t('doctors.verificationStatus')}</h3>
                 
@@ -372,11 +379,13 @@ const DoctorDetail: React.FC<DoctorDetailProps> = ({ isApproved: propIsApproved 
                         <div className={`absolute left-0 top-0 w-8 h-8 ${
                           doctor?.status === 'pendingApproval' ? 'bg-amber-100 text-amber-600' :
                           doctor?.status === 'approved' || doctor?.status === 'rejected' ? 'bg-emerald-100 text-emerald-600' :
+                          doctor?.status === 'inactive' ? 'bg-slate-100 text-slate-600' :
                           'bg-slate-100 text-slate-600'
                         } rounded-full flex items-center justify-center z-10 p-2.5 m-0 gap-1.5`}>
                           <i className={`fa-solid ${
                             doctor?.status === 'pendingApproval' ? 'fa-clock' :
                             doctor?.status === 'approved' || doctor?.status === 'rejected' ? 'fa-check' :
+                            doctor?.status === 'inactive' ? 'fa-pause' :
                             'fa-circle text-xs'
                           } text-xs`}></i>
                         </div>
@@ -388,6 +397,8 @@ const DoctorDetail: React.FC<DoctorDetailProps> = ({ isApproved: propIsApproved 
                             ? 'approved'
                             : doctor?.status === 'rejected'
                             ? 'rejected'
+                            : doctor?.status === 'inactive'
+                            ? 'inactive'
                             : t('doctors.steps.adminReviewStatus')
                           }
                         </p>
@@ -397,11 +408,13 @@ const DoctorDetail: React.FC<DoctorDetailProps> = ({ isApproved: propIsApproved 
                         <div className={`absolute left-0 top-0 w-8 h-8 ${
                           doctor?.status === 'approved' ? 'bg-emerald-100 text-emerald-600' :
                           doctor?.status === 'rejected' ? 'bg-red-100 text-red-600' :
+                          doctor?.status === 'inactive' ? 'bg-slate-100 text-slate-600' :
                           'bg-slate-100 text-slate-600'
                         } rounded-full flex items-center justify-center z-10 p-2.5 m-0 gap-1.5`}>
                           <i className={`fa-solid ${
                             doctor?.status === 'approved' ? 'fa-check' :
                             doctor?.status === 'rejected' ? 'fa-times' :
+                            doctor?.status === 'inactive' ? 'fa-pause' :
                             'fa-circle text-xs'
                           } text-xs`}></i>
                         </div>
@@ -411,6 +424,8 @@ const DoctorDetail: React.FC<DoctorDetailProps> = ({ isApproved: propIsApproved 
                             ? 'Verified'
                             : doctor?.status === 'rejected'
                             ? 'Not verified'
+                            : doctor?.status === 'inactive'
+                            ? 'Inactive'
                             : 'Pending admin approval'
                           }
                         </p>
