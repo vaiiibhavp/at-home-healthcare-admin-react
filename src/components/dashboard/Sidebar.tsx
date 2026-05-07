@@ -79,7 +79,7 @@ const Sidebar: React.FC = () => {
       {/* User Profile */}
       <div className="p-4 border-t border-slate-100">
         <div className="flex items-center gap-3 p-2 bg-slate-50 rounded-xl">
-          <img
+          {/* <img
             src="https://storage.googleapis.com/uxpilot-auth.appspot.com/avatars/avatar-2.jpg"
             alt="Admin"
             className="w-10 h-10 rounded-lg object-cover"
@@ -87,7 +87,7 @@ const Sidebar: React.FC = () => {
           <div className="flex-1 min-w-0">
             <p className="text-xs font-bold text-slate-900 truncate">Alexander Wright</p>
             <p className="text-[10px] text-slate-500 truncate">Senior Admin</p>
-          </div>
+          </div> */}
           <button 
             onClick={() => window.logout?.()} 
             className="text-slate-400 hover:text-danger p-1 auth-logout"

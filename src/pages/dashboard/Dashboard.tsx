@@ -95,8 +95,8 @@ const Dashboard: React.FC = () => {
                 onClick={handleExportReport}
                 disabled={isExporting || !exportData}
                 className="px-4 py-2 bg-white border border-slate-200 rounded-lg text-sm font-semibold text-slate-700 hover:bg-slate-50 transition-colors flex items-center gap-2 disabled:opacity-50 disabled:cursor-not-allowed">
-                <i className={`fa-solid ${isExporting ? 'fa-spinner fa-spin' : 'fa-download'}`}></i> 
-                {isExporting ? 'Exporting...' : (t('dashboard.exportReport') || 'Export Report')}
+                <i className="fa-solid fa-download"></i> 
+                {t('dashboard.exportReport') || 'Export Report'}
               </button>
               <button
                 onClick={handleViewRequest}
