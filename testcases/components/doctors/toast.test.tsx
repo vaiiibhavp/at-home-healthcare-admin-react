@@ -52,10 +52,10 @@ describe('Toast Component', () => {
     );
 
     const toastContainer = screen.getByText('Test message').closest('div')?.parentElement;
-    expect(toastContainer).toHaveClass('fixed', 'bottom-8', 'right-8', 'transform', 'transition-all', 'duration-300', 'z-[60]');
+    expect(toastContainer).toHaveClass('fixed bottom-8 right-8 transform transition-all duration-300 z-[60]');
     
     const toastContent = screen.getByText('Test message').parentElement;
-    expect(toastContent).toHaveClass('bg-slate-900', 'text-white', 'px-6', 'py-3', 'rounded-xl', 'shadow-2xl', 'flex', 'items-center', 'gap-3');
+    expect(toastContent).toHaveClass('bg-slate-900 text-white px-6 py-3 rounded-xl shadow-2xl flex items-center gap-3');
   });
 
   test('should auto-hide after 3 seconds', async () => {
@@ -177,6 +177,6 @@ describe('Toast Component', () => {
     );
 
     const icon = screen.getByRole('generic', { hidden: true });
-    expect(icon).toHaveClass('fa-circle-check', 'text-emerald-400');
+    expect(icon).toHaveClass('fa-circle-check text-emerald-400');
   });
 });

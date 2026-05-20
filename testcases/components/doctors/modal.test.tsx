@@ -185,10 +185,10 @@ describe('Modal Component', () => {
     );
 
     const modalContainer = screen.getByText('modal.confirmApproval').closest('div');
-    expect(modalContainer).toHaveClass('fixed', 'inset-0', 'z-50', 'flex', 'items-center', 'justify-center', 'p-4');
+    expect(modalContainer).toHaveClass('fixed inset-0 z-50 flex items-center justify-center p-4');
 
     const modalContent = screen.getByText('modal.confirmApproval').parentElement?.parentElement;
-    expect(modalContent).toHaveClass('bg-white', 'w-full', 'max-w-md', 'rounded-2xl', 'p-8', 'text-center');
+    expect(modalContent).toHaveClass('bg-white w-full max-w-md rounded-2xl p-8 text-center');
   });
 
   test('should have proper styling classes for rejection modal', () => {
@@ -205,10 +205,10 @@ describe('Modal Component', () => {
     );
 
     const modalContainer = screen.getByText('modal.rejectApplication').closest('div');
-    expect(modalContainer).toHaveClass('fixed', 'inset-0', 'z-50', 'flex', 'items-center', 'justify-center', 'p-4');
+    expect(modalContainer).toHaveClass('fixed inset-0 z-50 flex items-center justify-center p-4');
 
     const modalContent = screen.getByText('modal.rejectApplication').parentElement?.parentElement;
-    expect(modalContent).toHaveClass('bg-white', 'w-full', 'max-w-md', 'rounded-2xl');
+    expect(modalContent).toHaveClass('bg-white w-full max-w-md rounded-2xl');
   });
 
   test('should display rejection textarea in rejection modal', () => {
@@ -227,7 +227,7 @@ describe('Modal Component', () => {
     const textarea = screen.getByPlaceholderText(/e\.g\. Missing RPPS/);
     expect(textarea).toBeInTheDocument();
     expect(textarea).toHaveAttribute('rows', '4');
-    expect(textarea).toHaveClass('w-full', 'bg-slate-50', 'border', 'border-slate-200', 'rounded-xl', 'p-3', 'text-sm');
+    expect(textarea).toHaveClass('w-full bg-slate-50 border border-slate-200 rounded-xl p-3 text-sm');
   });
 
   test('should handle textarea input in rejection modal', () => {

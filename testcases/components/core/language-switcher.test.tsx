@@ -45,8 +45,8 @@ describe('LanguageSwitcher Component', () => {
     const enButton = screen.getByText('EN');
     const frButton = screen.getByText('FR');
 
-    expect(enButton).toHaveClass('bg-blue-500', 'text-white');
-    expect(frButton).toHaveClass('bg-gray-200', 'text-gray-700');
+    expect(enButton).toHaveClass('bg-blue-500 text-white');
+    expect(frButton).toHaveClass('bg-gray-200 text-gray-700');
   });
 
   test('should highlight active language (French)', () => {
@@ -57,8 +57,8 @@ describe('LanguageSwitcher Component', () => {
     const enButton = screen.getByText('EN');
     const frButton = screen.getByText('FR');
 
-    expect(frButton).toHaveClass('bg-blue-500', 'text-white');
-    expect(enButton).toHaveClass('bg-gray-200', 'text-gray-700');
+    expect(frButton).toHaveClass('bg-blue-500 text-white');
+    expect(enButton).toHaveClass('bg-gray-200 text-gray-700');
   });
 
   test('should call changeLanguage when English button is clicked', () => {
@@ -107,7 +107,7 @@ describe('LanguageSwitcher Component', () => {
     const frButton = screen.getByText('FR');
 
     // Check that buttons have base classes
-    expect(enButton).toHaveClass('px-2', 'py-1', 'text-xs', 'font-medium', 'rounded', 'transition-colors');
-    expect(frButton).toHaveClass('px-2', 'py-1', 'text-xs', 'font-medium', 'rounded', 'transition-colors');
+    expect(enButton).toHaveClass('px-2 py-1 text-xs font-medium rounded transition-colors');
+    expect(frButton).toHaveClass('px-2 py-1 text-xs font-medium rounded transition-colors');
   });
 });

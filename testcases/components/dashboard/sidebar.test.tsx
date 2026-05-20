@@ -100,7 +100,7 @@ describe('Sidebar Component', () => {
     );
 
     const doctorsLink = screen.getByText('navigation.doctors');
-    expect(doctorsLink.closest('a')).toHaveClass('sidebar-item-active', 'bg-primary/10', 'text-primary');
+    expect(doctorsLink.closest('a')).toHaveClass('sidebar-item-active bg-primary/10 text-primary');
   });
 
   test('should render logout button', () => {
