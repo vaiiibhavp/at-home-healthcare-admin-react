@@ -4,6 +4,7 @@ import { useTranslation } from 'react-i18next';
 import Sidebar from '../../components/dashboard/Sidebar';
 import LanguageSwitcher from '../../components/LanguageSwitcher';
 import { useCreateProviderMutation, useUpdateProviderMutation, useGetProviderByIdQuery } from '../../services/providersApi';
+import { useGetServicesQuery } from '../../services/servicesApi';
 
 interface Service {
   id: string;
@@ -20,6 +21,7 @@ const CreateProvider: React.FC = () => {
   const { data: providerData, isLoading: isLoadingProvider, error: providerError } = useGetProviderByIdQuery(id!, { 
   skip: !isEditMode,
 });
+  const { data: servicesData, isLoading: isLoadingServices } = useGetServicesQuery({});
 
   const [formData, setFormData] = useState({
     providerName: '',
@@ -36,7 +38,11 @@ const CreateProvider: React.FC = () => {
   const [toastType, setToastType] = useState<'success' | 'error' | 'info'>('success');
   const [showAllServices, setShowAllServices] = useState(false);
 
-  const availableServices: Service[] = [
+  // Use services from backend if available, otherwise fallback to hardcoded list
+  const availableServices: Service[] = servicesData?.data?.services?.map((service: any) => ({
+    id: service._id || service.id,
+    name: service.name || service.serviceName
+  })) || [
     { id: '69eb112a056b86c571c1a44f', name: 'Generic' },
     { id: '69eb112b056b86c571c1a450', name: 'Wound Care' },
     { id: '69eb112c056b86c571c1a451', name: 'IV Therapy' },
@@ -131,9 +137,10 @@ const CreateProvider: React.FC = () => {
     }
 
     try {
+      let response;
       if (isEditMode) {
         // Update existing provider
-        await updateProvider({
+        response = await updateProvider({
           id: id!,
           body: {
             providerName: formData.providerName,
@@ -144,7 +151,7 @@ const CreateProvider: React.FC = () => {
         }).unwrap();
       } else {
         // Create new provider
-        await createProvider({
+        response = await createProvider({
           providerName: formData.providerName,
           email: formData.email,
           phoneNumber: formData.phoneNumber,
@@ -153,16 +160,44 @@ const CreateProvider: React.FC = () => {
         }).unwrap();
       }
 
-      const action = isEditMode ? t('providers.validation.updated') : t('providers.validation.created');
-      showToastMessage(t('providers.validation.success', { action }), 'success');
+      // Check if response indicates partial success (provider created but some services invalid)
+      if (response?.status === 201 || response?.status === 200) {
+        const action = isEditMode ? t('providers.validation.updated') : t('providers.validation.created');
+        showToastMessage(t('providers.validation.success', { action }), 'success');
 
-      // Redirect after delay
-      setTimeout(() => {
-        window.location.href = '/providers';
-      }, 2000);
-    } catch (err) {
+        // Redirect after delay
+        setTimeout(() => {
+          window.location.href = '/providers';
+        }, 2000);
+      } else if (response?.status === 400 && response?.data?.providerId) {
+        // Partial success: provider created but some services invalid
+        showToastMessage(`Provider created successfully, but some services were invalid. Provider ID: ${response.data.providerId}`, 'info');
+        
+        // Redirect after delay
+        setTimeout(() => {
+          window.location.href = '/providers';
+        }, 3000);
+      } else {
+        // Other error cases
+        const action = isEditMode ? 'update' : 'create';
+        showToastMessage(`Failed to ${action} provider: ${response?.message || 'Unknown error'}`, 'error');
+      }
+    } catch (err: any) {
+      // Handle error with more detail
       const action = isEditMode ? 'update' : 'create';
-      showToastMessage(`Failed to ${action} provider. Please try again.`, 'error');
+      const errorMessage = err?.data?.message || err?.message || `Failed to ${action} provider. Please try again.`;
+      
+      // Check if it's a partial success scenario
+      if (err?.data?.status === 400 && err?.data?.data?.providerId) {
+        showToastMessage(`Provider created successfully, but some services were invalid. Provider ID: ${err.data.data.providerId}`, 'info');
+        
+        // Redirect after delay
+        setTimeout(() => {
+          window.location.href = '/providers';
+        }, 3000);
+      } else {
+        showToastMessage(errorMessage, 'error');
+      }
     }
   };
 
@@ -185,6 +220,21 @@ const CreateProvider: React.FC = () => {
         return 'fa-solid fa-circle-check text-emerald-400';
     }
   };
+
+  // Show loading state while fetching services data
+  if (isLoadingServices) {
+    return (
+      <div className="min-h-screen bg-slate-50 flex">
+        <Sidebar />
+        <div className="flex-1 flex items-center justify-center">
+          <div className="flex items-center gap-3">
+            <div className="w-6 h-6 border-2 border-primary border-t-transparent rounded-full animate-spin"></div>
+            <span className="text-sm text-slate-500">Loading services...</span>
+          </div>
+        </div>
+      </div>
+    );
+  }
 
   // Show loading state while fetching provider data in edit mode
   if (isEditMode && isLoadingProvider) {
