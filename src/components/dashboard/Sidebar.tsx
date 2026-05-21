@@ -1,6 +1,7 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { NavLink } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
+import ChangePasswordModal from '../ChangePasswordModal';
 
 interface SidebarItem {
   icon: string;
@@ -10,6 +11,7 @@ interface SidebarItem {
 
 const Sidebar: React.FC = () => {
   const { t } = useTranslation();
+  const [isChangePasswordModalOpen, setIsChangePasswordModalOpen] = useState(false);
   
   const mainNavItems: SidebarItem[] = [
     { icon: 'fa-chart-pie', label: t('navigation.dashboard'), path: '/dashboard' },
@@ -89,6 +91,13 @@ const Sidebar: React.FC = () => {
             <p className="text-[10px] text-slate-500 truncate">Senior Admin</p>
           </div> */}
           <button 
+            onClick={() => setIsChangePasswordModalOpen(true)}
+            className="text-slate-400 hover:text-primary p-1"
+            title="Change Password"
+          >
+            <i className="fa-solid fa-key"></i>
+          </button>
+          <button 
             onClick={() => window.logout?.()} 
             className="text-slate-400 hover:text-danger p-1 auth-logout"
             title={t('auth.logout')}
@@ -97,6 +106,11 @@ const Sidebar: React.FC = () => {
           </button>
         </div>
       </div>
+
+      <ChangePasswordModal 
+        isOpen={isChangePasswordModalOpen} 
+        onClose={() => setIsChangePasswordModalOpen(false)} 
+      />
     </aside>
   );
 };

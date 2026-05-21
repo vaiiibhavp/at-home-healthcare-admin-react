@@ -1,5 +1,5 @@
 import { createApi, fetchBaseQuery } from '@reduxjs/toolkit/query/react';
-import { LoginRequest, LoginResponse, ForgotPasswordRequest, ForgotPasswordResponse } from '../types/auth';
+import { LoginRequest, LoginResponse, ForgotPasswordRequest, ForgotPasswordResponse, ChangePasswordRequest, ChangePasswordResponse } from '../types/auth';
 
 export const api = createApi({
   reducerPath: 'api',
@@ -29,7 +29,14 @@ export const api = createApi({
         body: emailData,
       }),
     }),
+    changePassword: builder.mutation<ChangePasswordResponse, ChangePasswordRequest>({
+      query: (passwordData) => ({
+        url: '/admin/changePassword',
+        method: 'POST',
+        body: passwordData,
+      }),
+    }),
   }),
 });
 
-export const { useLoginMutation, useForgotPasswordMutation } = api;
+export const { useLoginMutation, useForgotPasswordMutation, useChangePasswordMutation } = api;
