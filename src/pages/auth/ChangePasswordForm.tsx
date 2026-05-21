@@ -1,9 +1,7 @@
 import React, { useState } from 'react';
-import { useTranslation } from 'react-i18next';
 import { useChangePasswordMutation } from '../../services/api';
 
 const ChangePasswordForm: React.FC = () => {
-  const { t } = useTranslation();
   const [formData, setFormData] = useState({
     currentPassword: '',
     newPassword: '',
