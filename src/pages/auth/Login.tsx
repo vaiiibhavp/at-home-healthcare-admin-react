@@ -116,10 +116,6 @@ const Login: React.FC = () => {
                     <label htmlFor="password" className="text-xs font-bold uppercase tracking-wider text-textMuted">
                       {t('auth.password')}
                     </label>
-                    {/* Forgot password link commented out for now */}
-                    {/* <a href="/forgot-password" className="text-xs font-semibold text-accent hover:underline">
-                      {t('auth.forgotPassword') || 'Forgot password?'}
-                    </a> */}
                   </div>
                   <div className="relative">
                     <span className="absolute left-4 top-1/2 -translate-y-1/2 text-textMuted/60">
