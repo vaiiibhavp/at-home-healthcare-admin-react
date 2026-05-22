@@ -22,9 +22,9 @@ const Sidebar: React.FC = () => {
     { icon: 'fa-clipboard-list', label: t('navigation.requests'), path: '/requests' }
   ];
 
-  const systemNavItems: SidebarItem[] = [
-    { icon: 'fa-gear', label: t('navigation.settings'), path: '/settings' }
-  ];
+  // const systemNavItems: SidebarItem[] = [
+  //   { icon: 'fa-gear', label: t('navigation.settings'), path: '/settings' }
+  // ];
 
   return (
     <aside className="w-64 bg-white border-r border-slate-200 flex flex-col flex-shrink-0">
@@ -55,8 +55,8 @@ const Sidebar: React.FC = () => {
           </NavLink>
         ))}
 
-        {/* System Section Divider */}
-        <div className="pt-4 pb-2">
+        {/* System Section Divider - Commented out */}
+        {/* <div className="pt-4 pb-2">
           <p className="px-4 text-[10px] font-bold text-slate-400 uppercase tracking-widest">
             System
           </p>
@@ -75,7 +75,7 @@ const Sidebar: React.FC = () => {
             <i className={`fa-solid ${item.icon} w-5`}></i>
             {item.label}
           </NavLink>
-        ))}
+        ))} */}
       </nav>
 
       {/* User Profile */}
