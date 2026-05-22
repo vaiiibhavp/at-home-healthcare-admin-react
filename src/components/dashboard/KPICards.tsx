@@ -33,12 +33,12 @@ const KPICards: React.FC = () => {
     {
       title: t('dashboard.kpi.pendingApprovals'),
       value: dashboardData.data.pendingApprovals.toLocaleString(),
-      change: dashboardData.data.pendingApprovals > 0 ? t('dashboard.kpi.pending') : t('dashboard.kpi.none'),
+      change: dashboardData.data.pendingApprovals > 0 ? t('dashboard.kpi.pending') : 'pending',
       changeType: dashboardData.data.pendingApprovals > 0 ? 'neutral' : 'positive',
       icon: 'fa-clock-rotate-left',
       iconBg: 'bg-amber-50',
       iconColor: 'text-amber-600',
-      subtitle: dashboardData.data.pendingApprovals > 0 ? t('dashboard.kpi.urgentReview') : t('dashboard.kpi.allClear')
+      subtitle: dashboardData.data.pendingApprovals > 0 ? 'requiring urgent review' : 'all clear'
     },
     {
       title: t('dashboard.kpi.activeRequests'),
