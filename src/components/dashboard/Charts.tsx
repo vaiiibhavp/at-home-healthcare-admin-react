@@ -19,7 +19,8 @@ const Charts: React.FC = () => {
       line: {
         color: '#526674',
         width: 3,
-        shape: 'spline' as const
+        //shape: 'spline' as const
+        shape: 'linear' as const
       },
       fill: 'tozeroy' as const,
       fillcolor: 'rgba(82, 102, 116, 0.05)'
