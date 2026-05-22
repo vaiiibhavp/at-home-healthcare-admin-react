@@ -44,7 +44,6 @@ export const providersApi = createApi({
         method: 'PATCH',
         body,
       }),
-      invalidatesTags: ['Providers'],
     }),
     activateProvider: builder.mutation<ActivateProviderResponse, { id: string; body: ActivateProviderRequest }>({
       query: ({ id, body }) => ({
@@ -52,7 +51,6 @@ export const providersApi = createApi({
         method: 'PATCH',
         body,
       }),
-      invalidatesTags: ['Providers'],
     }),
     bulkDeactivateProviders: builder.mutation<BulkDeactivateResponse, BulkDeactivateRequest>({
       query: (body) => ({

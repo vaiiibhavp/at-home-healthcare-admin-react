@@ -136,6 +136,9 @@ const CreateProvider: React.FC = () => {
       return;
     }
 
+    // Normalize phone number: remove + prefix and any non-numeric characters except spaces
+    const normalizedPhoneNumber = formData.phoneNumber.replace(/[^\d\s]/g, '').replace(/\s/g, '');
+
     try {
       let response;
       if (isEditMode) {
@@ -144,7 +147,7 @@ const CreateProvider: React.FC = () => {
           id: id!,
           body: {
             providerName: formData.providerName,
-            phoneNumber: formData.phoneNumber,
+            phoneNumber: normalizedPhoneNumber,
             registrationId: formData.registrationId,
             emailNotificationsEnabled: formData.emailNotificationsEnabled
           }
@@ -154,7 +157,7 @@ const CreateProvider: React.FC = () => {
         response = await createProvider({
           providerName: formData.providerName,
           email: formData.email,
-          phoneNumber: formData.phoneNumber,
+          phoneNumber: normalizedPhoneNumber,
           registrationId: formData.registrationId,
           assignedServices: formData.assignedServices
         }).unwrap();
@@ -369,7 +372,7 @@ const CreateProvider: React.FC = () => {
                     name="phoneNumber"
                     value={formData.phoneNumber}
                     onChange={handleInputChange}
-                    placeholder="+33 X XX XX XX XX"
+                    placeholder="e.g. 33677889900"
                     className="w-full pl-11 pr-4 py-3 bg-slate-50 border border-slate-200 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-primary/20 transition-all placeholder:text-slate-300"
                   />
                 </div>
