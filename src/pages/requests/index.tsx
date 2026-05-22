@@ -95,7 +95,7 @@ const Requests: React.FC = () => {
         headers['Authorization'] = `Bearer ${token}`;
       }
       
-      const response = await fetch(`http://163.227.92.122:3047/admin/requests?${params}`, {
+      const response = await fetch(`${process.env.REACT_APP_API_BASE_URL}/admin/requests?${params}`, {
         method: 'GET',
         headers
       });
@@ -168,7 +168,7 @@ const Requests: React.FC = () => {
         'Authorization': `Bearer ${token}`
       };
       
-      const response = await fetch(`http://163.227.92.122:3047/admin/requests/${requestId}`, {
+      const response = await fetch(`${process.env.REACT_APP_API_BASE_URL}/admin/requests/${requestId}`, {
         method: 'GET',
         headers
       });
@@ -199,7 +199,7 @@ const Requests: React.FC = () => {
         'Authorization': `Bearer ${token}`
       };
       
-      const response = await fetch(`http://163.227.92.122:3047/admin/requests/${requestId}/audit-logs`, {
+      const response = await fetch(`${process.env.REACT_APP_API_BASE_URL}/admin/requests/${requestId}/audit-logs`, {
         method: 'GET',
         headers
       });
