@@ -140,7 +140,9 @@ const DoctorDetail: React.FC<DoctorDetailProps> = ({ isApproved: propIsApproved 
         <main className="flex-1 flex flex-col min-w-0 bg-slate-50 overflow-y-auto">
           <div className="flex items-center justify-center h-full">
             <div className="text-center">
-              <p className="text-red-600 mb-4">{t('doctors.errorLoading') || 'Error loading doctor details'}</p>
+              <p className="text-red-600 mb-4">
+                {/* {t('doctors.errorLoading') || 'Error loading doctor details'} */}
+                </p>  
               <Link to="/doctors" className="text-primary hover:underline">
                 {t('doctors.backToDoctorsList')}
               </Link>

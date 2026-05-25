@@ -15,7 +15,7 @@ const Doctors: React.FC = () => {
   const navigate = useNavigate();
   
   // Fetch doctors data
-  const { data: doctorsData, isLoading, error } = useGetDoctorsQuery({ page: 1, size: 50 });
+  const { data: doctorsData, isLoading } = useGetDoctorsQuery({ page: 1, size: 50 });  //error handled in component
   const doctors = doctorsData?.data?.doctors || [];
   
   const handleNotificationAction = (notificationId: string, action: string) => {
@@ -148,13 +148,13 @@ const Doctors: React.FC = () => {
           />
           
           {/* Error State */}
-          {error && (
+          {/* {error && (
             <div className="bg-red-50 border border-red-200 rounded-lg p-4">
               <p className="text-red-700 text-sm">
                 {t('doctors.errorLoading') || 'Error loading doctors data. Please try again.'}
               </p>
             </div>
-          )}
+          )} */}
         </div>
       </main>
 
