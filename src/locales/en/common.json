@@ -55,7 +55,9 @@
     "contact": "Contact",
     "showing": "Showing {{start}}-{{end}} of {{total}} {{type}}",
     "bulkDeactivate": "Bulk Deactivate",
-    "deactivate": "Deactivate"
+    "deactivate": "Deactivate",
+    "clear": "Clear",
+    "apply": "Apply"
   },
   "pagination": {
     "showingItems": "Showing {{start}}-{{end}} of {{total}} items",
@@ -336,7 +338,9 @@
     "pendingReview": "Pending Review",
     "highPriority": "High Priority",
     "saveView": "Save View",
-    "dateRange": "Oct 20, 2023 - Oct 27, 2023",
+    "dateRange": "Date Range",
+    "startDate": "Start Date",
+    "endDate": "End Date",
     "allServices": "All Services",
     "inProgress": "In Progress",
     "returned": "Returned",
