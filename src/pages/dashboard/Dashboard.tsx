@@ -1,4 +1,4 @@
-import React, { useEffect } from 'react';
+import React, { useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useNavigate } from 'react-router-dom';
 import Sidebar from '../../components/dashboard/Sidebar';
@@ -7,12 +7,11 @@ import Charts from '../../components/dashboard/Charts';
 import RecentActivity from '../../components/dashboard/RecentActivity';
 import LanguageSwitcher from '../../components/LanguageSwitcher';
 import NotificationDropdown from '../../components/common/NotificationDropdown';
-import { useExportDashboardQuery } from '../../services/dashboardApi';
 
 const Dashboard: React.FC = () => {
   const { t } = useTranslation();
   const navigate = useNavigate();
-  const { data: exportData, isLoading: isExporting, error: exportError } = useExportDashboardQuery();
+  const [isExporting, setIsExporting] = useState(false);
   
   const handleViewRequest = () => {
     navigate('/requests');
@@ -25,44 +24,45 @@ const Dashboard: React.FC = () => {
 
   const handleExportReport = async () => {
     try {
-      if (exportData) {
-        // Create a blob with the export data
-        const jsonString = JSON.stringify(exportData, null, 2);
-        const blob = new Blob([jsonString], { type: 'application/json' });
-        
-        // Create download link
-        const url = window.URL.createObjectURL(blob);
-        const link = document.createElement('a');
-        link.href = url;
-        link.download = `dashboard-export-${new Date().toISOString().split('T')[0]}.json`;
-        document.body.appendChild(link);
-        link.click();
-        document.body.removeChild(link);
-        window.URL.revokeObjectURL(url);
+      setIsExporting(true);
+      const token = localStorage.getItem('authToken');
+      const baseUrl = process.env.REACT_APP_API_BASE_URL || 'http://163.227.92.122:3047';
+      
+      const response = await fetch(`${baseUrl}/export?entityType=dashboard&format=csv`, {
+        method: 'GET',
+        headers: {
+          'Authorization': `Bearer ${token}`,
+          'Content-Type': 'text/csv',
+        },
+      });
+
+      if (!response.ok) {
+        throw new Error('Failed to export dashboard data');
       }
+
+      const blob = await response.blob();
+      const url = window.URL.createObjectURL(blob);
+      const link = document.createElement('a');
+      link.href = url;
+      link.download = `dashboard-export-${new Date().toISOString().split('T')[0]}.csv`;
+      document.body.appendChild(link);
+      link.click();
+      document.body.removeChild(link);
+      window.URL.revokeObjectURL(url);
     } catch (error) {
       console.error('Export failed:', error);
       alert('Failed to export report. Please try again.');
+    } finally {
+      setIsExporting(false);
     }
   };
-
-  // Handle export errors
-  useEffect(() => {
-    if (exportError) {
-      const errorMessage = 'status' in exportError ? 
-        (exportError.data as { message?: string })?.message || 'Failed to export dashboard data' :
-        (exportError as { message?: string })?.message || 'An error occurred';
-      
-      alert(`Export error: ${errorMessage}`);
-    }
-  }, [exportError]);
 
   return ( 
     <div className="flex h-[1024px] overflow-hidden">
       <Sidebar />
       <main className="flex-1 flex flex-col min-w-0 bg-slate-50 overflow-y-auto">
         {/* Header */}
-        <header className="h-16 bg-white border-b border-slate-200 flex items-center justify-between px-8 sticky pt-10 pb-10">  {/* top-0 z-10 */}
+        <header className="h-16 bg-white border-b border-slate-200 flex items-center justify-between px-8 sticky top-0 z-10 pt-10 pb-10">
           <div className="flex items-center gap-4 flex-1">
             <div className="relative w-full max-w-md">
               <i className="fa-solid fa-magnifying-glass absolute left-3 top-1/2 -translate-y-1/2 text-slate-400 text-sm"></i>
@@ -93,7 +93,7 @@ const Dashboard: React.FC = () => {
             <div className="flex gap-3">
               <button
                 onClick={handleExportReport}
-                disabled={isExporting || !exportData}
+                disabled={isExporting}
                 className="px-4 py-2 bg-white border border-slate-200 rounded-lg text-sm font-semibold text-slate-700 hover:bg-slate-50 transition-colors flex items-center gap-2 disabled:opacity-50 disabled:cursor-not-allowed">
                 <i className="fa-solid fa-download"></i> 
                 {t('dashboard.exportReport') || 'Export Report'}
