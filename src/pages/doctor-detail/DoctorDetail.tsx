@@ -492,10 +492,16 @@ const DoctorDetail: React.FC<DoctorDetailProps> = ({ isApproved: propIsApproved 
 
         {modalState.type === 'reject' && (
           <div className={`fixed inset-0 z-50 flex items-center justify-center p-4 ${modalState.isOpen ? '' : 'hidden'}`} style={{ backgroundColor: 'rgba(15, 23, 42, 0.5)', backdropFilter: 'blur(4px)' }}>
-            <div className="bg-white w-full max-w-md rounded-2xl tradingview-shadow overflow-hidden">
+            <div className="bg-white w-full max-w-md rounded-2xl tradingview-shadow overflow-hidden" onClick={(e) => e.stopPropagation()}>
               <div className="p-6 border-b border-slate-100 flex justify-between items-center">
                 <h3 className="text-lg font-bold text-slate-900">Reject Application</h3>
-                <button onClick={hideModal} className="text-slate-400 hover:text-slate-600">
+                <button 
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    hideModal();
+                  }} 
+                  className="text-slate-400 hover:text-slate-600"
+                >
                   <i className="fa-solid fa-xmark"></i>
                 </button>
               </div>
@@ -524,10 +530,22 @@ const DoctorDetail: React.FC<DoctorDetailProps> = ({ isApproved: propIsApproved 
                 )}
               </div>
               <div className="p-6 bg-slate-50 border-t border-slate-100 flex justify-end gap-3">
-                <button onClick={hideModal} className="px-4 py-2 text-sm font-bold text-slate-600 hover:bg-slate-100 rounded-lg">
+                <button 
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    hideModal();
+                  }} 
+                  className="px-4 py-2 text-sm font-bold text-slate-600 hover:bg-slate-100 rounded-lg"
+                >
                   {t('doctors.cancel')}
                 </button>
-                <button onClick={validateReject} className="px-4 py-2 text-sm font-bold text-white bg-danger rounded-lg hover:bg-red-700">
+                <button 
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    validateReject();
+                  }} 
+                  className="px-4 py-2 text-sm font-bold text-white bg-danger rounded-lg hover:bg-red-700"
+                >
                   {t('doctors.confirmReject')}
                 </button>
               </div>
