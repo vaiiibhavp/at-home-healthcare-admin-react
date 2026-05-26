@@ -40,13 +40,19 @@ const Modal: React.FC<ModalProps> = ({ isOpen, onClose, type, onConfirm, doctorN
           </div>
           <div className="p-6 bg-slate-50 border-t border-slate-100 flex justify-end gap-3">
             <button
-              onClick={onClose}
+              onClick={(e) => {
+                e.stopPropagation();
+                onClose();
+              }}
               className="px-4 py-2 text-sm font-bold text-slate-600 hover:bg-slate-100 rounded-lg"
             >
               {t('common.cancel') || 'Cancel'}
             </button>
             <button
-              onClick={() => onConfirm('Rejected')}
+              onClick={(e) => {
+                e.stopPropagation();
+                onConfirm('Rejected');
+              }}
               className="px-4 py-2 text-sm font-bold text-white bg-danger rounded-lg hover:bg-red-700"
             >
               {t('modal.confirmRejection') || 'Confirm Rejection'}
@@ -59,7 +65,10 @@ const Modal: React.FC<ModalProps> = ({ isOpen, onClose, type, onConfirm, doctorN
 
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center p-4" style={{ backgroundColor: 'rgba(15, 23, 42, 0.5)', backdropFilter: 'blur(4px)' }}>
-      <div className="bg-white w-full max-w-md rounded-2xl tradingview-shadow p-8 text-center">
+      <div 
+        className="bg-white w-full max-w-md rounded-2xl tradingview-shadow p-8 text-center"
+        onClick={(e) => e.stopPropagation()}
+      >
         <div className="w-16 h-16 bg-emerald-50 text-emerald-600 rounded-full flex items-center justify-center mx-auto mb-4">
           <i className="fa-solid fa-user-check text-2xl"></i>
         </div>
@@ -69,13 +78,19 @@ const Modal: React.FC<ModalProps> = ({ isOpen, onClose, type, onConfirm, doctorN
         </p>
         <div className="mt-8 flex gap-3">
           <button
-            onClick={onClose}
+            onClick={(e) => {
+              e.stopPropagation();
+              onClose();
+            }}
             className="flex-1 px-4 py-2.5 text-sm font-bold text-slate-600 bg-slate-100 hover:bg-slate-200 rounded-xl"
           >
             {t('common.cancel') || 'Cancel'}
           </button>
           <button
-            onClick={() => onConfirm('Approved')}
+            onClick={(e) => {
+              e.stopPropagation();
+              onConfirm('Approved');
+            }}
             className="flex-1 px-4 py-2.5 text-sm font-bold text-white bg-primary hover:bg-slate-800 rounded-xl"
           >
             {t('modal.approveNow') || 'Approve Now'}

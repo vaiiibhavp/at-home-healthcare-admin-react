@@ -16,6 +16,9 @@ const DoctorDetail: React.FC<DoctorDetailProps> = ({ isApproved: propIsApproved 
   const [searchParams] = useSearchParams();
   const { id: doctorId } = useParams<{ id: string }>();
   
+  // Store the original approved parameter from URL for back navigation
+  const originalApprovedParam = searchParams.get('approved') === 'true';
+  
   // Fetch doctor details - only call API if doctorId exists
   const { data: doctorData, isLoading, error } = useGetDoctorDetailsQuery(doctorId || '', {
     skip: !doctorId
@@ -31,7 +34,7 @@ const DoctorDetail: React.FC<DoctorDetailProps> = ({ isApproved: propIsApproved 
   // Internal notes mutation
   const [updateInternalNotes] = useUpdateInternalNotesMutation();
   
-  const isApproved = doctor?.status === 'approved' || propIsApproved || searchParams.get('approved') === 'true';
+  const isApproved = doctor?.status === 'approved' || propIsApproved || originalApprovedParam;
   const isInactive = doctor?.status === 'inactive';
 
   const [modalState, setModalState] = useState({
@@ -110,7 +113,7 @@ const DoctorDetail: React.FC<DoctorDetailProps> = ({ isApproved: propIsApproved 
           <div className="flex items-center justify-center h-full">
             <div className="text-center">
               <p className="text-red-600 mb-4">{t('doctors.noDoctorId')}</p>
-              <Link to="/doctors" className="text-primary hover:underline">
+              <Link to={`/doctors?approved=${searchParams.get('approved') === 'true'}`} className="text-primary hover:underline">
                 {t('doctors.backToDoctorsList')}
               </Link>
             </div>
@@ -143,7 +146,7 @@ const DoctorDetail: React.FC<DoctorDetailProps> = ({ isApproved: propIsApproved 
               <p className="text-red-600 mb-4">
                 {/* {t('doctors.errorLoading') || 'Error loading doctor details'} */}
                 </p>  
-              <Link to="/doctors" className="text-primary hover:underline">
+              <Link to={`/doctors?approved=${searchParams.get('approved') === 'true'}`} className="text-primary hover:underline">
                 {t('doctors.backToDoctorsList')}
               </Link>
             </div>
@@ -161,7 +164,7 @@ const DoctorDetail: React.FC<DoctorDetailProps> = ({ isApproved: propIsApproved 
           <div className="flex items-center justify-center h-full">
             <div className="text-center">
               <p className="text-red-600 mb-4">{t('doctors.doctorDataNotFound')}</p>
-              <Link to="/doctors" className="text-primary hover:underline">
+              <Link to={`/doctors?approved=${searchParams.get('approved') === 'true'}`} className="text-primary hover:underline">
                 {t('doctors.backToDoctorsList')}
               </Link>
             </div>
@@ -230,7 +233,7 @@ const DoctorDetail: React.FC<DoctorDetailProps> = ({ isApproved: propIsApproved 
         {/* Header */}
         <header className="h-16 bg-white border-b border-slate-200 flex items-center justify-between px-8 sticky top-0 z-20 pt-10 pb-10">
           <div className="flex items-center gap-4">
-            <Link to="/doctors" className="inline-block">
+            <Link to={`/doctors?approved=${originalApprovedParam}`} className="inline-block">
               <button 
                 className="text-slate-400 hover:text-primary transition-colors"
               >
@@ -489,10 +492,16 @@ const DoctorDetail: React.FC<DoctorDetailProps> = ({ isApproved: propIsApproved 
 
         {modalState.type === 'reject' && (
           <div className={`fixed inset-0 z-50 flex items-center justify-center p-4 ${modalState.isOpen ? '' : 'hidden'}`} style={{ backgroundColor: 'rgba(15, 23, 42, 0.5)', backdropFilter: 'blur(4px)' }}>
-            <div className="bg-white w-full max-w-md rounded-2xl tradingview-shadow overflow-hidden">
+            <div className="bg-white w-full max-w-md rounded-2xl tradingview-shadow overflow-hidden" onClick={(e) => e.stopPropagation()}>
               <div className="p-6 border-b border-slate-100 flex justify-between items-center">
                 <h3 className="text-lg font-bold text-slate-900">Reject Application</h3>
-                <button onClick={hideModal} className="text-slate-400 hover:text-slate-600">
+                <button 
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    hideModal();
+                  }} 
+                  className="text-slate-400 hover:text-slate-600"
+                >
                   <i className="fa-solid fa-xmark"></i>
                 </button>
               </div>
@@ -521,10 +530,22 @@ const DoctorDetail: React.FC<DoctorDetailProps> = ({ isApproved: propIsApproved 
                 )}
               </div>
               <div className="p-6 bg-slate-50 border-t border-slate-100 flex justify-end gap-3">
-                <button onClick={hideModal} className="px-4 py-2 text-sm font-bold text-slate-600 hover:bg-slate-100 rounded-lg">
+                <button 
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    hideModal();
+                  }} 
+                  className="px-4 py-2 text-sm font-bold text-slate-600 hover:bg-slate-100 rounded-lg"
+                >
                   {t('doctors.cancel')}
                 </button>
-                <button onClick={validateReject} className="px-4 py-2 text-sm font-bold text-white bg-danger rounded-lg hover:bg-red-700">
+                <button 
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    validateReject();
+                  }} 
+                  className="px-4 py-2 text-sm font-bold text-white bg-danger rounded-lg hover:bg-red-700"
+                >
                   {t('doctors.confirmReject')}
                 </button>
               </div>

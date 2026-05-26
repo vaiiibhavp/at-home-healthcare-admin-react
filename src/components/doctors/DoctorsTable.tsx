@@ -12,12 +12,22 @@ interface DoctorsTableProps {
   onReject: (doctor: Doctor) => void;
   onView: (doctor: Doctor) => void;
   onDisable?: (doctor: Doctor) => void;
+  activeTab: 'pending' | 'approved';
+  setActiveTab: (tab: 'pending' | 'approved') => void;
 }
 
-const DoctorsTable = ({ doctors, loading = false, onApprove, onReject, onView, onDisable }: DoctorsTableProps) => {
+const DoctorsTable = ({ doctors, loading = false, onApprove, onReject, onView, onDisable, activeTab, setActiveTab }: DoctorsTableProps) => {
   const { t } = useTranslation('common');
   const navigate = useNavigate();
-  const [activeTab, setActiveTab] = useState<'pending' | 'approved'>('pending');
+  
+  // Helper function to get approved parameter
+  const getApprovedParam = (): string => {
+    const tabMap: Record<'pending' | 'approved', string> = {
+      pending: 'false',
+      approved: 'true'
+    };
+    return tabMap[activeTab];
+  };
   
   // Status update mutation
   const [updateDoctorStatus] = useUpdateDoctorStatusMutation();
@@ -217,17 +227,6 @@ const DoctorsTable = ({ doctors, loading = false, onApprove, onReject, onView, o
             <option value="orthopedics">{t('doctors.orthopedics')}</option>
             <option value="other">{t('doctors.other')}</option>
           </select>
-          {selectedSpecialty && (
-            <button 
-              className="px-3 py-1.5 bg-primary text-white rounded-lg text-xs font-medium hover:bg-slate-800"
-              onClick={() => {
-                setSelectedSpecialty('');
-                setCurrentPage(1);
-              }}
-            >
-              <i className="fa-solid fa-times mr-1"></i> {t('doctors.clearFilter')}
-            </button>
-          )}
           {/* <button className="px-3 py-1.5 bg-white border border-slate-200 rounded-lg text-xs font-medium text-slate-600 hover:bg-slate-50">
             <i className="fa-solid fa-filter mr-1"></i> {t('doctors.moreFilters')}
           </button> */}
@@ -290,7 +289,7 @@ const DoctorsTable = ({ doctors, loading = false, onApprove, onReject, onView, o
                         <i className="fa-solid fa-xmark"></i>
                       </button>
                       <button
-                        onClick={() => navigate(`/doctors/${doctor.id}?approved=${doctor.status === 'approved'}`)}
+                        onClick={() => navigate(`/doctors/${doctor.id}?approved=${getApprovedParam()}`)}
                         title="View Details"
                         className="p-2 text-slate-400 hover:bg-slate-100 rounded-lg transition-colors"
                       >
@@ -346,7 +345,7 @@ const DoctorsTable = ({ doctors, loading = false, onApprove, onReject, onView, o
                   <td className="px-6 py-4 text-right">
                     <div className="flex justify-end gap-2">
                       <button
-                        onClick={() => navigate(`/doctors/${doctor.id}?approved=${doctor.status === 'approved'}`)}
+                        onClick={() => navigate(`/doctors/${doctor.id}?approved=${getApprovedParam()}`)}
                         className="px-3 py-1.5 text-xs font-bold text-primary hover:bg-slate-100 rounded-lg transition-colors"
                       >
                         View
