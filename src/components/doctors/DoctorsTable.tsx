@@ -227,17 +227,6 @@ const DoctorsTable = ({ doctors, loading = false, onApprove, onReject, onView, o
             <option value="orthopedics">{t('doctors.orthopedics')}</option>
             <option value="other">{t('doctors.other')}</option>
           </select>
-          {selectedSpecialty && (
-            <button 
-              className="px-3 py-1.5 bg-primary text-white rounded-lg text-xs font-medium hover:bg-slate-800"
-              onClick={() => {
-                setSelectedSpecialty('');
-                setCurrentPage(1);
-              }}
-            >
-              <i className="fa-solid fa-times mr-1"></i> {t('doctors.clearFilter')}
-            </button>
-          )}
           {/* <button className="px-3 py-1.5 bg-white border border-slate-200 rounded-lg text-xs font-medium text-slate-600 hover:bg-slate-50">
             <i className="fa-solid fa-filter mr-1"></i> {t('doctors.moreFilters')}
           </button> */}
