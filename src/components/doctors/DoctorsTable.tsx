@@ -14,9 +14,11 @@ interface DoctorsTableProps {
   onDisable?: (doctor: Doctor) => void;
   activeTab: 'pending' | 'approved';
   setActiveTab: (tab: 'pending' | 'approved') => void;
+  totalPendingDoctors?: number;
+  totalApprovedDoctors?: number;
 }
 
-const DoctorsTable = ({ doctors, loading = false, onApprove, onReject, onView, onDisable, activeTab, setActiveTab }: DoctorsTableProps) => {
+const DoctorsTable = ({ doctors, loading = false, onApprove, onReject, onView, onDisable, activeTab, setActiveTab, totalPendingDoctors, totalApprovedDoctors }: DoctorsTableProps) => {
   const { t } = useTranslation('common');
   const navigate = useNavigate();
   
@@ -45,7 +47,7 @@ const DoctorsTable = ({ doctors, loading = false, onApprove, onReject, onView, o
     (selectedSpecialty === '' || doctor.specialty === selectedSpecialty)
   );
   const approvedDoctors = doctors.filter(doctor => 
-    (doctor.status === 'approved' || doctor.status === 'inactive') && 
+    doctor.status === 'approved' && 
     (selectedSpecialty === '' || doctor.specialty === selectedSpecialty)
   );
 
@@ -193,7 +195,7 @@ const DoctorsTable = ({ doctors, loading = false, onApprove, onReject, onView, o
           }`}
         >
           Pending Approvals 
-          <span className="ml-2 px-2 py-0.5 bg-amber-100 text-amber-700 rounded-full text-xs">{pendingDoctors.length}</span>
+          <span className="ml-2 px-2 py-0.5 bg-amber-100 text-amber-700 rounded-full text-xs">{totalPendingDoctors !== undefined ? totalPendingDoctors : pendingDoctors.length}</span>
         </button>
         <button
           onClick={() => handleTabChange('approved')}
@@ -204,6 +206,7 @@ const DoctorsTable = ({ doctors, loading = false, onApprove, onReject, onView, o
           }`}
         >
           Approved Doctors
+          <span className="ml-2 px-2 py-0.5 bg-emerald-100 text-emerald-700 rounded-full text-xs">{totalApprovedDoctors !== undefined ? totalApprovedDoctors : approvedDoctors.length}</span>
         </button>
       </div>
 
