@@ -1,5 +1,5 @@
-import React, { useState } from 'react';
-import { useNavigate } from 'react-router-dom';
+import React, { useState, useEffect } from 'react';
+import { useNavigate, useLocation } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
 import Sidebar from '../../components/dashboard/Sidebar';
 import DoctorsTable from '../../components/doctors/DoctorsTable';
@@ -13,10 +13,34 @@ import { Doctor } from '../../types/doctor';
 const Doctors: React.FC = () => {
   const { t } = useTranslation('common');
   const navigate = useNavigate();
+  const location = useLocation();
   
   // Fetch doctors data
   const { data: doctorsData, isLoading } = useGetDoctorsQuery({ page: 1, size: 50 });  //error handled in component
   const doctors = doctorsData?.data?.doctors || [];
+  
+  // Tab state managed at parent level
+  const [activeTab, setActiveTab] = useState<'pending' | 'approved'>('pending');
+  
+  // Helper function to get approved parameter
+  const getApprovedParam = (): string => {
+    const tabMap: Record<'pending' | 'approved', string> = {
+      pending: 'false',
+      approved: 'true'
+    };
+    return tabMap[activeTab];
+  };
+  
+  // Sync tab state with URL parameter on mount and when URL changes
+  useEffect(() => {
+    const params = new URLSearchParams(location.search);
+    const approvedParam = params.get('approved');
+    if (approvedParam === 'true') {
+      setActiveTab('approved');
+    } else {
+      setActiveTab('pending');
+    }
+  }, [location.search]);
   
   const handleNotificationAction = (notificationId: string, action: string) => {
     console.log('Notification action:', notificationId, action);
@@ -64,7 +88,7 @@ const Doctors: React.FC = () => {
   };
 
   const handleView = (doctor: Doctor) => {
-    navigate(`/doctors/${doctor.id}?approved=${doctor.status === 'approved'}`);
+    navigate(`/doctors/${doctor.id}?approved=${getApprovedParam()}`);
   };
 
   const hideModal = () => {
@@ -145,6 +169,8 @@ const Doctors: React.FC = () => {
             onReject={handleReject}
             onView={handleView}
             onDisable={handleDisable}
+            activeTab={activeTab}
+            setActiveTab={setActiveTab}
           />
           
           {/* Error State */}
