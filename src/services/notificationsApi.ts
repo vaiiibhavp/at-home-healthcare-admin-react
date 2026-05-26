@@ -1,26 +1,42 @@
 import { createApi, fetchBaseQuery } from '@reduxjs/toolkit/query/react';
 
-export interface NotificationStatsResponse {
-  status: number;
-  message: string;
-  data: {
-    total: number;
-  };
-  timestamp: string;
+export interface NotificationMetadata {
+  doctorId?: string;
+  doctorName?: string;
+  rppsNumber?: string;
+  finessNumber?: string;
+  specialty?: string;
+  email?: string;
+  phoneNumber?: string;
 }
 
 export interface Notification {
-  id: string;
+  userId: string;
+  type: string;
   title: string;
   message: string;
-  time: string;
-  isRead: boolean;
-  icon: string;
-  iconColor: string;
-  actions?: {
-    label: string;
-    variant: 'primary' | 'secondary';
-  }[];
+  referenceType: string;
+  referenceId: string;
+  actionUrl: string;
+  status: 'unread' | 'read';
+  readAt: string | null;
+  channels: string[];
+  priority: string;
+  metadata: NotificationMetadata;
+  createdAt: string;
+  updatedAt: string;
+  id: string;
+  creator: string | null;
+}
+
+export interface Pagination {
+  total: number;
+  page: number;
+  size: number;
+  totalPages: number;
+  totalRange: string;
+  hasNextPage: boolean;
+  hasPrevPage: boolean;
 }
 
 export interface NotificationsResponse {
@@ -28,10 +44,42 @@ export interface NotificationsResponse {
   message: string;
   data: {
     notifications: Notification[];
-    total: number;
-    unread: number;
+    pagination: Pagination;
   };
   timestamp: string;
+}
+
+export interface UnreadCountResponse {
+  status: number;
+  message: string;
+  data: {
+    unreadCount: number;
+  };
+  timestamp: string;
+}
+
+export interface MarkAsReadResponse {
+  status: number;
+  message: string;
+  data: {
+    status: string;
+    readAt: string;
+  };
+  timestamp: string;
+}
+
+export interface MarkAllReadResponse {
+  status: number;
+  message: string;
+  data: {
+    markedAsRead: number;
+  };
+  timestamp: string;
+}
+
+export interface GetNotificationsParams {
+  page?: number;
+  size?: number;
 }
 
 export const notificationsApi = createApi({
@@ -48,13 +96,37 @@ export const notificationsApi = createApi({
   }),
   tagTypes: ['Notification'],
   endpoints: (builder) => ({
-    getNotificationStats: builder.query<NotificationStatsResponse, void>({
-      query: () => '/notifications/admin/stats',
+    getNotifications: builder.query<NotificationsResponse, GetNotificationsParams>({
+      query: (params) => ({
+        url: '/notifications',
+        params: params || { page: 1, size: 10 },
+      }),
       providesTags: ['Notification'],
+    }),
+    getUnreadCount: builder.query<UnreadCountResponse, void>({
+      query: () => '/notifications/unread-count',
+      providesTags: ['Notification'],
+    }),
+    markAsRead: builder.mutation<MarkAsReadResponse, string>({
+      query: (notificationId) => ({
+        url: `/notifications/${notificationId}/read`,
+        method: 'PATCH',
+      }),
+      invalidatesTags: ['Notification'],
+    }),
+    markAllAsRead: builder.mutation<MarkAllReadResponse, void>({
+      query: () => ({
+        url: '/notifications/mark-all-read',
+        method: 'PATCH',
+      }),
+      invalidatesTags: ['Notification'],
     }),
   }),
 });
 
 export const {
-  useGetNotificationStatsQuery,
+  useGetNotificationsQuery,
+  useGetUnreadCountQuery,
+  useMarkAsReadMutation,
+  useMarkAllAsReadMutation,
 } = notificationsApi;
