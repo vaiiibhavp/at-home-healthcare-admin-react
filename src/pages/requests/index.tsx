@@ -248,7 +248,7 @@ const Requests: React.FC = () => {
   // Fetch data on component mount and when pagination changes
   useEffect(() => {
     fetchRequests(currentPage, itemsPerPage, statusFilter, startDate, endDate);
-  }, [currentPage, itemsPerPage, fetchRequests]);
+  }, [currentPage, itemsPerPage, statusFilter, startDate, endDate, fetchRequests]);
 
   // Display requests from API (already paginated)
   const displayedRequests = requestsData;
