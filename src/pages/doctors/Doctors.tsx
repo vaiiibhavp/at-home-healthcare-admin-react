@@ -25,6 +25,10 @@ const Doctors: React.FC = () => {
   // Search state
   const [searchQuery, setSearchQuery] = useState('');
   
+  // Calculate total counts before search filtering
+  const totalPendingDoctors = doctors.filter(doctor => doctor.status === 'pendingApproval').length;
+  const totalApprovedDoctors = doctors.filter(doctor => doctor.status === 'approved').length;
+  
   // Filter doctors based on search query
   const filteredDoctors = doctors.filter(doctor => {
     if (!searchQuery) return true;
@@ -187,6 +191,8 @@ const Doctors: React.FC = () => {
             onDisable={handleDisable}
             activeTab={activeTab}
             setActiveTab={setActiveTab}
+            totalPendingDoctors={totalPendingDoctors}
+            totalApprovedDoctors={totalApprovedDoctors}
           />
           
           {/* Error State */}
