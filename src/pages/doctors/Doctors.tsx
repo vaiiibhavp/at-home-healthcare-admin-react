@@ -22,6 +22,20 @@ const Doctors: React.FC = () => {
   // Tab state managed at parent level
   const [activeTab, setActiveTab] = useState<'pending' | 'approved'>('pending');
   
+  // Search state
+  const [searchQuery, setSearchQuery] = useState('');
+  
+  // Filter doctors based on search query
+  const filteredDoctors = doctors.filter(doctor => {
+    if (!searchQuery) return true;
+    const query = searchQuery.toLowerCase();
+    return (
+      doctor.fullName?.toLowerCase().includes(query) ||
+      doctor.email?.toLowerCase().includes(query) ||
+      doctor.specialty?.toLowerCase().includes(query)
+    );
+  });
+  
   // Helper function to get approved parameter
   const getApprovedParam = (): string => {
     const tabMap: Record<'pending' | 'approved', string> = {
@@ -127,6 +141,8 @@ const Doctors: React.FC = () => {
               <input
                 type="text"
                 placeholder={t('doctors.searchDoctors')}
+                value={searchQuery}
+                onChange={(e) => setSearchQuery(e.target.value)}
                 className="w-full bg-slate-50 border border-slate-200 rounded-lg py-2 pl-10 pr-4 text-sm focus:ring-2 focus:ring-primary/20 focus:border-primary outline-none transition-all"
               />
             </div>
@@ -163,7 +179,7 @@ const Doctors: React.FC = () => {
 
           {/* Doctors Table */}
           <DoctorsTable 
-            doctors={doctors}
+            doctors={filteredDoctors}
             loading={isLoading}
             onApprove={handleApprove}
             onReject={handleReject}
