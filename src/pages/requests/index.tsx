@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useCallback } from 'react';
+import React, { useState, useEffect, useCallback, useRef } from 'react';
 import { useTranslation } from 'react-i18next';
 import { RequestDetailModal } from './RequestDetailModal';
 import { RequestData } from './RequestTypes';
@@ -38,6 +38,14 @@ const Requests: React.FC = () => {
   const [currentPage, setCurrentPage] = useState(1);
   const [itemsPerPage, setItemsPerPage] = useState(10);
   
+  // Filter state
+  const [statusFilter, setStatusFilter] = useState<string>('');
+  const [serviceFilter, setServiceFilter] = useState<string>('');
+  const [startDate, setStartDate] = useState<string>('');
+  const [endDate, setEndDate] = useState<string>('');
+  const [showDatePicker, setShowDatePicker] = useState(false);
+  const datePickerRef = useRef<HTMLDivElement>(null);
+  
   // API state
   const [requestsData, setRequestsData] = useState<RequestData[]>([]);
   const [loading, setLoading] = useState(false);
@@ -48,6 +56,23 @@ const Requests: React.FC = () => {
     console.log('Notification action:', notificationId, action);
     // Handle navigation or other actions based on notification type
   };
+
+  // Close date picker when clicking outside
+  useEffect(() => {
+    const handleClickOutside = (event: MouseEvent) => {
+      if (datePickerRef.current && !datePickerRef.current.contains(event.target as Node)) {
+        setShowDatePicker(false);
+      }
+    };
+
+    if (showDatePicker) {
+      document.addEventListener('mousedown', handleClickOutside);
+    }
+
+    return () => {
+      document.removeEventListener('mousedown', handleClickOutside);
+    };
+  }, [showDatePicker]);
 
   // Helper function to get service color based on status
   const getServiceColor = (status: string): string => {
@@ -76,13 +101,15 @@ const Requests: React.FC = () => {
   };
 
   // API function to fetch requests
-  const fetchRequests = useCallback(async (page: number = 1, size: number = 10, status?: string) => {
+  const fetchRequests = useCallback(async (page: number = 1, size: number = 10, status?: string, startDate?: string, endDate?: string) => {
     setLoading(true);
     try {
       const params = new URLSearchParams({
         page: page.toString(),
         size: size.toString(),
-        ...(status && { status })
+        ...(status && { status }),
+        ...(startDate && { startDate }),
+        ...(endDate && { endDate })
       });
       
       // Get auth token from localStorage
@@ -220,8 +247,8 @@ const Requests: React.FC = () => {
 
   // Fetch data on component mount and when pagination changes
   useEffect(() => {
-    fetchRequests(currentPage, itemsPerPage);
-  }, [currentPage, itemsPerPage, fetchRequests]);
+    fetchRequests(currentPage, itemsPerPage, statusFilter, startDate, endDate);
+  }, [currentPage, itemsPerPage, statusFilter, startDate, endDate, fetchRequests]);
 
   // Display requests from API (already paginated)
   const displayedRequests = requestsData;
@@ -229,13 +256,13 @@ const Requests: React.FC = () => {
   // Pagination handlers
   const handlePageChange = (page: number) => {
     setCurrentPage(page);
-    fetchRequests(page, itemsPerPage);
+    fetchRequests(page, itemsPerPage, statusFilter, startDate, endDate);
   };
 
   const handleItemsPerPageChange = (newItemsPerPage: number) => {
     setItemsPerPage(newItemsPerPage);
     setCurrentPage(1); // Reset to first page when changing items per page
-    fetchRequests(1, newItemsPerPage);
+    fetchRequests(1, newItemsPerPage, statusFilter, startDate, endDate);
   };
 
   const getStatusChipClass = (status: string): string => {
@@ -393,23 +420,91 @@ const Requests: React.FC = () => {
           {/* Filters & Views Section */}
           <section className="flex flex-wrap items-center justify-between gap-4">
             <div className="flex items-center gap-2">
-              <select className="bg-white border border-slate-200 rounded-xl px-4 py-2 text-xs font-bold text-primary shadow-sm outline-none focus:ring-2 focus:ring-primary/20">
-                <option>{t('requests.allRequests')}</option>
-                <option>{t('requests.submitted')}</option>
-                <option>{t('requests.inProgress')}</option>
-                <option>{t('requests.completed')}</option>
-                <option>{t('requests.returned')}</option>
-                <option>{t('requests.draft')}</option>
+              <select 
+                className="bg-white border border-slate-200 rounded-xl px-4 py-2 text-xs font-bold text-primary shadow-sm outline-none focus:ring-2 focus:ring-primary/20"
+                value={statusFilter}
+                onChange={(e) => {
+                  setStatusFilter(e.target.value);
+                  setCurrentPage(1);
+                  fetchRequests(1, itemsPerPage, e.target.value, startDate, endDate);
+                }}
+              >
+                <option value="">{t('requests.allRequests')}</option>
+                <option value="pending">{t('requests.submitted')}</option>
+                <option value="inprogress">{t('requests.inProgress')}</option>
+                <option value="completed">{t('requests.completed')}</option>
+                <option value="returned">{t('requests.returned')}</option>
+                <option value="draft">{t('requests.draft')}</option>
               </select>
             </div>
-            <div className="flex items-center gap-3">
-              <div className="flex items-center gap-2 bg-white border border-slate-200 rounded-xl px-3 py-2">
+            <div className="flex items-center gap-3 relative" ref={datePickerRef}>
+              <div 
+                className="flex items-center gap-2 bg-white border border-slate-200 rounded-xl px-3 py-2 cursor-pointer hover:border-primary/50 transition-all"
+                onClick={() => setShowDatePicker(!showDatePicker)}
+              >
                 <i className="fa-solid fa-calendar text-slate-400 text-xs"></i>
-                <span className="text-xs font-medium text-slate-600">{t('requests.dateRange')}</span>
+                <span className="text-xs font-medium text-slate-600">
+                  {startDate && endDate ? `${startDate} - ${endDate}` : t('requests.dateRange')}
+                </span>
                 <i className="fa-solid fa-chevron-down text-slate-400 text-[10px] ml-2"></i>
               </div>
-              <select className="bg-white border border-slate-200 rounded-xl px-3 py-2 text-xs font-medium text-slate-600 outline-none focus:ring-2 focus:ring-primary/20 pr-3 items-start text-left">
-                <option>{t('requests.allServices')}</option>
+              
+              {showDatePicker && (
+                <div className="absolute top-full right-0 mt-2 bg-white border border-slate-200 rounded-xl shadow-lg p-4 z-50 w-72">
+                  <div className="space-y-3">
+                    <div>
+                      <label className="text-xs font-medium text-slate-700 block mb-1">{t('requests.startDate')}</label>
+                      <input
+                        type="date"
+                        value={startDate}
+                        onChange={(e) => setStartDate(e.target.value)}
+                        className="w-full bg-slate-50 border border-slate-200 rounded-lg px-3 py-2 text-xs outline-none focus:ring-2 focus:ring-primary/20"
+                      />
+                    </div>
+                    <div>
+                      <label className="text-xs font-medium text-slate-700 block mb-1">{t('requests.endDate')}</label>
+                      <input
+                        type="date"
+                        value={endDate}
+                        onChange={(e) => setEndDate(e.target.value)}
+                        className="w-full bg-slate-50 border border-slate-200 rounded-lg px-3 py-2 text-xs outline-none focus:ring-2 focus:ring-primary/20"
+                      />
+                    </div>
+                    <div className="flex gap-2 pt-2">
+                      <button
+                        onClick={() => {
+                          setStartDate('');
+                          setEndDate('');
+                          setShowDatePicker(false);
+                          fetchRequests(currentPage, itemsPerPage, statusFilter);
+                        }}
+                        className="flex-1 px-3 py-2 border border-slate-200 rounded-lg text-xs font-medium text-slate-600 hover:bg-slate-50 transition-all"
+                      >
+                        {t('common.clear')}
+                      </button>
+                      <button
+                        onClick={() => {
+                          setShowDatePicker(false);
+                          fetchRequests(currentPage, itemsPerPage, statusFilter, startDate, endDate);
+                        }}
+                        className="flex-1 px-3 py-2 bg-primary text-white rounded-lg text-xs font-medium hover:bg-slate-800 transition-all"
+                      >
+                        {t('common.apply')}
+                      </button>
+                    </div>
+                  </div>
+                </div>
+              )}
+              <select 
+                className="bg-white border border-slate-200 rounded-xl px-3 py-2 text-xs font-medium text-slate-600 outline-none focus:ring-2 focus:ring-primary/20 pr-3 items-start text-left"
+                value={serviceFilter}
+                onChange={(e) => {
+                  setServiceFilter(e.target.value);
+                  setCurrentPage(1);
+                  fetchRequests(1, itemsPerPage, statusFilter, startDate, endDate);
+                }}
+              >
+                <option value="">{t('requests.allServices')}</option>
                 <option>Generic</option>
                 <option>Wound Care</option>
                 <option>IV Therapy</option>
