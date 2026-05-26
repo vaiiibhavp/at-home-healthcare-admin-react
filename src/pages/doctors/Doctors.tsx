@@ -1,5 +1,5 @@
-import React, { useState } from 'react';
-import { useNavigate } from 'react-router-dom';
+import React, { useState, useEffect } from 'react';
+import { useNavigate, useLocation } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
 import Sidebar from '../../components/dashboard/Sidebar';
 import DoctorsTable from '../../components/doctors/DoctorsTable';
@@ -13,10 +13,48 @@ import { Doctor } from '../../types/doctor';
 const Doctors: React.FC = () => {
   const { t } = useTranslation('common');
   const navigate = useNavigate();
+  const location = useLocation();
   
   // Fetch doctors data
   const { data: doctorsData, isLoading } = useGetDoctorsQuery({ page: 1, size: 50 });  //error handled in component
   const doctors = doctorsData?.data?.doctors || [];
+  
+  // Tab state managed at parent level
+  const [activeTab, setActiveTab] = useState<'pending' | 'approved'>('pending');
+  
+  // Search state
+  const [searchQuery, setSearchQuery] = useState('');
+  
+  // Filter doctors based on search query
+  const filteredDoctors = doctors.filter(doctor => {
+    if (!searchQuery) return true;
+    const query = searchQuery.toLowerCase();
+    return (
+      doctor.fullName?.toLowerCase().includes(query) ||
+      doctor.email?.toLowerCase().includes(query) ||
+      doctor.specialty?.toLowerCase().includes(query)
+    );
+  });
+  
+  // Helper function to get approved parameter
+  const getApprovedParam = (): string => {
+    const tabMap: Record<'pending' | 'approved', string> = {
+      pending: 'false',
+      approved: 'true'
+    };
+    return tabMap[activeTab];
+  };
+  
+  // Sync tab state with URL parameter on mount and when URL changes
+  useEffect(() => {
+    const params = new URLSearchParams(location.search);
+    const approvedParam = params.get('approved');
+    if (approvedParam === 'true') {
+      setActiveTab('approved');
+    } else {
+      setActiveTab('pending');
+    }
+  }, [location.search]);
   
   const handleNotificationAction = (notificationId: string, action: string) => {
     console.log('Notification action:', notificationId, action);
@@ -64,7 +102,7 @@ const Doctors: React.FC = () => {
   };
 
   const handleView = (doctor: Doctor) => {
-    navigate(`/doctors/${doctor.id}?approved=${doctor.status === 'approved'}`);
+    navigate(`/doctors/${doctor.id}?approved=${getApprovedParam()}`);
   };
 
   const hideModal = () => {
@@ -103,6 +141,8 @@ const Doctors: React.FC = () => {
               <input
                 type="text"
                 placeholder={t('doctors.searchDoctors')}
+                value={searchQuery}
+                onChange={(e) => setSearchQuery(e.target.value)}
                 className="w-full bg-slate-50 border border-slate-200 rounded-lg py-2 pl-10 pr-4 text-sm focus:ring-2 focus:ring-primary/20 focus:border-primary outline-none transition-all"
               />
             </div>
@@ -139,12 +179,14 @@ const Doctors: React.FC = () => {
 
           {/* Doctors Table */}
           <DoctorsTable 
-            doctors={doctors}
+            doctors={filteredDoctors}
             loading={isLoading}
             onApprove={handleApprove}
             onReject={handleReject}
             onView={handleView}
             onDisable={handleDisable}
+            activeTab={activeTab}
+            setActiveTab={setActiveTab}
           />
           
           {/* Error State */}
