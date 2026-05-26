@@ -6,7 +6,8 @@ import { useGetRequestsOverTimeQuery, useGetRequestsByStatusQuery } from '../../
 const Charts: React.FC = () => {
   const { t } = useTranslation();
   const [days, setDays] = useState(7);
-  const { data: requestsData, isLoading: isLoadingTimeData, error: timeDataError } = useGetRequestsOverTimeQuery({ days });
+  const requestsOverTimeQuery = useGetRequestsOverTimeQuery({ days });
+  const { data: requestsData, isLoading: isLoadingTimeData, error: timeDataError } = requestsOverTimeQuery;
   const { data: statusData, isLoading: isLoadingStatusData, error: statusDataError } = useGetRequestsByStatusQuery();
   
   const lineData = requestsData ? [
@@ -81,7 +82,9 @@ const Charts: React.FC = () => {
   };
 
   const handleDaysChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
-    setDays(Number(e.target.value));
+    const newDays = Number(e.target.value);
+    setDays(newDays);
+    requestsOverTimeQuery.refetch();
   };
 
   const isLoading = isLoadingTimeData || isLoadingStatusData;
