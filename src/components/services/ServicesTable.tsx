@@ -35,7 +35,6 @@ export const ServicesTable: React.FC<ServicesTableProps> = ({
 }) => {
   const { t } = useTranslation();
   const navigate = useNavigate();
-  const [filterStatus, setFilterStatus] = useState<'all' | 'mapped'>('all');
   const [triggerDownload, { isFetching: isDownloading }] = useLazyDownloadServicesQuery();
   const [isRefreshing, setIsRefreshing] = useState(false);
 
@@ -65,24 +64,6 @@ export const ServicesTable: React.FC<ServicesTableProps> = ({
     setTimeout(() => setIsRefreshing(false), 1000);
   };
 
-  // Filter services based on selected status
-  const filteredServices = useMemo(() => {
-    switch (filterStatus) {
-      case 'mapped':
-        return services.filter(service => service.formMapping.status === 'Mapped');
-      default:
-        return services;
-    }
-  }, [services, filterStatus]);
-
-  const handleFilterChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
-    const value = e.target.value;
-    if (value === t('services.mappedOnly')) {
-      setFilterStatus('mapped');
-    } else {
-      setFilterStatus('all');
-    }
-  };
   return (
     <section className="bg-white rounded-2xl border border-slate-200 tradingview-shadow overflow-hidden">
       <div className="p-6 border-b border-slate-100 flex items-center justify-between bg-slate-50/30">
@@ -140,7 +121,7 @@ export const ServicesTable: React.FC<ServicesTableProps> = ({
             </tr>
           </thead>
           <tbody className="divide-y divide-slate-50">
-            {filteredServices.map((service) => (
+            {services.map((service) => (
               <tr key={service.id} className="hover:bg-slate-50/80 transition-colors group">
                 <td className="px-6 py-4">
                   <div className="flex items-center gap-3">
