@@ -34,7 +34,7 @@ const KPICards: React.FC = () => {
       title: t('dashboard.kpi.pendingApprovals'),
       value: dashboardData.data.pendingApprovals.toLocaleString(),
       change: dashboardData.data.pendingApprovals > 0 ? t('dashboard.kpi.pending') : 'pending',
-      changeType: dashboardData.data.pendingApprovals > 0 ? 'neutral' : 'positive',
+      changeType: 'neutral',
       icon: 'fa-clock-rotate-left',
       iconBg: 'bg-amber-50',
       iconColor: 'text-amber-600',
@@ -56,8 +56,7 @@ const KPICards: React.FC = () => {
       changeType: 'neutral',
       icon: 'fa-building-columns',
       iconBg: 'bg-purple-50',
-      iconColor: 'text-purple-600',
-      subtitle: t('dashboard.kpi.serviceUptime')
+      iconColor: 'text-purple-600'
     }
   ] : [];
 
