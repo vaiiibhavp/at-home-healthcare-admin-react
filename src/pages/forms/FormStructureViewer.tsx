@@ -814,15 +814,9 @@ const ArtificialNutritionForm: React.FC = () => {
               <div className="space-y-2">
                 <h5 className="font-medium">Initial setup package for enteral nutrition</h5>
                 <h5 className="font-medium">Weekly enteral nutrition package by:</h5>
-                <div className="ml-4 space-y-1">
-                  <label className="flex items-center gap-2">
-                    <input type="checkbox" className="w-4 h-4" />
-                    <span>Gravity (package 1)</span>
-                  </label>
-                  <label className="flex items-center gap-2">
-                    <input type="checkbox" className="w-4 h-4" />
-                    <span>Pump (package 2)</span>
-                  </label>
+                <div className="ml-4 space-y-2">
+                  <div>- Gravity (package 1)</div>
+                  <div>- Pump (package 2)</div>
                 </div>
               </div>
               
@@ -843,18 +837,12 @@ const ArtificialNutritionForm: React.FC = () => {
               </div>
               
               <div className="space-y-2">
-                <label className="flex items-center gap-2">
-                  <input type="checkbox" className="w-4 h-4" />
-                  <span>Rental of an IV pole</span>
-                </label>
+                <div>- Rental of an IV pole</div>
                 <div>
                   <label className="block">Equipment for adult nasogastric tube care every ………… days</label>
                   <input type="number" className="w-20 h-9 border border-slate-300 rounded mt-1 px-3 text-sm" />
                 </div>
-                <label className="flex items-center gap-2">
-                  <input type="checkbox" className="w-4 h-4" />
-                  <span>Equipment for gastrostomy or jejunostomy care</span>
-                </label>
+                <div>- Equipment for gastrostomy or jejunostomy care</div>
               </div>
             </div>
           </div>
@@ -876,18 +864,12 @@ const ArtificialNutritionForm: React.FC = () => {
                 <input type="number" className="w-20 h-9 border border-slate-300 rounded mt-1 px-3 text-sm" />
               </div>
               <div>
-                <label className="flex items-center gap-2">
-                  <input type="checkbox" className="w-4 h-4" />
-                  <span>Equipment in case of gastrostomy tube replacement</span>
-                </label>
+                <div>- Equipment in case of gastrostomy tube replacement</div>
               </div>
             </div>
-            
+
             <div>
-              <label className="flex items-center gap-2">
-                <input type="checkbox" className="w-4 h-4" />
-                <span>One gastrostomy button extension set, to be renewed every 7 days</span>
-              </label>
+              <div>- One gastrostomy button extension set, to be renewed every 7 days</div>
             </div>
           </div>
           
