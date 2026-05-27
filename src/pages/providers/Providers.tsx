@@ -6,6 +6,7 @@ import LanguageSwitcher from '../../components/LanguageSwitcher';
 import NotificationDropdown from '../../components/common/NotificationDropdown';
 import PaginationComponent from '../../components/ui/PaginationComponent';
 import { useGetProvidersQuery, useGetProviderByIdQuery, useDeactivateProviderMutation, useActivateProviderMutation, useBulkDeactivateProvidersMutation, useExportProvidersCSVMutation } from '../../services/providersApi';
+import { useGetServicesQuery } from '../../services/servicesApi';
 import { Provider as APIProvider } from '../../types/provider';
 
 // Local interface for UI compatibility
@@ -76,6 +77,14 @@ const Providers: React.FC = () => {
   const { data: providerDetails, isLoading: isLoadingProvider } = useGetProviderByIdQuery(selectedProviderForView, {
     skip: !selectedProviderForView || !showViewModal
   });
+
+  const { data: servicesData } = useGetServicesQuery({});
+
+  // Create a map of service ID to service name
+  const serviceIdToNameMap = servicesData?.data?.services?.reduce((map: Record<string, string>, service: any) => {
+    map[service._id || service.id] = service.name || service.serviceName;
+    return map;
+  }, {}) || {};
 
   const [deactivateProvider, { isLoading: isDeactivating }] = useDeactivateProviderMutation();
   const [activateProvider, { isLoading: isActivating }] = useActivateProviderMutation();
@@ -872,7 +881,7 @@ const Providers: React.FC = () => {
                           key={index}
                           className="px-3 py-1.5 bg-primary/5 text-primary rounded-lg text-xs font-bold border border-primary/10"
                         >
-                          Service ID: {serviceId}
+                          {serviceIdToNameMap[serviceId] || serviceId}
                         </span>
                       ))}
                     </div>
