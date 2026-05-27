@@ -1244,39 +1244,15 @@ const PCAPainManagementForm: React.FC = () => {
             
             <div className="space-y-2">
               <h5 className="font-medium">Nursing care to be provided:</h5>
-              <div className="ml-4 space-y-1">
-                <label className="flex items-center gap-2">
-                  <input type="checkbox" className="w-4 h-4" />
-                  <span>Preparation and programming of a portable pump</span>
-                </label>
-                <label className="flex items-center gap-2">
-                  <input type="checkbox" className="w-4 h-4" />
-                  <span>Filling and setting up the portable pump</span>
-                </label>
-                <label className="flex items-center gap-2">
-                  <input type="checkbox" className="w-4 h-4" />
-                  <span>Connecting the infusion and starting the device</span>
-                </label>
-                <label className="flex items-center gap-2">
-                  <input type="checkbox" className="w-4 h-4" />
-                  <span>Reservoir change (flexible bag)</span>
-                </label>
-                <label className="flex items-center gap-2">
-                  <input type="checkbox" className="w-4 h-4" />
-                  <span>Stopping and removing the device</span>
-                </label>
-                <label className="flex items-center gap-2">
-                  <input type="checkbox" className="w-4 h-4" />
-                  <span>Flush / "heparinization"</span>
-                </label>
-                <label className="flex items-center gap-2">
-                  <input type="checkbox" className="w-4 h-4" />
-                  <span>Dressing change and replacement of the Huber needle once a week</span>
-                </label>
-                <label className="flex items-center gap-2">
-                  <input type="checkbox" className="w-4 h-4" />
-                  <span>Organization of infusion monitoring, care planning, and, where applicable, coordination of 24-hour monitoring services, including Saturdays, Sundays, and public holidays</span>
-                </label>
+              <div className="ml-4 space-y-2">
+                <div>- Preparation and programming of a portable pump</div>
+                <div>- Filling and setting up the portable pump</div>
+                <div>- Connecting the infusion and starting the device</div>
+                <div>- Reservoir change (flexible bag)</div>
+                <div>- Stopping and removing the device</div>
+                <div>- Flush / "heparinization"</div>
+                <div>- Dressing change and replacement of the Huber needle once a week</div>
+                <div>- Organization of infusion monitoring, care planning, and, where applicable, coordination of 24-hour monitoring services, including Saturdays, Sundays, and public holidays</div>
               </div>
             </div>
           </div>
