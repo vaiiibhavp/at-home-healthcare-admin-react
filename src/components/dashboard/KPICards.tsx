@@ -56,8 +56,7 @@ const KPICards: React.FC = () => {
       changeType: 'neutral',
       icon: 'fa-building-columns',
       iconBg: 'bg-purple-50',
-      iconColor: 'text-purple-600',
-      subtitle: t('dashboard.kpi.serviceUptime')
+      iconColor: 'text-purple-600'
     }
   ] : [];
 
