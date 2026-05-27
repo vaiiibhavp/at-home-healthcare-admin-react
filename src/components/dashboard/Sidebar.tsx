@@ -27,9 +27,9 @@ const Sidebar: React.FC = () => {
   // ];
 
   return (
-    <aside className="w-64 bg-white border-r border-slate-200 flex flex-col flex-shrink-0">
+    <aside className="w-64 h-full bg-white border-r border-slate-200 flex flex-col flex-shrink-0">
       {/* Logo */}
-      <div className="p-6 flex items-center gap-3">
+      <div className="p-6 flex items-center gap-3 flex-shrink-0">
         <div className="w-10 h-10 bg-primary/10 rounded-xl flex items-center justify-center">
           <div className="-top-1 -right-1 items-center text-center static top-0">
             <i className="fa-solid fa-atom text-primary text-xs animate-pulse"></i>
@@ -79,7 +79,7 @@ const Sidebar: React.FC = () => {
       </nav>
 
       {/* User Profile */}
-      <div className="p-4 border-t border-slate-100">
+      <div className="p-4 border-t border-slate-100 flex-shrink-0">
         <div className="flex items-center gap-3 p-2 bg-slate-50 rounded-xl">
           {/* <img
             src="https://storage.googleapis.com/uxpilot-auth.appspot.com/avatars/avatar-2.jpg"
