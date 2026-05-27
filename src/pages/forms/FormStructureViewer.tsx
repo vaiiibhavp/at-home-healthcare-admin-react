@@ -306,11 +306,14 @@ const WoundCareForm: React.FC = () => {
             <label className="block">Date of birth:</label>
             <input type="date" className="w-40 h-9 border border-slate-300 rounded mt-1 px-3 text-sm" />
           </div>
-          <div>
-            <label className="block">Date:</label>
-            <input type="date" className="w-40 h-9 border border-slate-300 rounded mt-1 px-3 text-sm" />
-          </div>
-          <div className="col-span-2 space-y-2">
+        </div>
+      </div>
+
+      {/* Care Related to ALD */}
+      <div className="border border-slate-200 rounded-lg p-4">
+        <h3 className="font-bold text-sm mb-4">Care Related to ALD</h3>
+        <div className="space-y-3 text-sm">
+          <div className="space-y-2">
             <label className="flex items-center gap-2">
               <input type="checkbox" className="w-4 h-4" />
               <span>Care related to long-term condition (ALD)</span>
@@ -319,6 +322,10 @@ const WoundCareForm: React.FC = () => {
               <input type="checkbox" className="w-4 h-4" />
               <span>Care not related to long-term condition (ALD)</span>
             </label>
+          </div>
+          <div>
+            <label className="block">Date:</label>
+            <input type="date" className="w-40 h-9 border border-slate-300 rounded mt-1 px-3 text-sm" />
           </div>
         </div>
       </div>
@@ -393,19 +400,10 @@ const WoundCareForm: React.FC = () => {
             <input type="checkbox" className="w-4 h-4" />
             <span>Packing:</span>
           </label>
-          <div className="ml-6 space-y-1">
-            <label className="flex items-center gap-2">
-              <input type="checkbox" className="w-4 h-4" />
-              <span>Fill a cavity</span>
-            </label>
-            <label className="flex items-center gap-2">
-              <input type="checkbox" className="w-4 h-4" />
-              <span>Occupy dead space</span>
-            </label>
-            <label className="flex items-center gap-2">
-              <input type="checkbox" className="w-4 h-4" />
-              <span>Prevent premature superficial closure</span>
-            </label>
+          <div className="ml-6 space-y-2">
+            <div>- Fill a cavity</div>
+            <div>- Occupy dead space</div>
+            <div>- Prevent premature superficial closure</div>
           </div>
         </div>
       </div>
