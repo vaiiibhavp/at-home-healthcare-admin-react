@@ -35,7 +35,7 @@ export const ServicesTable: React.FC<ServicesTableProps> = ({
 }) => {
   const { t } = useTranslation();
   const navigate = useNavigate();
-  const [filterStatus, setFilterStatus] = useState<'all' | 'mapped' | 'unmapped'>('all');
+  const [filterStatus, setFilterStatus] = useState<'all' | 'mapped'>('all');
   const [triggerDownload, { isFetching: isDownloading }] = useLazyDownloadServicesQuery();
 
   const handleDownload = async () => {
@@ -61,8 +61,6 @@ export const ServicesTable: React.FC<ServicesTableProps> = ({
     switch (filterStatus) {
       case 'mapped':
         return services.filter(service => service.formMapping.status === 'Mapped');
-      case 'unmapped':
-        return services.filter(service => service.formMapping.status === 'Unmapped');
       default:
         return services;
     }
@@ -72,8 +70,6 @@ export const ServicesTable: React.FC<ServicesTableProps> = ({
     const value = e.target.value;
     if (value === t('services.mappedOnly')) {
       setFilterStatus('mapped');
-    } else if (value === t('services.unmappedOnly')) {
-      setFilterStatus('unmapped');
     } else {
       setFilterStatus('all');
     }
@@ -86,12 +82,11 @@ export const ServicesTable: React.FC<ServicesTableProps> = ({
           <div className="flex gap-2">
             <select 
               className="text-xs font-bold text-slate-500 bg-white border border-slate-200 rounded-lg px-3 py-1.5 focus:outline-none"
-              value={filterStatus === 'all' ? t('services.allStatus') : filterStatus === 'mapped' ? t('services.mappedOnly') : t('services.unmappedOnly')}
+              value={filterStatus === 'all' ? t('services.allStatus') : t('services.mappedOnly')}
               onChange={handleFilterChange}
             >
               <option value={t('services.allStatus')}>{t('services.allStatus')}</option>
               <option value={t('services.mappedOnly')}>{t('services.mappedOnly')}</option>
-              <option value={t('services.unmappedOnly')}>{t('services.unmappedOnly')}</option>
             </select>
           </div>
         </div>
@@ -168,24 +163,11 @@ export const ServicesTable: React.FC<ServicesTableProps> = ({
                 </td>
                 <td className="px-6 py-4">
                   {service.assignedProviders && service.assignedProviders.length > 0 ? (
-                    <div className="flex -space-x-2">
-                      {service.assignedProviders.slice(0, 3).map((group, index) => (
-                        <div
-                          key={index}
-                          className="w-6 h-6 rounded-full border-2 border-white bg-slate-100 flex items-center justify-center text-[8px] font-bold text-slate-500"
-                          title={group.providers[0]?.name || 'Provider'}
-                        >
-                          {group.providers[0]?.name.charAt(0).toUpperCase() || 'P'}
-                        </div>
-                      ))}
-                      {service.assignedProviders.length > 3 && (
-                        <div className="w-6 h-6 rounded-full border-2 border-white bg-slate-100 flex items-center justify-center text-[8px] font-bold text-slate-500">
-                          +{service.assignedProviders.length - 3}
-                        </div>
-                      )}
-                    </div>
+                    <span className="text-xs font-semibold text-slate-700">
+                      {service.assignedProviders.reduce((total, group) => total + group.providers.length, 0)}
+                    </span>
                   ) : (
-                    <span className="text-xs text-slate-400">No providers</span>
+                    <span className="text-xs text-slate-400">0</span>
                   )}
                 </td>
                 <td className="px-6 py-4 text-right">
@@ -196,18 +178,18 @@ export const ServicesTable: React.FC<ServicesTableProps> = ({
                         navigate(`/forms?serviceId=${service.id}&serviceName=${encodeURIComponent(service.serviceName)}&formMapped=${service.formMapping.status === 'Mapped'}`);
                       }}
                       className="p-2 text-slate-400 hover:text-primary hover:bg-white rounded-lg transition-all border border-transparent hover:border-slate-200"
-                      title={service.formMapping.status === 'Mapped' ? "Change Form" : "Assign Form"}
+                      title={service.formMapping.status === 'Mapped' ? "View Form" : "Assign Form"}
                     >
                       <i className={`fa-solid ${service.formMapping.status === 'Mapped' ? 'fa-file-lines' : 'fa-link'}`}></i>
                     </button>
-                    <div className="w-px h-4 bg-slate-200"></div>
-                    <button
+                    {/* <div className="w-px h-4 bg-slate-200"></div> */}
+                    {/* <button
                       onClick={() => onView(service)}
                       className="p-2 text-slate-400 hover:text-primary hover:bg-white rounded-lg transition-all border border-transparent hover:border-slate-200"
                       title="View"
                     >
                       <i className="fa-solid fa-eye"></i>
-                    </button>
+                    </button> */}
                     {/* <button
                       onClick={() => onEdit(service)}
                       className="p-2 text-slate-400 hover:text-primary hover:bg-white rounded-lg transition-all border border-transparent hover:border-slate-200"

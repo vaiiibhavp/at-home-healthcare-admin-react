@@ -162,35 +162,11 @@ export const Services: React.FC = () => {
 
         <div className="p-8 space-y-6">
           {/* Stats Section */}
-          <section className="grid grid-cols-1 md:grid-cols-4 gap-4">
-            <div className="bg-white p-5 rounded-2xl border border-slate-200 tradingview-shadow">
+          <section className="grid grid-cols-1 md:grid-cols-1 gap-4">
+            <div className="bg-white p-4 rounded-xl border border-slate-200 tradingview-shadow">
               <p className="text-[10px] font-bold text-slate-400 uppercase tracking-widest mb-1">{t('services.totalServices')}</p>
-              <div className="flex items-end justify-between">
-                <h3 className="text-2xl font-bold text-slate-800">{stats.totalServices}</h3>
-                <span className="text-[10px] font-bold text-emerald-500 bg-emerald-50 px-2 py-0.5 rounded">{t('services.thisMonth')}</span>
-              </div>
+              <h3 className="text-xl font-bold text-slate-800">{stats.totalServices}</h3>
             </div>
-            <div className="bg-white p-5 rounded-2xl border border-slate-200 tradingview-shadow">
-              <p className="text-[10px] font-bold text-slate-400 uppercase tracking-widest mb-1">{t('services.mappedForms')}</p>
-              <div className="flex items-end justify-between">
-                <h3 className="text-2xl font-bold text-slate-800">{stats.mappedForms}</h3>
-                <span className="text-[10px] font-bold text-slate-400 bg-slate-100 px-2 py-0.5 rounded">{t('services.coverage')}</span>
-              </div>
-            </div>
-            <div className="bg-white p-5 rounded-2xl border border-slate-200 tradingview-shadow">
-              <p className="text-[10px] font-bold text-slate-400 uppercase tracking-widest mb-1">{t('services.unmappedServices')}</p>
-              <div className="flex items-end justify-between">
-                <h3 className="text-2xl font-bold text-slate-800">{stats.unmappedServices}</h3>
-                <span className="text-[10px] font-bold text-amber-500 bg-amber-50 px-2 py-0.5 rounded">{t('services.actionRequired')}</span>
-              </div>
-            </div>
-            {/* <div className="bg-white p-5 rounded-2xl border border-slate-200 tradingview-shadow">
-              <p className="text-[10px] font-bold text-slate-400 uppercase tracking-widest mb-1">{t('services.activeProviders')}</p>
-              <div className="flex items-end justify-between">
-                <h3 className="text-2xl font-bold text-slate-800">{stats.activeProviders}</h3>
-                <span className="text-[10px] font-bold text-emerald-500 bg-emerald-50 px-2 py-0.5 rounded">{t('services.acrossAllServices')}</span>
-              </div>
-            </div> */}
           </section>
 
           {/* Services Table */}
