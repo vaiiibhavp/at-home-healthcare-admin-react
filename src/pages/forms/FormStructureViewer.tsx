@@ -157,7 +157,7 @@ const CNOForm: React.FC = () => {
               "Compote 250 kcal + 6–9 g protein"
             ].map((item, index) => (
               <div key={index} className="flex items-center gap-2">
-                <span className="w-2">{item}</span>
+                <span className="flex-1">{item}</span>
                 <input type="text" className="w-24 h-9 border border-slate-300 rounded px-3 text-sm" />
                 <span>Qty</span>
                 <input type="text" className="w-16 h-9 border border-slate-300 rounded px-3 text-sm" />
