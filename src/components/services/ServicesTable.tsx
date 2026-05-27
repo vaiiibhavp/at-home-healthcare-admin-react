@@ -178,18 +178,18 @@ export const ServicesTable: React.FC<ServicesTableProps> = ({
                         navigate(`/forms?serviceId=${service.id}&serviceName=${encodeURIComponent(service.serviceName)}&formMapped=${service.formMapping.status === 'Mapped'}`);
                       }}
                       className="p-2 text-slate-400 hover:text-primary hover:bg-white rounded-lg transition-all border border-transparent hover:border-slate-200"
-                      title={service.formMapping.status === 'Mapped' ? "Change Form" : "Assign Form"}
+                      title={service.formMapping.status === 'Mapped' ? "View Form" : "Assign Form"}
                     >
                       <i className={`fa-solid ${service.formMapping.status === 'Mapped' ? 'fa-file-lines' : 'fa-link'}`}></i>
                     </button>
-                    <div className="w-px h-4 bg-slate-200"></div>
-                    <button
+                    {/* <div className="w-px h-4 bg-slate-200"></div> */}
+                    {/* <button
                       onClick={() => onView(service)}
                       className="p-2 text-slate-400 hover:text-primary hover:bg-white rounded-lg transition-all border border-transparent hover:border-slate-200"
                       title="View"
                     >
                       <i className="fa-solid fa-eye"></i>
-                    </button>
+                    </button> */}
                     {/* <button
                       onClick={() => onEdit(service)}
                       className="p-2 text-slate-400 hover:text-primary hover:bg-white rounded-lg transition-all border border-transparent hover:border-slate-200"
