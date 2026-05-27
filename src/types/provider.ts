@@ -18,6 +18,7 @@ export interface Provider {
   providerName: string;
   email: string;
   phoneNumber: string;
+  countryCode?: string;
   assignedServices: string[];
   registrationId: string;
   emailNotificationsEnabled: boolean;
@@ -81,6 +82,7 @@ export interface CreateProviderRequest {
   providerName: string;
   email: string;
   phoneNumber: string;
+  countryCode?: string;
   registrationId: string;
   assignedServices: string[];
 }
@@ -97,6 +99,7 @@ export interface CreateProviderResponse {
 export interface UpdateProviderRequest {
   providerName: string;
   phoneNumber: string;
+  countryCode?: string;
   registrationId: string;
   emailNotificationsEnabled: boolean;
 }
