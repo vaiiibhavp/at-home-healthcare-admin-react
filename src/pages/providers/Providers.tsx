@@ -444,13 +444,13 @@ const Providers: React.FC = () => {
                   <span className="truncate">
                     {selectedService === 'all' ? t('services.allServices') : selectedService}
                   </span>
-<span
-  className={`ml-2 transition-transform duration-200 ${
-    isServiceDropdownOpen ? 'rotate-180' : ''
-  }`}
->
-  ▼
-</span>
+                    <span
+                      className={`ml-2 transition-transform duration-200 ${
+                        isServiceDropdownOpen ? 'rotate-180' : ''
+                      }`}
+                    >
+                      ▼
+                    </span>
                 </button>
                 {isServiceDropdownOpen && (
                   <div className="absolute top-full left-0 right-0 mt-1 bg-white border border-slate-200 rounded-xl shadow-lg z-10 max-h-60 overflow-y-auto">
@@ -526,9 +526,6 @@ const Providers: React.FC = () => {
                       Eligible services
                     </th>
                     <th className="px-6 py-4 text-[10px] font-bold text-slate-400 uppercase tracking-widest">
-                      Active requests
-                    </th>
-                    <th className="px-6 py-4 text-[10px] font-bold text-slate-400 uppercase tracking-widest">
                       {t('common.status')}
                     </th>
                     <th className="px-6 py-4 text-[10px] font-bold text-slate-400 uppercase tracking-widest text-right">
@@ -587,12 +584,6 @@ const Providers: React.FC = () => {
                                 +{provider.services.length - 2}
                               </span>
                             )}
-                          </div>
-                        </td>
-                        <td className="px-6 py-4">
-                          <div className="flex items-center gap-2">
-                            <span className="text-sm font-bold text-slate-900">{provider.activeRequests}</span>
-                            <span className="text-sm text-slate-500">requests</span>
                           </div>
                         </td>
                         <td className="px-6 py-4">
@@ -859,15 +850,6 @@ const Providers: React.FC = () => {
                       </div>
                     </div>
                     <div className="space-y-4">
-                      <div className="flex items-center gap-3">
-                        <div className="w-8 h-8 bg-amber-50 rounded-lg flex items-center justify-center text-amber-600">
-                          <i className="fa-solid fa-clipboard-list text-sm"></i>
-                        </div>
-                        <div>
-                          <p className="text-xs text-slate-500">Active Requests</p>
-                          <p className="text-sm font-medium text-slate-900">{getTransformedProvider()?.activeRequests} requests</p>
-                        </div>
-                      </div>
                       <div className="flex items-center gap-3">
                         <div className="w-8 h-8 bg-slate-50 rounded-lg flex items-center justify-center text-slate-600">
                           <i className="fa-solid fa-circle-info text-sm"></i>
