@@ -47,7 +47,7 @@ const DoctorsTable = ({ doctors, loading = false, onApprove, onReject, onView, o
     (selectedSpecialty === '' || doctor.specialty === selectedSpecialty)
   );
   const approvedDoctors = doctors.filter(doctor => 
-    doctor.status === 'approved' && 
+    (doctor.status === 'approved' || doctor.status === 'inactive') && 
     (selectedSpecialty === '' || doctor.specialty === selectedSpecialty)
   );
 
