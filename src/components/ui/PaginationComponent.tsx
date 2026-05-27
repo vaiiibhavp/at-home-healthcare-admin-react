@@ -50,7 +50,48 @@ const PaginationComponent: React.FC<PaginationComponentProps> = ({
   const startItem = (currentPage - 1) * itemsPerPage + 1;
   const endItem = Math.min(currentPage * itemsPerPage, totalItems);
 
-  
+  // Generate page numbers to display with condensed format
+  const getPageNumbers = () => {
+    if (totalPages <= 7) {
+      // Show all pages if total pages is 7 or less
+      return Array.from({ length: totalPages }, (_, i) => i + 1);
+    }
+
+    const pages: (number | string)[] = [];
+    
+    // Always show first 2 pages
+    pages.push(1, 2);
+    
+    // Add ellipsis if current page is beyond page 4
+    if (currentPage > 4) {
+      pages.push('...');
+    }
+    
+    // Show current page and its neighbors
+    const startPage = Math.max(3, currentPage - 1);
+    const endPage = Math.min(totalPages - 1, currentPage + 1);
+    
+    for (let i = startPage; i <= endPage; i++) {
+      if (!pages.includes(i)) {
+        pages.push(i);
+      }
+    }
+    
+    // Add ellipsis if current page is far from last page
+    if (currentPage < totalPages - 3) {
+      pages.push('...');
+    }
+    
+    // Always show last page
+    if (!pages.includes(totalPages)) {
+      pages.push(totalPages);
+    }
+    
+    return pages;
+  };
+
+  const displayPages = getPageNumbers();
+
   return (
     <div className={`p-4 border-t border-slate-100 flex items-center justify-between bg-white ${className}`}>
       {/* Items info */}
@@ -101,18 +142,27 @@ const PaginationComponent: React.FC<PaginationComponentProps> = ({
           </button>
 
           {/* Page numbers */}
-          {Array.from({ length: totalPages }, (_, i) => i + 1).map(page => (
-            <button
-              key={page}
-              onClick={() => handlePageClick(page)}
-              className={`w-8 h-8 flex items-center justify-center text-xs rounded transition-colors ${
-                page === currentPage
-                  ? 'text-primary font-bold'
-                  : 'text-slate-600 hover:text-slate-800'
-              }`}
-            >
-              {page}
-            </button>
+          {displayPages.map((page, index) => (
+            page === '...' ? (
+              <span
+                key={`ellipsis-${index}`}
+                className="w-8 h-8 flex items-center justify-center text-xs text-slate-400"
+              >
+                ...
+              </span>
+            ) : (
+              <button
+                key={page}
+                onClick={() => handlePageClick(page as number)}
+                className={`w-8 h-8 flex items-center justify-center text-xs rounded transition-colors ${
+                  page === currentPage
+                    ? 'text-primary font-bold'
+                    : 'text-slate-600 hover:text-slate-800'
+                }`}
+              >
+                {page}
+              </button>
+            )
           ))}
 
           {/* Next button */}
