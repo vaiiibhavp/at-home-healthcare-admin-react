@@ -55,7 +55,9 @@
     "contact": "Contact",
     "showing": "Showing {{start}}-{{end}} of {{total}} {{type}}",
     "bulkDeactivate": "Bulk Deactivate",
-    "deactivate": "Deactivate"
+    "deactivate": "Deactivate",
+    "clear": "Clear",
+    "apply": "Apply"
   },
   "pagination": {
     "showingItems": "Showing {{start}}-{{end}} of {{total}} items",
@@ -336,7 +338,9 @@
     "pendingReview": "Pending Review",
     "highPriority": "High Priority",
     "saveView": "Save View",
-    "dateRange": "Oct 20, 2023 - Oct 27, 2023",
+    "dateRange": "Date Range",
+    "startDate": "Start Date",
+    "endDate": "End Date",
     "allServices": "All Services",
     "inProgress": "In Progress",
     "returned": "Returned",
@@ -361,7 +365,9 @@
     "adminLogin": "Admin Login",
     "loginDescription": "Welcome back. Please enter your credentials to access the healthcare dashboard.",
     "emailAddress": "Email Address",
+    "emailPlaceholder": "Enter your email",
     "password": "Password",
+    "passwordPlaceholder": "Please enter password",
     "forgotPassword": "Forgot password?",
     "invalidCredentials": "Invalid email or password. Please try again.",
     "loggingIn": "Logging in...",

@@ -52,6 +52,7 @@ const Providers: React.FC = () => {
   const [selectedProviders, setSelectedProviders] = useState<string[]>([]);
   const [showBulkDeactivateModal, setShowBulkDeactivateModal] = useState(false);
   const [showCheckboxes, setShowCheckboxes] = useState(false);
+  const [updatingProviderId, setUpdatingProviderId] = useState<string | null>(null);
 
   // Pagination state
   const [currentPage, setCurrentPage] = useState(1);
@@ -63,7 +64,7 @@ const Providers: React.FC = () => {
   };
 
   // API call to get providers
-  const { data: providersData, isLoading, error } = useGetProvidersQuery({
+  const { data: providersData, isLoading, error, refetch } = useGetProvidersQuery({
     page: currentPage,
     size: itemsPerPage,
     status: filterStatus === 'all' ? undefined : 
@@ -229,19 +230,25 @@ const Providers: React.FC = () => {
     console.log('confirmDeactivate - selectedProviderForDeactivate type:', typeof selectedProviderForDeactivate);
     console.log('confirmDeactivate - selectedProviderForDeactivate length:', selectedProviderForDeactivate?.length);
     
+    const providerId = selectedProviderForDeactivate;
+    setShowDeactivateModal(false);
+    setUpdatingProviderId(providerId);
+    
     try {
-      const result = await deactivateProvider({
-        id: selectedProviderForDeactivate,
+      await deactivateProvider({
+        id: providerId,
         body: { status: 'inactive' }
       }).unwrap();
       
-      console.log('Deactivate success:', result);
-      setShowDeactivateModal(false);
+      console.log('Deactivate success');
+      await refetch();
+      setUpdatingProviderId(null);
       setToastMessage(t('providers.deactivatedSuccessfully'));
       setShowToast(true);
       setTimeout(() => setShowToast(false), 3000);
     } catch (error) {
       console.error('Deactivate error:', error);
+      setUpdatingProviderId(null);
       setToastMessage('Failed to deactivate provider. Please try again.');
       setShowToast(true);
       setTimeout(() => setShowToast(false), 3000);
@@ -253,19 +260,25 @@ const Providers: React.FC = () => {
     console.log('confirmActivate - selectedProviderForActivate type:', typeof selectedProviderForActivate);
     console.log('confirmActivate - selectedProviderForActivate length:', selectedProviderForActivate?.length);
     
+    const providerId = selectedProviderForActivate;
+    setShowActivateModal(false);
+    setUpdatingProviderId(providerId);
+    
     try {
-      const result = await activateProvider({
-        id: selectedProviderForActivate,
+      await activateProvider({
+        id: providerId,
         body: { status: 'approved' }
       }).unwrap();
       
-      console.log('Activate success:', result);
-      setShowActivateModal(false);
+      console.log('Activate success');
+      await refetch();
+      setUpdatingProviderId(null);
       setToastMessage('Provider activated successfully');
       setShowToast(true);
       setTimeout(() => setShowToast(false), 3000);
     } catch (error) {
       console.error('Activate error:', error);
+      setUpdatingProviderId(null);
       setToastMessage('Failed to activate provider. Please try again.');
       setShowToast(true);
       setTimeout(() => setShowToast(false), 3000);
@@ -583,8 +596,11 @@ const Providers: React.FC = () => {
                                 <i className="fa-solid fa-pen-to-square"></i>
                               </button>
                             </Link>
-                            {/* Debug: Provider {provider.name} status: {provider.status} */}
-                            {provider.status === 'active' ? (
+                            {updatingProviderId === provider.id ? (
+                              <div className="p-2">
+                                <div className="w-4 h-4 border-2 border-slate-300 border-t-primary rounded-full animate-spin"></div>
+                              </div>
+                            ) : provider.status === 'active' ? (
                               <button
                                 onClick={() => handleDeactivate(provider.id)}
                                 className="p-2 text-slate-400 hover:text-danger hover:bg-white rounded-lg transition-all relative z-10"

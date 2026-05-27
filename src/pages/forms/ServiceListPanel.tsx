@@ -17,7 +17,7 @@ export const ServiceListPanel: React.FC<ServiceListPanelProps> = ({
   const [searchTerm, setSearchTerm] = useState('');
   const [filter, setFilter] = useState<'all' | 'mapped' | 'unmapped'>('all');
 
-  const filteredServices = services.filter(service => {
+  const filteredServices = (services || []).filter(service => {
     const matchesSearch = service.name.toLowerCase().includes(searchTerm.toLowerCase());
     const matchesFilter = filter === 'all' || service.status === filter;
     return matchesSearch && matchesFilter;
@@ -45,7 +45,7 @@ export const ServiceListPanel: React.FC<ServiceListPanelProps> = ({
         <div className="flex items-center justify-between">
           <h3 className="text-sm font-bold text-slate-800">Services</h3>
           <span className="text-[10px] font-bold text-slate-400 bg-slate-100 px-2 py-1 rounded">
-            {services.length} Total
+            {(services || []).length} Total
           </span>
         </div>
         <div className="flex gap-2">
@@ -57,9 +57,9 @@ export const ServiceListPanel: React.FC<ServiceListPanelProps> = ({
                 : 'bg-slate-100 text-slate-600 hover:bg-slate-200'
             }`}
           >
-            All
+            All Mapped
           </button>
-          <button
+          {/* <button
             onClick={() => setFilter('mapped')}
             className={`px-3 py-1 text-xs font-medium rounded-lg transition-all ${
               filter === 'mapped'
@@ -78,7 +78,7 @@ export const ServiceListPanel: React.FC<ServiceListPanelProps> = ({
             }`}
           >
             Unmapped
-          </button>
+          </button> */}
         </div>
         <div className="relative">
           <i className="fa-solid fa-magnifying-glass absolute left-3 top-1/2 -translate-y-1/2 text-slate-400 text-xs"></i>
@@ -93,31 +93,31 @@ export const ServiceListPanel: React.FC<ServiceListPanelProps> = ({
       </div>
       <div className="flex-1 overflow-y-auto">
         <div className="divide-y divide-slate-50">
-          {filteredServices.map((service) => (
-            <div
-              key={service.id}
-              onClick={() => onServiceSelect(service)}
-              className={`p-4 hover:bg-slate-50 cursor-pointer transition-all ${
-                selectedService?.id === service.id
-                  ? 'bg-blue-50 border-l-4 border-blue-500 shadow-sm'
-                  : ''
-              }`}
-            >
-              <div className="flex justify-between items-start mb-1">
-                <p className="text-sm font-bold text-slate-800">{service.name}</p>
-                {getStatusBadge(service.status)}
-              </div>
-              {service.description && (
-                <p className="text-[11px] text-slate-500 line-clamp-2 mb-1">
-                  {service.description}
+            {filteredServices.map((service) => (
+              <div
+                key={service.id}
+                onClick={() => onServiceSelect(service)}
+                className={`p-4 hover:bg-slate-50 cursor-pointer transition-all ${
+                  selectedService?.id === service.id
+                    ? 'bg-blue-50 border-l-4 border-blue-500 shadow-sm'
+                    : ''
+                }`}
+              >
+                <div className="flex justify-between items-start mb-1">
+                  <p className="text-sm font-bold text-slate-800">{service.name}</p>
+                  {getStatusBadge(service.status)}
+                </div>
+                {service.description && (
+                  <p className="text-[11px] text-slate-500 line-clamp-2 mb-1">
+                    {service.description}
+                  </p>
+                )}
+                <p className="text-[11px] text-slate-500 line-clamp-1">
+                  {service.formName ? <>{t('forms.form')}: <span className="font-bold">{service.formName}</span></> : t('forms.noFormAssigned')}
                 </p>
-              )}
-              <p className="text-[11px] text-slate-500 line-clamp-1">
-                {service.formName ? <>{t('forms.form')}: <span className="font-bold">{service.formName}</span></> : t('forms.noFormAssigned')}
-              </p>
-            </div>
-          ))}
-        </div>
+              </div>
+            ))}
+          </div>
       </div>
     </section>
   );

@@ -157,7 +157,7 @@ const CNOForm: React.FC = () => {
               "Compote 250 kcal + 6–9 g protein"
             ].map((item, index) => (
               <div key={index} className="flex items-center gap-2">
-                <span className="w-2">{item}</span>
+                <span className="flex-1">{item}</span>
                 <input type="text" className="w-24 h-9 border border-slate-300 rounded px-3 text-sm" />
                 <span>Qty</span>
                 <input type="text" className="w-16 h-9 border border-slate-300 rounded px-3 text-sm" />
@@ -306,11 +306,14 @@ const WoundCareForm: React.FC = () => {
             <label className="block">Date of birth:</label>
             <input type="date" className="w-40 h-9 border border-slate-300 rounded mt-1 px-3 text-sm" />
           </div>
-          <div>
-            <label className="block">Date:</label>
-            <input type="date" className="w-40 h-9 border border-slate-300 rounded mt-1 px-3 text-sm" />
-          </div>
-          <div className="col-span-2 space-y-2">
+        </div>
+      </div>
+
+      {/* Care Related to ALD */}
+      <div className="border border-slate-200 rounded-lg p-4">
+        <h3 className="font-bold text-sm mb-4">Care Related to ALD</h3>
+        <div className="space-y-3 text-sm">
+          <div className="space-y-2">
             <label className="flex items-center gap-2">
               <input type="checkbox" className="w-4 h-4" />
               <span>Care related to long-term condition (ALD)</span>
@@ -319,6 +322,10 @@ const WoundCareForm: React.FC = () => {
               <input type="checkbox" className="w-4 h-4" />
               <span>Care not related to long-term condition (ALD)</span>
             </label>
+          </div>
+          <div>
+            <label className="block">Date:</label>
+            <input type="date" className="w-40 h-9 border border-slate-300 rounded mt-1 px-3 text-sm" />
           </div>
         </div>
       </div>
@@ -393,19 +400,10 @@ const WoundCareForm: React.FC = () => {
             <input type="checkbox" className="w-4 h-4" />
             <span>Packing:</span>
           </label>
-          <div className="ml-6 space-y-1">
-            <label className="flex items-center gap-2">
-              <input type="checkbox" className="w-4 h-4" />
-              <span>Fill a cavity</span>
-            </label>
-            <label className="flex items-center gap-2">
-              <input type="checkbox" className="w-4 h-4" />
-              <span>Occupy dead space</span>
-            </label>
-            <label className="flex items-center gap-2">
-              <input type="checkbox" className="w-4 h-4" />
-              <span>Prevent premature superficial closure</span>
-            </label>
+          <div className="ml-6 space-y-2">
+            <div>- Fill a cavity</div>
+            <div>- Occupy dead space</div>
+            <div>- Prevent premature superficial closure</div>
           </div>
         </div>
       </div>
@@ -816,15 +814,9 @@ const ArtificialNutritionForm: React.FC = () => {
               <div className="space-y-2">
                 <h5 className="font-medium">Initial setup package for enteral nutrition</h5>
                 <h5 className="font-medium">Weekly enteral nutrition package by:</h5>
-                <div className="ml-4 space-y-1">
-                  <label className="flex items-center gap-2">
-                    <input type="checkbox" className="w-4 h-4" />
-                    <span>Gravity (package 1)</span>
-                  </label>
-                  <label className="flex items-center gap-2">
-                    <input type="checkbox" className="w-4 h-4" />
-                    <span>Pump (package 2)</span>
-                  </label>
+                <div className="ml-4 space-y-2">
+                  <div>- Gravity (package 1)</div>
+                  <div>- Pump (package 2)</div>
                 </div>
               </div>
               
@@ -845,18 +837,12 @@ const ArtificialNutritionForm: React.FC = () => {
               </div>
               
               <div className="space-y-2">
-                <label className="flex items-center gap-2">
-                  <input type="checkbox" className="w-4 h-4" />
-                  <span>Rental of an IV pole</span>
-                </label>
+                <div>- Rental of an IV pole</div>
                 <div>
                   <label className="block">Equipment for adult nasogastric tube care every ………… days</label>
                   <input type="number" className="w-20 h-9 border border-slate-300 rounded mt-1 px-3 text-sm" />
                 </div>
-                <label className="flex items-center gap-2">
-                  <input type="checkbox" className="w-4 h-4" />
-                  <span>Equipment for gastrostomy or jejunostomy care</span>
-                </label>
+                <div>- Equipment for gastrostomy or jejunostomy care</div>
               </div>
             </div>
           </div>
@@ -878,18 +864,12 @@ const ArtificialNutritionForm: React.FC = () => {
                 <input type="number" className="w-20 h-9 border border-slate-300 rounded mt-1 px-3 text-sm" />
               </div>
               <div>
-                <label className="flex items-center gap-2">
-                  <input type="checkbox" className="w-4 h-4" />
-                  <span>Equipment in case of gastrostomy tube replacement</span>
-                </label>
+                <div>- Equipment in case of gastrostomy tube replacement</div>
               </div>
             </div>
-            
+
             <div>
-              <label className="flex items-center gap-2">
-                <input type="checkbox" className="w-4 h-4" />
-                <span>One gastrostomy button extension set, to be renewed every 7 days</span>
-              </label>
+              <div>- One gastrostomy button extension set, to be renewed every 7 days</div>
             </div>
           </div>
           
@@ -1070,10 +1050,7 @@ const PersonalHygieneCareForm: React.FC = () => {
                 <span className="text-sm">times per day</span>
               </label>
               <div className="flex items-center gap-2">
-                <label className="flex items-center gap-2">
-                  <input type="checkbox" className="w-4 h-4" />
-                  <span className="text-sm">Removal of the urinary catheter on:</span>
-                </label>
+                <div className="text-sm">- Removal of the urinary catheter on:</div>
                 <input type="date" className="w-40 h-9 border border-slate-300 rounded px-3 text-sm" />
               </div>
               <label className="flex items-center gap-2">
@@ -1267,39 +1244,15 @@ const PCAPainManagementForm: React.FC = () => {
             
             <div className="space-y-2">
               <h5 className="font-medium">Nursing care to be provided:</h5>
-              <div className="ml-4 space-y-1">
-                <label className="flex items-center gap-2">
-                  <input type="checkbox" className="w-4 h-4" />
-                  <span>Preparation and programming of a portable pump</span>
-                </label>
-                <label className="flex items-center gap-2">
-                  <input type="checkbox" className="w-4 h-4" />
-                  <span>Filling and setting up the portable pump</span>
-                </label>
-                <label className="flex items-center gap-2">
-                  <input type="checkbox" className="w-4 h-4" />
-                  <span>Connecting the infusion and starting the device</span>
-                </label>
-                <label className="flex items-center gap-2">
-                  <input type="checkbox" className="w-4 h-4" />
-                  <span>Reservoir change (flexible bag)</span>
-                </label>
-                <label className="flex items-center gap-2">
-                  <input type="checkbox" className="w-4 h-4" />
-                  <span>Stopping and removing the device</span>
-                </label>
-                <label className="flex items-center gap-2">
-                  <input type="checkbox" className="w-4 h-4" />
-                  <span>Flush / "heparinization"</span>
-                </label>
-                <label className="flex items-center gap-2">
-                  <input type="checkbox" className="w-4 h-4" />
-                  <span>Dressing change and replacement of the Huber needle once a week</span>
-                </label>
-                <label className="flex items-center gap-2">
-                  <input type="checkbox" className="w-4 h-4" />
-                  <span>Organization of infusion monitoring, care planning, and, where applicable, coordination of 24-hour monitoring services, including Saturdays, Sundays, and public holidays</span>
-                </label>
+              <div className="ml-4 space-y-2">
+                <div>- Preparation and programming of a portable pump</div>
+                <div>- Filling and setting up the portable pump</div>
+                <div>- Connecting the infusion and starting the device</div>
+                <div>- Reservoir change (flexible bag)</div>
+                <div>- Stopping and removing the device</div>
+                <div>- Flush / "heparinization"</div>
+                <div>- Dressing change and replacement of the Huber needle once a week</div>
+                <div>- Organization of infusion monitoring, care planning, and, where applicable, coordination of 24-hour monitoring services, including Saturdays, Sundays, and public holidays</div>
               </div>
             </div>
           </div>
@@ -1546,22 +1499,10 @@ const MedicalOxygenForm: React.FC = () => {
           </div>
           
           <div className="space-y-2 text-sm">
-            <label className="flex items-center gap-2">
-              <input type="checkbox" className="w-4 h-4" />
-              <span>Backup source: compressed oxygen cylinder with pressure regulator and appropriate flowmeter</span>
-            </label>
-            <label className="flex items-center gap-2">
-              <input type="checkbox" className="w-4 h-4" />
-              <span>Mobility source: 1 small compressed oxygen cylinder with pressure regulator and appropriate flowmeter</span>
-            </label>
-            <label className="flex items-center gap-2">
-              <input type="checkbox" className="w-4 h-4" />
-              <span>Provision of a pulse oximeter</span>
-            </label>
-            <label className="flex items-center gap-2">
-              <input type="checkbox" className="w-4 h-4" />
-              <span>Non-kinking star-lumen oxygen tubing if possible</span>
-            </label>
+            <div>- Backup source: compressed oxygen cylinder with pressure regulator and appropriate flowmeter</div>
+            <div>- Mobility source: 1 small compressed oxygen cylinder with pressure regulator and appropriate flowmeter</div>
+            <div>- Provision of a pulse oximeter</div>
+            <div>- Non-kinking star-lumen oxygen tubing if possible</div>
           </div>
           
           <div className="text-sm">
@@ -1974,7 +1915,7 @@ export const FormStructureViewer: React.FC<FormStructureViewerProps> = ({
               <p className="text-[11px] text-slate-500">{t('forms.structuredFieldPreview')}</p>
             </div>
           </div>
-          <div className="flex gap-2">
+          {/* <div className="flex gap-2">
             <button
               onClick={onMapService}
               className="px-4 py-2 text-xs font-bold text-white bg-blue-600 rounded-lg hover:bg-blue-700 transition-all shadow-sm border border-blue-700"
@@ -1982,7 +1923,7 @@ export const FormStructureViewer: React.FC<FormStructureViewerProps> = ({
             >
               <i className="fa-solid fa-link mr-1.5"></i> Assign Form
             </button>
-          </div>
+          </div> */}
         </div>
         <div className="flex-1 flex items-center justify-center text-slate-400">
           <div className="text-center">
@@ -2009,7 +1950,7 @@ export const FormStructureViewer: React.FC<FormStructureViewerProps> = ({
             <p className="text-[11px] text-slate-500">{t('forms.structuredFieldPreview')}</p>
           </div>
         </div>
-        <div className="flex gap-2">
+        {/* <div className="flex gap-2">
           <button
             onClick={onMapService}
             className="px-4 py-2 text-xs font-bold text-white bg-blue-600 rounded-lg hover:bg-blue-700 transition-all shadow-sm border border-blue-700"
@@ -2017,7 +1958,7 @@ export const FormStructureViewer: React.FC<FormStructureViewerProps> = ({
           >
             <i className="fa-solid fa-link mr-1.5"></i> {selectedService.formName ? 'Change Form' : 'Assign Form'}
           </button>
-        </div>
+        </div> */}
       </div>
       
       <div className="flex-1 overflow-y-auto p-8 bg-slate-50/30">

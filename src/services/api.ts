@@ -1,10 +1,10 @@
 import { createApi, fetchBaseQuery } from '@reduxjs/toolkit/query/react';
-import { LoginRequest, LoginResponse, ForgotPasswordRequest, ForgotPasswordResponse } from '../types/auth';
+import { LoginRequest, LoginResponse, ForgotPasswordRequest, ForgotPasswordResponse, ChangePasswordRequest, ChangePasswordResponse } from '../types/auth';
 
 export const api = createApi({
   reducerPath: 'api',
   baseQuery: fetchBaseQuery({
-    baseUrl: process.env.REACT_APP_API_BASE_URL || 'http://163.227.92.122:3047',
+    baseUrl: process.env.REACT_APP_API_BASE_URL || (process.env.NODE_ENV === 'production' ? '' : ''),
     prepareHeaders: (headers) => {
       const token = localStorage.getItem('authToken');
       if (token) {
@@ -29,7 +29,14 @@ export const api = createApi({
         body: emailData,
       }),
     }),
+    changePassword: builder.mutation<ChangePasswordResponse, ChangePasswordRequest>({
+      query: (passwordData) => ({
+        url: '/admin/changePassword',
+        method: 'POST',
+        body: passwordData,
+      }),
+    }),
   }),
 });
 
-export const { useLoginMutation, useForgotPasswordMutation } = api;
+export const { useLoginMutation, useForgotPasswordMutation, useChangePasswordMutation } = api;

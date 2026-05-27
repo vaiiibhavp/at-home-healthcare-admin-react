@@ -1,4 +1,5 @@
 import React from 'react';
+import { Navigate } from 'react-router-dom';
 import { useAppSelector } from '../hooks/redux';
 
 interface ProtectedRouteProps {
@@ -21,8 +22,8 @@ const ProtectedRoute: React.FC<ProtectedRouteProps> = ({ children }) => {
   }
 
   if (!isAuthenticated) {
-    // Redirect to login with return URL
-    window.location.href = '/login';
+    // Redirect to login
+    return <Navigate to="/login" replace />;
   }
 
   return <>{children}</>;

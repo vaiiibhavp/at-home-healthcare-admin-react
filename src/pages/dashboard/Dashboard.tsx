@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useNavigate } from 'react-router-dom';
 import Sidebar from '../../components/dashboard/Sidebar';
@@ -11,6 +11,7 @@ import NotificationDropdown from '../../components/common/NotificationDropdown';
 const Dashboard: React.FC = () => {
   const { t } = useTranslation();
   const navigate = useNavigate();
+  const [isExporting, setIsExporting] = useState(false);
   
   const handleViewRequest = () => {
     navigate('/requests');
@@ -21,7 +22,42 @@ const Dashboard: React.FC = () => {
     // Handle navigation or other actions based on notification type
   };
 
-  return (
+  const handleExportReport = async () => {
+    try {
+      setIsExporting(true);
+      const token = localStorage.getItem('authToken');
+      const baseUrl = process.env.REACT_APP_API_BASE_URL || 'http://163.227.92.122:3047';
+      
+      const response = await fetch(`${baseUrl}/export?entityType=dashboard&format=csv`, {
+        method: 'GET',
+        headers: {
+          'Authorization': `Bearer ${token}`,
+          'Content-Type': 'text/csv',
+        },
+      });
+
+      if (!response.ok) {
+        throw new Error('Failed to export dashboard data');
+      }
+
+      const blob = await response.blob();
+      const url = window.URL.createObjectURL(blob);
+      const link = document.createElement('a');
+      link.href = url;
+      link.download = `dashboard-export-${new Date().toISOString().split('T')[0]}.csv`;
+      document.body.appendChild(link);
+      link.click();
+      document.body.removeChild(link);
+      window.URL.revokeObjectURL(url);
+    } catch (error) {
+      console.error('Export failed:', error);
+      alert('Failed to export report. Please try again.');
+    } finally {
+      setIsExporting(false);
+    }
+  };
+
+  return ( 
     <div className="flex h-[1024px] overflow-hidden">
       <Sidebar />
       <main className="flex-1 flex flex-col min-w-0 bg-slate-50 overflow-y-auto">
@@ -56,8 +92,11 @@ const Dashboard: React.FC = () => {
             </div>
             <div className="flex gap-3">
               <button
-                className="px-4 py-2 bg-white border border-slate-200 rounded-lg text-sm font-semibold text-slate-700 hover:bg-slate-50 transition-colors flex items-center gap-2">
-                <i className="fa-solid fa-download"></i> {t('dashboard.exportReport') || 'Export Report'}
+                onClick={handleExportReport}
+                disabled={isExporting}
+                className="px-4 py-2 bg-white border border-slate-200 rounded-lg text-sm font-semibold text-slate-700 hover:bg-slate-50 transition-colors flex items-center gap-2 disabled:opacity-50 disabled:cursor-not-allowed">
+                <i className="fa-solid fa-download"></i> 
+                {t('dashboard.exportReport') || 'Export Report'}
               </button>
               <button
                 onClick={handleViewRequest}

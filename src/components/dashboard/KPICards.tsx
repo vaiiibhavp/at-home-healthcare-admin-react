@@ -1,5 +1,6 @@
 import React from 'react';
 import { useTranslation } from 'react-i18next';
+import { useGetDashboardOverviewQuery } from '../../services/dashboardApi';
 
 interface KPICard {
   title: string;
@@ -17,45 +18,40 @@ interface KPICard {
 
 const KPICards: React.FC = () => {
   const { t } = useTranslation();
+  const { data: dashboardData, isLoading, error } = useGetDashboardOverviewQuery();
   
-  const kpiData: KPICard[] = [
+  const kpiData: KPICard[] = dashboardData ? [
     {
       title: t('dashboard.kpi.totalDoctors'),
-      value: '1,284',
-      change: '12%',
-      changeType: 'positive',
+      value: dashboardData.data.totalDoctors.toLocaleString(),
+      change: `${Math.abs(dashboardData.data.trends.doctors.percentage)}%`,
+      changeType: dashboardData.data.trends.doctors.isPositive ? 'positive' : 'negative',
       icon: 'fa-user-doctor',
       iconBg: 'bg-blue-50',
-      iconColor: 'text-blue-600',
-      progress: 75
+      iconColor: 'text-blue-600'
     },
     {
       title: t('dashboard.kpi.pendingApprovals'),
-      value: '42',
-      change: t('dashboard.kpi.pending'),
-      changeType: 'neutral',
+      value: dashboardData.data.pendingApprovals.toLocaleString(),
+      change: dashboardData.data.pendingApprovals > 0 ? t('dashboard.kpi.pending') : 'pending',
+      changeType: dashboardData.data.pendingApprovals > 0 ? 'neutral' : 'positive',
       icon: 'fa-clock-rotate-left',
       iconBg: 'bg-amber-50',
       iconColor: 'text-amber-600',
-      subtitle: t('dashboard.kpi.urgentReview')
+      subtitle: dashboardData.data.pendingApprovals > 0 ? 'requiring urgent review' : 'all clear'
     },
     {
       title: t('dashboard.kpi.activeRequests'),
-      value: '3,592',
-      change: '5.4%',
-      changeType: 'positive',
+      value: dashboardData.data.activeRequests.toLocaleString(),
+      change: `${Math.abs(dashboardData.data.trends.requests.percentage)}%`,
+      changeType: dashboardData.data.trends.requests.isPositive ? 'positive' : 'negative',
       icon: 'fa-heart-pulse',
       iconBg: 'bg-emerald-50',
-      iconColor: 'text-emerald-600',
-      avatars: [
-        'https://storage.googleapis.com/uxpilot-auth.appspot.com/avatars/avatar-1.jpg',
-        'https://storage.googleapis.com/uxpilot-auth.appspot.com/avatars/avatar-2.jpg',
-        'https://storage.googleapis.com/uxpilot-auth.appspot.com/avatars/avatar-3.jpg'
-      ]
+      iconColor: 'text-emerald-600'
     },
     {
       title: t('dashboard.kpi.providers'),
-      value: '156',
+      value: dashboardData.data.totalProviders.toLocaleString(),
       change: t('dashboard.kpi.stable'),
       changeType: 'neutral',
       icon: 'fa-building-columns',
@@ -63,13 +59,19 @@ const KPICards: React.FC = () => {
       iconColor: 'text-purple-600',
       subtitle: t('dashboard.kpi.serviceUptime')
     }
-  ];
+  ] : [];
 
   const getChangeBadge = (kpi: KPICard) => {
     if (kpi.changeType === 'positive') {
       return (
         <span className="text-success text-xs font-bold flex items-center gap-1 bg-success/10 px-2 py-1 rounded-full">
           <i className="fa-solid fa-arrow-up"></i> {kpi.change}
+        </span>
+      );
+    } else if (kpi.changeType === 'negative') {
+      return (
+        <span className="text-error text-xs font-bold flex items-center gap-1 bg-error/10 px-2 py-1 rounded-full">
+          <i className="fa-solid fa-arrow-down"></i> {kpi.change}
         </span>
       );
     } else if (kpi.changeType === 'neutral') {
@@ -81,6 +83,26 @@ const KPICards: React.FC = () => {
     }
     return null;
   };
+
+  if (isLoading) {
+    return (
+      <div className="flex justify-center items-center h-screen">
+        <p className="text-slate-500 text-lg font-bold">Loading...</p>
+      </div>
+    );
+  }
+
+  if (error) {
+    const errorMessage = 'status' in error ? 
+      (error.data as { message?: string })?.message || 'Failed to load dashboard data' :
+      error.message || 'An error occurred';
+    
+    return (
+      <div className="flex justify-center items-center h-screen">
+        <p className="text-error text-lg font-bold">Error: {errorMessage}</p>
+      </div>
+    );
+  }
 
   return (
     <section id="kpi-grid" className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">

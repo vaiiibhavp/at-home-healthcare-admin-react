@@ -103,7 +103,7 @@ const Login: React.FC = () => {
                       name="email"
                       value={formData.email}
                       onChange={handleInputChange}
-                      placeholder="adminathomehealthcare@yopmail.com"
+                      placeholder={t('auth.emailPlaceholder')}
                       required
                       className="tradingview-input w-full h-12 pl-11 pr-4 bg-white border border-border rounded-xl text-sm transition-all outline-none"
                     />
@@ -116,10 +116,6 @@ const Login: React.FC = () => {
                     <label htmlFor="password" className="text-xs font-bold uppercase tracking-wider text-textMuted">
                       {t('auth.password')}
                     </label>
-                    {/* Forgot password link commented out for now */}
-                    {/* <a href="/forgot-password" className="text-xs font-semibold text-accent hover:underline">
-                      {t('auth.forgotPassword') || 'Forgot password?'}
-                    </a> */}
                   </div>
                   <div className="relative">
                     <span className="absolute left-4 top-1/2 -translate-y-1/2 text-textMuted/60">
@@ -131,7 +127,7 @@ const Login: React.FC = () => {
                       name="password"
                       value={formData.password}
                       onChange={handleInputChange}
-                      placeholder="&#8226;&#8226;&#8226;&#8226;&#8226;&#8226;&#8226;&#8226;"
+                      placeholder={t('auth.passwordPlaceholder')}
                       required
                       className="tradingview-input w-full h-12 pl-11 pr-12 bg-white border border-border rounded-xl text-sm transition-all outline-none"
                     />
