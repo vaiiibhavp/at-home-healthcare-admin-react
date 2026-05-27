@@ -849,17 +849,7 @@ const Providers: React.FC = () => {
                         </div>
                       </div>
                     </div>
-                    <div className="space-y-4">
-                      <div className="flex items-center gap-3">
-                        <div className="w-8 h-8 bg-slate-50 rounded-lg flex items-center justify-center text-slate-600">
-                          <i className="fa-solid fa-circle-info text-sm"></i>
-                        </div>
-                        <div>
-                          <p className="text-xs text-slate-500">Account Status</p>
-                          <p className="text-sm font-medium text-slate-900 capitalize">{getTransformedProvider()?.status}</p>
-                        </div>
-                      </div>
-                    </div>
+
                   </div>
 
                   {/* Services */}
