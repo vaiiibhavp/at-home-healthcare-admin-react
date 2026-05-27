@@ -1526,22 +1526,10 @@ const MedicalOxygenForm: React.FC = () => {
           </div>
           
           <div className="space-y-2 text-sm">
-            <label className="flex items-center gap-2">
-              <input type="checkbox" className="w-4 h-4" />
-              <span>Backup source: compressed oxygen cylinder with pressure regulator and appropriate flowmeter</span>
-            </label>
-            <label className="flex items-center gap-2">
-              <input type="checkbox" className="w-4 h-4" />
-              <span>Mobility source: 1 small compressed oxygen cylinder with pressure regulator and appropriate flowmeter</span>
-            </label>
-            <label className="flex items-center gap-2">
-              <input type="checkbox" className="w-4 h-4" />
-              <span>Provision of a pulse oximeter</span>
-            </label>
-            <label className="flex items-center gap-2">
-              <input type="checkbox" className="w-4 h-4" />
-              <span>Non-kinking star-lumen oxygen tubing if possible</span>
-            </label>
+            <div>- Backup source: compressed oxygen cylinder with pressure regulator and appropriate flowmeter</div>
+            <div>- Mobility source: 1 small compressed oxygen cylinder with pressure regulator and appropriate flowmeter</div>
+            <div>- Provision of a pulse oximeter</div>
+            <div>- Non-kinking star-lumen oxygen tubing if possible</div>
           </div>
           
           <div className="text-sm">
