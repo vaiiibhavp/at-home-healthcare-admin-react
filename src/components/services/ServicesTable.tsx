@@ -104,11 +104,8 @@ export const ServicesTable: React.FC<ServicesTableProps> = ({
             className="p-2 text-slate-400 hover:text-primary hover:bg-white rounded-lg transition-all border border-transparent hover:border-slate-200 disabled:opacity-50 disabled:cursor-not-allowed"
             title="Download"
           >
-            {isDownloading ? (
-              <i className="fa-solid fa-spinner fa-spin"></i>
-            ) : (
-              <i className="fa-solid fa-download"></i>
-            )}
+            {!isDownloading && <i className="fa-solid fa-download"></i>}
+            {isDownloading && <i className="fa-solid fa-spinner fa-spin"></i>}
           </button>
         </div>
       </div>
