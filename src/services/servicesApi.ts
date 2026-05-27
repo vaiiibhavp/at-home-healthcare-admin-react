@@ -1,4 +1,5 @@
-import { createApi, fetchBaseQuery } from '@reduxjs/toolkit/query/react';
+import { createApi } from '@reduxjs/toolkit/query/react';
+import { baseQueryWithAuth } from '../utils/baseQuery';
 
 export interface FormMapping {
   status: 'Mapped' | 'Unmapped';
@@ -77,16 +78,7 @@ export interface ServiceStatsResponse {
 
 export const servicesApi = createApi({
   reducerPath: 'servicesApi',
-  baseQuery: fetchBaseQuery({
-    baseUrl: process.env.REACT_APP_API_BASE_URL || 'http://163.227.92.122:3047',
-    prepareHeaders: (headers) => {
-      const token = localStorage.getItem('authToken');
-      if (token) {
-        headers.set('authorization', `Bearer ${token}`);
-      }
-      return headers;
-    },
-  }),
+  baseQuery: baseQueryWithAuth,
   tagTypes: ['Services'],
   endpoints: (builder) => ({
     getServices: builder.query<ServicesListResponse, { page?: number; size?: number }>({
