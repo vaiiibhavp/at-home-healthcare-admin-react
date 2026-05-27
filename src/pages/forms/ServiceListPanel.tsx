@@ -57,9 +57,9 @@ export const ServiceListPanel: React.FC<ServiceListPanelProps> = ({
                 : 'bg-slate-100 text-slate-600 hover:bg-slate-200'
             }`}
           >
-            All
+            All Mapped
           </button>
-          <button
+          {/* <button
             onClick={() => setFilter('mapped')}
             className={`px-3 py-1 text-xs font-medium rounded-lg transition-all ${
               filter === 'mapped'
@@ -78,7 +78,7 @@ export const ServiceListPanel: React.FC<ServiceListPanelProps> = ({
             }`}
           >
             Unmapped
-          </button>
+          </button> */}
         </div>
         <div className="relative">
           <i className="fa-solid fa-magnifying-glass absolute left-3 top-1/2 -translate-y-1/2 text-slate-400 text-xs"></i>
