@@ -27,6 +27,7 @@ const Providers: React.FC = () => {
   const [searchTerm, setSearchTerm] = useState('');
   const [filterStatus, setFilterStatus] = useState<'all' | 'active' | 'inactive'>('all');
   const [selectedService, setSelectedService] = useState('all');
+  const [isServiceDropdownOpen, setIsServiceDropdownOpen] = useState(false);
   const [showDeactivateModal, setShowDeactivateModal] = useState(false);
   const [selectedProviderForDeactivate, setSelectedProviderForDeactivate] = useState<string>('');
   const [showActivateModal, setShowActivateModal] = useState(false);
@@ -435,21 +436,50 @@ const Providers: React.FC = () => {
                   {t('common.inactive')}
                 </button>
               </div>
-              <select
-                value={selectedService}
-                onChange={(e) => {
-                  setSelectedService(e.target.value);
-                  handleFilterChange();
-                }}
-                className="bg-white border border-slate-200 rounded-xl px-4 py-2 text-xs font-bold text-slate-600 focus:outline-none shadow-sm"
-              >
-                <option value="all">{t('services.allServices')}</option>
-                {servicesData?.data?.services?.map((service: any) => (
-                  <option key={service._id || service.id} value={service.name || service.serviceName}>
-                    {service.name || service.serviceName}
-                  </option>
-                ))}
-              </select>
+              <div className="relative">
+                <button
+                  onClick={() => setIsServiceDropdownOpen(!isServiceDropdownOpen)}
+                  className="bg-white border border-slate-200 rounded-xl px-4 py-2 text-xs font-bold text-slate-600 focus:outline-none shadow-sm flex items-center justify-between w-48"
+                >
+                  <span className="truncate">
+                    {selectedService === 'all' ? t('services.allServices') : selectedService}
+                  </span>
+<span
+  className={`ml-2 transition-transform duration-200 ${
+    isServiceDropdownOpen ? 'rotate-180' : ''
+  }`}
+>
+  ▼
+</span>
+                </button>
+                {isServiceDropdownOpen && (
+                  <div className="absolute top-full left-0 right-0 mt-1 bg-white border border-slate-200 rounded-xl shadow-lg z-10 max-h-60 overflow-y-auto">
+                    <div
+                      onClick={() => {
+                        setSelectedService('all');
+                        setIsServiceDropdownOpen(false);
+                        handleFilterChange();
+                      }}
+                      className="px-4 py-2 text-xs font-bold text-slate-600 hover:bg-slate-50 cursor-pointer"
+                    >
+                      {t('services.allServices')}
+                    </div>
+                    {servicesData?.data?.services?.map((service: any) => (
+                      <div
+                        key={service._id || service.id}
+                        onClick={() => {
+                          setSelectedService(service.name || service.serviceName);
+                          setIsServiceDropdownOpen(false);
+                          handleFilterChange();
+                        }}
+                        className="px-4 py-2 text-xs font-bold text-slate-600 hover:bg-slate-50 cursor-pointer truncate"
+                      >
+                        {service.name || service.serviceName}
+                      </div>
+                    ))}
+                  </div>
+                )}
+              </div>
             </div>
           </section>
 
