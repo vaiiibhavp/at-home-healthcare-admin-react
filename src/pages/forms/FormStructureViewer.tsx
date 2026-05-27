@@ -1050,10 +1050,7 @@ const PersonalHygieneCareForm: React.FC = () => {
                 <span className="text-sm">times per day</span>
               </label>
               <div className="flex items-center gap-2">
-                <label className="flex items-center gap-2">
-                  <input type="checkbox" className="w-4 h-4" />
-                  <span className="text-sm">Removal of the urinary catheter on:</span>
-                </label>
+                <div className="text-sm">- Removal of the urinary catheter on:</div>
                 <input type="date" className="w-40 h-9 border border-slate-300 rounded px-3 text-sm" />
               </div>
               <label className="flex items-center gap-2">
