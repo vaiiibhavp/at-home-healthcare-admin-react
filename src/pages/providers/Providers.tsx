@@ -626,12 +626,14 @@ const Providers: React.FC = () => {
               </table>
             )}
             <div className="flex gap-2 p-6 bg-slate-50/30 border-t border-slate-100">
-              <button 
-                onClick={handleBulkDeactivate}
-                className="px-3 py-1.5 text-xs font-bold text-slate-600 bg-white border border-slate-200 rounded-lg hover:bg-slate-50 transition-all"
-              >
-                {t('common.bulkDeactivate')}
-              </button>
+              {filterStatus === 'active' && (
+                <button 
+                  onClick={handleBulkDeactivate}
+                  className="px-3 py-1.5 text-xs font-bold text-slate-600 bg-white border border-slate-200 rounded-lg hover:bg-slate-50 transition-all"
+                >
+                  {t('common.bulkDeactivate')}
+                </button>
+              )}
               <button 
                 onClick={handleExportCSV}
                 disabled={isExporting}
