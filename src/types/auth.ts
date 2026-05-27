@@ -7,6 +7,19 @@ export interface ForgotPasswordRequest {
   email: string;
 }
 
+export interface ChangePasswordRequest {
+  currentPassword: string;
+  newPassword: string;
+  confirmPassword: string;
+}
+
+export interface ChangePasswordResponse {
+  status: number;
+  message: string;
+  data: null;
+  timestamp: string;
+}
+
 export interface ForgotPasswordResponse {
   status: number;
   message: string;

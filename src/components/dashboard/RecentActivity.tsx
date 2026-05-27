@@ -81,11 +81,10 @@ const RecentActivity: React.FC = () => {
 
   return (
     <div id="ijax57" className="bg-white p-6 rounded-2xl border border-slate-100 tradingview-shadow w-full">
-      <div className="flex justify-between items-center mb-6 w-full">
+      <div className="mb-6 w-full">
         <h4 className="font-bold text-slate-800">{t('dashboard.recentActivity.title') || 'Recent Activity'}</h4>
-        <button className="text-primary text-xs font-bold hover:underline">{t('dashboard.recentActivity.viewAll') || 'View All'}</button>
       </div>
-      <div className="space-y-6">
+      <div className="space-y-6 max-h-80 overflow-y-auto pr-2">
         {activitiesData?.data.map((activity) => {
           const iconConfig = getActivityIcon(activity.type);
           return (

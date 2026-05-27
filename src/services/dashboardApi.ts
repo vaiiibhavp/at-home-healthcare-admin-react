@@ -63,6 +63,7 @@ export interface RecentActivityResponse {
     actionUrl: string;
   }>;
   timestamp: string;
+  total: number;
 }
 
 export interface ExportResponse {
@@ -129,8 +130,8 @@ export const dashboardApi = createApi({
       query: () => '/admin/dashboard/requests-by-status',
       providesTags: ['Dashboard'],
     }),
-    getRecentActivity: builder.query<RecentActivityResponse, { size?: number }>({
-      query: ({ size = 10 }) => `/admin/dashboard/recent-activity?size=${size}`,
+    getRecentActivity: builder.query<RecentActivityResponse, { size?: number; page?: number }>({
+      query: ({ size = 10, page = 0 }) => `/admin/dashboard/recent-activity?size=${size}&page=${page}`,
       providesTags: ['Dashboard'],
     }),
     exportDashboard: builder.query<ExportResponse, void>({

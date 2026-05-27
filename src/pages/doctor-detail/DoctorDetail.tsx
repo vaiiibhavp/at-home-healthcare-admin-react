@@ -16,6 +16,9 @@ const DoctorDetail: React.FC<DoctorDetailProps> = ({ isApproved: propIsApproved 
   const [searchParams] = useSearchParams();
   const { id: doctorId } = useParams<{ id: string }>();
   
+  // Store the original approved parameter from URL for back navigation
+  const originalApprovedParam = searchParams.get('approved') === 'true';
+  
   // Fetch doctor details - only call API if doctorId exists
   const { data: doctorData, isLoading, error } = useGetDoctorDetailsQuery(doctorId || '', {
     skip: !doctorId
@@ -31,7 +34,8 @@ const DoctorDetail: React.FC<DoctorDetailProps> = ({ isApproved: propIsApproved 
   // Internal notes mutation
   const [updateInternalNotes] = useUpdateInternalNotesMutation();
   
-  const isApproved = doctor?.status === 'approved' || propIsApproved || searchParams.get('approved') === 'true';
+  const isApproved = doctor?.status === 'approved' || propIsApproved || originalApprovedParam;
+  const isInactive = doctor?.status === 'inactive';
 
   const [modalState, setModalState] = useState({
     isOpen: false,
@@ -109,7 +113,7 @@ const DoctorDetail: React.FC<DoctorDetailProps> = ({ isApproved: propIsApproved 
           <div className="flex items-center justify-center h-full">
             <div className="text-center">
               <p className="text-red-600 mb-4">{t('doctors.noDoctorId')}</p>
-              <Link to="/doctors" className="text-primary hover:underline">
+              <Link to={`/doctors?approved=${searchParams.get('approved') === 'true'}`} className="text-primary hover:underline">
                 {t('doctors.backToDoctorsList')}
               </Link>
             </div>
@@ -139,8 +143,10 @@ const DoctorDetail: React.FC<DoctorDetailProps> = ({ isApproved: propIsApproved 
         <main className="flex-1 flex flex-col min-w-0 bg-slate-50 overflow-y-auto">
           <div className="flex items-center justify-center h-full">
             <div className="text-center">
-              <p className="text-red-600 mb-4">{t('doctors.errorLoading') || 'Error loading doctor details'}</p>
-              <Link to="/doctors" className="text-primary hover:underline">
+              <p className="text-red-600 mb-4">
+                {/* {t('doctors.errorLoading') || 'Error loading doctor details'} */}
+                </p>  
+              <Link to={`/doctors?approved=${searchParams.get('approved') === 'true'}`} className="text-primary hover:underline">
                 {t('doctors.backToDoctorsList')}
               </Link>
             </div>
@@ -158,7 +164,7 @@ const DoctorDetail: React.FC<DoctorDetailProps> = ({ isApproved: propIsApproved 
           <div className="flex items-center justify-center h-full">
             <div className="text-center">
               <p className="text-red-600 mb-4">{t('doctors.doctorDataNotFound')}</p>
-              <Link to="/doctors" className="text-primary hover:underline">
+              <Link to={`/doctors?approved=${searchParams.get('approved') === 'true'}`} className="text-primary hover:underline">
                 {t('doctors.backToDoctorsList')}
               </Link>
             </div>
@@ -227,7 +233,7 @@ const DoctorDetail: React.FC<DoctorDetailProps> = ({ isApproved: propIsApproved 
         {/* Header */}
         <header className="h-16 bg-white border-b border-slate-200 flex items-center justify-between px-8 sticky top-0 z-20 pt-10 pb-10">
           <div className="flex items-center gap-4">
-            <Link to="/doctors" className="inline-block">
+            <Link to={`/doctors?approved=${originalApprovedParam}`} className="inline-block">
               <button 
                 className="text-slate-400 hover:text-primary transition-colors"
               >
@@ -240,10 +246,16 @@ const DoctorDetail: React.FC<DoctorDetailProps> = ({ isApproved: propIsApproved 
             <div className={`flex items-center gap-2 px-3 py-1 rounded-full text-xs font-bold ${
               isApproved 
                 ? 'bg-emerald-50 text-emerald-700 border border-emerald-100' 
+                : isInactive
+                ? 'bg-slate-50 text-slate-700 border border-slate-100'
                 : 'bg-amber-50 text-amber-700 border border-amber-100'
             }`}>
-              <i className={`fa-solid ${isApproved ? 'fa-check' : 'fa-clock'}`}></i> 
-              {isApproved ? t('doctors.approved') : t('doctors.pendingApproval')}
+              <i className={`fa-solid ${
+                isApproved ? 'fa-check' : 
+                isInactive ? 'fa-pause' : 
+                'fa-clock'
+              }`}></i> 
+              {isApproved ? t('doctors.approved') : isInactive ? 'Inactive' : t('doctors.pendingApproval')}
             </div>
           </div>
         </header>
@@ -334,7 +346,7 @@ const DoctorDetail: React.FC<DoctorDetailProps> = ({ isApproved: propIsApproved 
           {/* Right Column: Approval Panel */}
           <section className="lg:w-1/3 space-y-6">
             {/* Action Card - Only show for pending approval */}
-            {!isApproved && (
+            {!isApproved && !isInactive && (
               <div className="bg-white rounded-2xl border border-slate-200 tradingview-shadow p-6">
                 <h3 className="text-lg font-bold text-slate-900 mb-4">{t('doctors.verificationStatus')}</h3>
                 
@@ -372,11 +384,13 @@ const DoctorDetail: React.FC<DoctorDetailProps> = ({ isApproved: propIsApproved 
                         <div className={`absolute left-0 top-0 w-8 h-8 ${
                           doctor?.status === 'pendingApproval' ? 'bg-amber-100 text-amber-600' :
                           doctor?.status === 'approved' || doctor?.status === 'rejected' ? 'bg-emerald-100 text-emerald-600' :
+                          doctor?.status === 'inactive' ? 'bg-slate-100 text-slate-600' :
                           'bg-slate-100 text-slate-600'
                         } rounded-full flex items-center justify-center z-10 p-2.5 m-0 gap-1.5`}>
                           <i className={`fa-solid ${
                             doctor?.status === 'pendingApproval' ? 'fa-clock' :
                             doctor?.status === 'approved' || doctor?.status === 'rejected' ? 'fa-check' :
+                            doctor?.status === 'inactive' ? 'fa-pause' :
                             'fa-circle text-xs'
                           } text-xs`}></i>
                         </div>
@@ -388,6 +402,8 @@ const DoctorDetail: React.FC<DoctorDetailProps> = ({ isApproved: propIsApproved 
                             ? 'approved'
                             : doctor?.status === 'rejected'
                             ? 'rejected'
+                            : doctor?.status === 'inactive'
+                            ? 'inactive'
                             : t('doctors.steps.adminReviewStatus')
                           }
                         </p>
@@ -397,11 +413,13 @@ const DoctorDetail: React.FC<DoctorDetailProps> = ({ isApproved: propIsApproved 
                         <div className={`absolute left-0 top-0 w-8 h-8 ${
                           doctor?.status === 'approved' ? 'bg-emerald-100 text-emerald-600' :
                           doctor?.status === 'rejected' ? 'bg-red-100 text-red-600' :
+                          doctor?.status === 'inactive' ? 'bg-slate-100 text-slate-600' :
                           'bg-slate-100 text-slate-600'
                         } rounded-full flex items-center justify-center z-10 p-2.5 m-0 gap-1.5`}>
                           <i className={`fa-solid ${
                             doctor?.status === 'approved' ? 'fa-check' :
                             doctor?.status === 'rejected' ? 'fa-times' :
+                            doctor?.status === 'inactive' ? 'fa-pause' :
                             'fa-circle text-xs'
                           } text-xs`}></i>
                         </div>
@@ -411,6 +429,8 @@ const DoctorDetail: React.FC<DoctorDetailProps> = ({ isApproved: propIsApproved 
                             ? 'Verified'
                             : doctor?.status === 'rejected'
                             ? 'Not verified'
+                            : doctor?.status === 'inactive'
+                            ? 'Inactive'
                             : 'Pending admin approval'
                           }
                         </p>
@@ -472,10 +492,16 @@ const DoctorDetail: React.FC<DoctorDetailProps> = ({ isApproved: propIsApproved 
 
         {modalState.type === 'reject' && (
           <div className={`fixed inset-0 z-50 flex items-center justify-center p-4 ${modalState.isOpen ? '' : 'hidden'}`} style={{ backgroundColor: 'rgba(15, 23, 42, 0.5)', backdropFilter: 'blur(4px)' }}>
-            <div className="bg-white w-full max-w-md rounded-2xl tradingview-shadow overflow-hidden">
+            <div className="bg-white w-full max-w-md rounded-2xl tradingview-shadow overflow-hidden" onClick={(e) => e.stopPropagation()}>
               <div className="p-6 border-b border-slate-100 flex justify-between items-center">
                 <h3 className="text-lg font-bold text-slate-900">Reject Application</h3>
-                <button onClick={hideModal} className="text-slate-400 hover:text-slate-600">
+                <button 
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    hideModal();
+                  }} 
+                  className="text-slate-400 hover:text-slate-600"
+                >
                   <i className="fa-solid fa-xmark"></i>
                 </button>
               </div>
@@ -504,10 +530,22 @@ const DoctorDetail: React.FC<DoctorDetailProps> = ({ isApproved: propIsApproved 
                 )}
               </div>
               <div className="p-6 bg-slate-50 border-t border-slate-100 flex justify-end gap-3">
-                <button onClick={hideModal} className="px-4 py-2 text-sm font-bold text-slate-600 hover:bg-slate-100 rounded-lg">
+                <button 
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    hideModal();
+                  }} 
+                  className="px-4 py-2 text-sm font-bold text-slate-600 hover:bg-slate-100 rounded-lg"
+                >
                   {t('doctors.cancel')}
                 </button>
-                <button onClick={validateReject} className="px-4 py-2 text-sm font-bold text-white bg-danger rounded-lg hover:bg-red-700">
+                <button 
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    validateReject();
+                  }} 
+                  className="px-4 py-2 text-sm font-bold text-white bg-danger rounded-lg hover:bg-red-700"
+                >
                   {t('doctors.confirmReject')}
                 </button>
               </div>

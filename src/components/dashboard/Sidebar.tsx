@@ -1,6 +1,7 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { NavLink } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
+import ChangePasswordModal from '../ChangePasswordModal';
 
 interface SidebarItem {
   icon: string;
@@ -10,6 +11,7 @@ interface SidebarItem {
 
 const Sidebar: React.FC = () => {
   const { t } = useTranslation();
+  const [isChangePasswordModalOpen, setIsChangePasswordModalOpen] = useState(false);
   
   const mainNavItems: SidebarItem[] = [
     { icon: 'fa-chart-pie', label: t('navigation.dashboard'), path: '/dashboard' },
@@ -20,9 +22,9 @@ const Sidebar: React.FC = () => {
     { icon: 'fa-clipboard-list', label: t('navigation.requests'), path: '/requests' }
   ];
 
-  const systemNavItems: SidebarItem[] = [
-    { icon: 'fa-gear', label: t('navigation.settings'), path: '/settings' }
-  ];
+  // const systemNavItems: SidebarItem[] = [
+  //   { icon: 'fa-gear', label: t('navigation.settings'), path: '/settings' }
+  // ];
 
   return (
     <aside className="w-64 bg-white border-r border-slate-200 flex flex-col flex-shrink-0">
@@ -53,8 +55,8 @@ const Sidebar: React.FC = () => {
           </NavLink>
         ))}
 
-        {/* System Section Divider */}
-        <div className="pt-4 pb-2">
+        {/* System Section Divider - Commented out */}
+        {/* <div className="pt-4 pb-2">
           <p className="px-4 text-[10px] font-bold text-slate-400 uppercase tracking-widest">
             System
           </p>
@@ -73,7 +75,7 @@ const Sidebar: React.FC = () => {
             <i className={`fa-solid ${item.icon} w-5`}></i>
             {item.label}
           </NavLink>
-        ))}
+        ))} */}
       </nav>
 
       {/* User Profile */}
@@ -89,6 +91,13 @@ const Sidebar: React.FC = () => {
             <p className="text-[10px] text-slate-500 truncate">Senior Admin</p>
           </div> */}
           <button 
+            onClick={() => setIsChangePasswordModalOpen(true)}
+            className="text-slate-400 hover:text-primary p-1"
+            title="Change Password"
+          >
+            <i className="fa-solid fa-key"></i>
+          </button>
+          <button 
             onClick={() => window.logout?.()} 
             className="text-slate-400 hover:text-danger p-1 auth-logout"
             title={t('auth.logout')}
@@ -97,6 +106,11 @@ const Sidebar: React.FC = () => {
           </button>
         </div>
       </div>
+
+      <ChangePasswordModal 
+        isOpen={isChangePasswordModalOpen} 
+        onClose={() => setIsChangePasswordModalOpen(false)} 
+      />
     </aside>
   );
 };
