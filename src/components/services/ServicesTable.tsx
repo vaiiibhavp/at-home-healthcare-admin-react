@@ -88,7 +88,7 @@ export const ServicesTable: React.FC<ServicesTableProps> = ({
       <div className="p-6 border-b border-slate-100 flex items-center justify-between bg-slate-50/30">
         <div className="flex items-center gap-4">
           <h2 className="text-sm font-bold text-slate-800">{t('services.allServices')}</h2>
-          <div className="flex gap-2">
+          {/* <div className="flex gap-2">
             <select 
               className="text-xs font-bold text-slate-500 bg-white border border-slate-200 rounded-lg px-3 py-1.5 focus:outline-none"
               value={filterStatus === 'all' ? t('services.allStatus') : t('services.mappedOnly')}
@@ -97,7 +97,7 @@ export const ServicesTable: React.FC<ServicesTableProps> = ({
               <option value={t('services.allStatus')}>{t('services.allStatus')}</option>
               <option value={t('services.mappedOnly')}>{t('services.mappedOnly')}</option>
             </select>
-          </div>
+          </div> */}
         </div>
         <div className="flex items-center gap-2">
           <button
