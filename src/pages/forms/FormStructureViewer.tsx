@@ -1972,7 +1972,7 @@ export const FormStructureViewer: React.FC<FormStructureViewerProps> = ({
               <p className="text-[11px] text-slate-500">{t('forms.structuredFieldPreview')}</p>
             </div>
           </div>
-          <div className="flex gap-2">
+          {/* <div className="flex gap-2">
             <button
               onClick={onMapService}
               className="px-4 py-2 text-xs font-bold text-white bg-blue-600 rounded-lg hover:bg-blue-700 transition-all shadow-sm border border-blue-700"
@@ -1980,7 +1980,7 @@ export const FormStructureViewer: React.FC<FormStructureViewerProps> = ({
             >
               <i className="fa-solid fa-link mr-1.5"></i> Assign Form
             </button>
-          </div>
+          </div> */}
         </div>
         <div className="flex-1 flex items-center justify-center text-slate-400">
           <div className="text-center">
@@ -2007,7 +2007,7 @@ export const FormStructureViewer: React.FC<FormStructureViewerProps> = ({
             <p className="text-[11px] text-slate-500">{t('forms.structuredFieldPreview')}</p>
           </div>
         </div>
-        <div className="flex gap-2">
+        {/* <div className="flex gap-2">
           <button
             onClick={onMapService}
             className="px-4 py-2 text-xs font-bold text-white bg-blue-600 rounded-lg hover:bg-blue-700 transition-all shadow-sm border border-blue-700"
@@ -2015,7 +2015,7 @@ export const FormStructureViewer: React.FC<FormStructureViewerProps> = ({
           >
             <i className="fa-solid fa-link mr-1.5"></i> {selectedService.formName ? 'Change Form' : 'Assign Form'}
           </button>
-        </div>
+        </div> */}
       </div>
       
       <div className="flex-1 overflow-y-auto p-8 bg-slate-50/30">
