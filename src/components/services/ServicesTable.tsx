@@ -132,9 +132,6 @@ export const ServicesTable: React.FC<ServicesTableProps> = ({
                 {t('services.description')}
               </th>
               <th className="px-6 py-4 text-[10px] font-bold text-slate-400 uppercase tracking-widest">
-                {t('services.formMapped')}
-              </th>
-              <th className="px-6 py-4 text-[10px] font-bold text-slate-400 uppercase tracking-widest">
                 {t('services.assignedProviders')}
               </th>
               <th className="px-6 py-4 text-[10px] font-bold text-slate-400 uppercase tracking-widest text-right">
@@ -155,19 +152,6 @@ export const ServicesTable: React.FC<ServicesTableProps> = ({
                 </td>
                 <td className="px-6 py-4">
                   <p className="text-xs text-slate-500 max-w-xs truncate">{service.description}</p>
-                </td>
-                <td className="px-6 py-4">
-                  {service.formMapping.status === 'Mapped' ? (
-                    <span className="inline-flex items-center gap-1.5 px-2.5 py-1 bg-emerald-50 text-emerald-700 rounded-full text-[10px] font-bold border border-emerald-100 uppercase tracking-wider">
-                      <i className="fa-solid fa-circle-check text-[8px]"></i>
-                      {t('common.yes')}
-                    </span>
-                  ) : (
-                    <span className="inline-flex items-center gap-1.5 px-2.5 py-1 bg-amber-50 text-amber-700 rounded-full text-[10px] font-bold border border-amber-100 uppercase tracking-wider">
-                      <i className="fa-solid fa-circle-exclamation text-[8px]"></i>
-                      {t('common.no')}
-                    </span>
-                  )}
                 </td>
                 <td className="px-6 py-4">
                   {service.assignedProviders && service.assignedProviders.length > 0 ? (
