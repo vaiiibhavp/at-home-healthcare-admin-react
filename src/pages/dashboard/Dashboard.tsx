@@ -57,10 +57,10 @@ const Dashboard: React.FC = () => {
     }
   };
 
-  return ( 
+  return (
     <div className="flex h-screen overflow-hidden">
       <Sidebar />
-      <main className="flex-1 flex flex-col min-w-0 bg-slate-50 overflow-y-auto">
+      <div className="flex-1 flex flex-col min-w-0 bg-slate-50">
         {/* Header */}
         <header className="h-16 bg-white border-b border-slate-200 flex items-center justify-between px-8 sticky top-0 z-10 pt-10 pb-10">
           <div className="flex-1"></div>
@@ -72,8 +72,9 @@ const Dashboard: React.FC = () => {
             <LanguageSwitcher />
           </div>
         </header>
-        
-        <div className="p-8 space-y-8">
+
+        <main className="flex-1 overflow-y-auto">
+          <div className="p-8 space-y-8">
           {/* Welcome Section */}
           <div className="flex justify-between items-end">
             <div>
@@ -106,7 +107,8 @@ const Dashboard: React.FC = () => {
           {/* Recent Activity */}
           <RecentActivity />
         </div>
-      </main>
+        </main>
+      </div>
     </div>
   );
 };
