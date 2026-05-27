@@ -12,7 +12,7 @@ const Charts: React.FC = () => {
   
   const lineData = requestsData ? [
     {
-      x: requestsData.data.map(item => item.day),
+      x: requestsData.data.map(item => item.date),
       y: requestsData.data.map(item => item.count),
       type: 'scatter' as const,
       mode: 'lines+markers' as const,
