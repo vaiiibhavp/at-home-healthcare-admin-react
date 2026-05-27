@@ -163,24 +163,11 @@ export const ServicesTable: React.FC<ServicesTableProps> = ({
                 </td>
                 <td className="px-6 py-4">
                   {service.assignedProviders && service.assignedProviders.length > 0 ? (
-                    <div className="flex -space-x-2">
-                      {service.assignedProviders.slice(0, 3).map((group, index) => (
-                        <div
-                          key={index}
-                          className="w-6 h-6 rounded-full border-2 border-white bg-slate-100 flex items-center justify-center text-[8px] font-bold text-slate-500"
-                          title={group.providers[0]?.name || 'Provider'}
-                        >
-                          {group.providers[0]?.name.charAt(0).toUpperCase() || 'P'}
-                        </div>
-                      ))}
-                      {service.assignedProviders.length > 3 && (
-                        <div className="w-6 h-6 rounded-full border-2 border-white bg-slate-100 flex items-center justify-center text-[8px] font-bold text-slate-500">
-                          +{service.assignedProviders.length - 3}
-                        </div>
-                      )}
-                    </div>
+                    <span className="text-xs font-semibold text-slate-700">
+                      {service.assignedProviders.reduce((total, group) => total + group.providers.length, 0)}
+                    </span>
                   ) : (
-                    <span className="text-xs text-slate-400">No providers</span>
+                    <span className="text-xs text-slate-400">0</span>
                   )}
                 </td>
                 <td className="px-6 py-4 text-right">
