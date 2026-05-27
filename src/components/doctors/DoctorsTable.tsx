@@ -251,9 +251,6 @@ const DoctorsTable = ({ doctors, loading = false, onApprove, onReject, onView, o
                 <th className="px-6 py-4 text-xs font-bold text-slate-500 uppercase tracking-wider">
                   Specialty
                 </th>
-                <th className="px-6 py-4 text-xs font-bold text-slate-500 uppercase tracking-wider">
-                  Status
-                </th>
                 <th className="px-6 py-4 text-xs font-bold text-slate-500 uppercase tracking-wider text-right">
                   Actions
                 </th>
@@ -274,7 +271,6 @@ const DoctorsTable = ({ doctors, loading = false, onApprove, onReject, onView, o
                   </td>
                   <td className="px-6 py-4 text-sm text-slate-600">{doctor.email}</td>
                   <td className="px-6 py-4 text-sm text-slate-600">{capitalizeFirst(doctor.specialty)}</td>
-                  <td className="px-6 py-4">{getStatusBadge(doctor.status)}</td>
                   <td className="px-6 py-4 text-right">
                     <div className="flex justify-end gap-2">
                       <button
