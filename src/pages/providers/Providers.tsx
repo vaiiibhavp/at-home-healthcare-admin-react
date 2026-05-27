@@ -6,6 +6,7 @@ import LanguageSwitcher from '../../components/LanguageSwitcher';
 import NotificationDropdown from '../../components/common/NotificationDropdown';
 import PaginationComponent from '../../components/ui/PaginationComponent';
 import { useGetProvidersQuery, useGetProviderByIdQuery, useDeactivateProviderMutation, useActivateProviderMutation, useBulkDeactivateProvidersMutation, useExportProvidersCSVMutation } from '../../services/providersApi';
+import { useGetServicesQuery } from '../../services/servicesApi';
 import { Provider as APIProvider } from '../../types/provider';
 
 // Local interface for UI compatibility
@@ -20,27 +21,13 @@ interface Provider {
   activeRequests: number;
 }
 
-// Service mapping from dropdown values to actual backend service names
-const SERVICE_VALUE_TO_NAME: Record<string, string> = {
-  'generic': 'Generic',
-  'wound-care': 'Wound Care',
-  'iv-therapy': 'IV Therapy',
-  'medical-oxygen': 'Medical Oxygen',
-  'artificial-nutrition': 'Artificial Nutrition',
-  'personal-hygiene-care': 'Personal Hygiene care',
-  'pca-pain-management': 'PCA(Pain management)',
-  'pregnancy-related-care': 'Pregnancy related care',
-  'parenteral-nutrition': 'Parenteral nutrition (central line)',
-  'cno': 'CNO',
-  'hydration-infusion': 'Hydration Infusion',
-  'antibiotherapy-infusion': 'Antibiothérapy infusion',
-};
 
 const Providers: React.FC = () => {
   const { t } = useTranslation();
   const [searchTerm, setSearchTerm] = useState('');
   const [filterStatus, setFilterStatus] = useState<'all' | 'active' | 'inactive'>('all');
   const [selectedService, setSelectedService] = useState('all');
+  const [isServiceDropdownOpen, setIsServiceDropdownOpen] = useState(false);
   const [showDeactivateModal, setShowDeactivateModal] = useState(false);
   const [selectedProviderForDeactivate, setSelectedProviderForDeactivate] = useState<string>('');
   const [showActivateModal, setShowActivateModal] = useState(false);
@@ -67,15 +54,23 @@ const Providers: React.FC = () => {
   const { data: providersData, isLoading, error, refetch } = useGetProvidersQuery({
     page: currentPage,
     size: itemsPerPage,
-    status: filterStatus === 'all' ? undefined : 
+    status: filterStatus === 'all' ? undefined :
             filterStatus === 'active' ? 'approved' : 'inactive',
     search: searchTerm || undefined,
-    service: selectedService === 'all' ? undefined : SERVICE_VALUE_TO_NAME[selectedService]
+    service: selectedService === 'all' ? undefined : selectedService
   });
 
   const { data: providerDetails, isLoading: isLoadingProvider } = useGetProviderByIdQuery(selectedProviderForView, {
     skip: !selectedProviderForView || !showViewModal
   });
+
+  const { data: servicesData } = useGetServicesQuery({});
+
+  // Create a map of service ID to service name
+  const serviceIdToNameMap = servicesData?.data?.services?.reduce((map: Record<string, string>, service: any) => {
+    map[service._id || service.id] = service.name || service.serviceName;
+    return map;
+  }, {}) || {};
 
   const [deactivateProvider, { isLoading: isDeactivating }] = useDeactivateProviderMutation();
   const [activateProvider, { isLoading: isActivating }] = useActivateProviderMutation();
@@ -330,10 +325,10 @@ const Providers: React.FC = () => {
   const totalPages = providersData?.data?.pagination?.totalPages || 1;
   
   // Client-side service filtering as fallback if API doesn't support it
-  const displayedProviders = selectedService === 'all' 
-    ? providers 
-    : providers.filter(provider => 
-        provider.services.includes(SERVICE_VALUE_TO_NAME[selectedService])
+  const displayedProviders = selectedService === 'all'
+    ? providers
+    : providers.filter(provider =>
+        provider.services.includes(selectedService)
       );
 
   // Pagination handlers
@@ -441,28 +436,50 @@ const Providers: React.FC = () => {
                   {t('common.inactive')}
                 </button>
               </div>
-              <select
-                value={selectedService}
-                onChange={(e) => {
-                  setSelectedService(e.target.value);
-                  handleFilterChange();
-                }}
-                className="bg-white border border-slate-200 rounded-xl px-4 py-2 text-xs font-bold text-slate-600 focus:outline-none shadow-sm"
-              >
-                <option value="all">{t('services.allServices')}</option>
-                <option value="generic">Generic</option>
-                <option value="wound-care">Wound Care</option>
-                <option value="iv-therapy">IV Therapy</option>
-                <option value="medical-oxygen">Medical Oxygen</option>
-                <option value="artificial-nutrition">Artificial Nutrition</option>
-                <option value="personal-hygiene-care">Personal Hygiene care</option>
-                <option value="pca-pain-management">PCA(Pain management)</option>
-                <option value="pregnancy-related-care">Pregnancy related care</option>
-                <option value="parenteral-nutrition">Parenteral nutrition (central line)</option>
-                <option value="cno">CNO</option>
-                <option value="hydration-infusion">Hydration Infusion</option>
-                <option value="antibiotherapy-infusion">Antibiothérapy infusion</option>
-              </select>
+              <div className="relative">
+                <button
+                  onClick={() => setIsServiceDropdownOpen(!isServiceDropdownOpen)}
+                  className="bg-white border border-slate-200 rounded-xl px-4 py-2 text-xs font-bold text-slate-600 focus:outline-none shadow-sm flex items-center justify-between w-48"
+                >
+                  <span className="truncate">
+                    {selectedService === 'all' ? t('services.allServices') : selectedService}
+                  </span>
+                    <span
+                      className={`ml-2 transition-transform duration-200 ${
+                        isServiceDropdownOpen ? 'rotate-180' : ''
+                      }`}
+                    >
+                      ▼
+                    </span>
+                </button>
+                {isServiceDropdownOpen && (
+                  <div className="absolute top-full left-0 right-0 mt-1 bg-white border border-slate-200 rounded-xl shadow-lg z-10 max-h-60 overflow-y-auto">
+                    <div
+                      onClick={() => {
+                        setSelectedService('all');
+                        setIsServiceDropdownOpen(false);
+                        handleFilterChange();
+                      }}
+                      className="px-4 py-2 text-xs font-bold text-slate-600 hover:bg-slate-50 cursor-pointer"
+                    >
+                      {t('services.allServices')}
+                    </div>
+                    {servicesData?.data?.services?.map((service: any) => (
+                      <div
+                        key={service._id || service.id}
+                        onClick={() => {
+                          setSelectedService(service.name || service.serviceName);
+                          setIsServiceDropdownOpen(false);
+                          handleFilterChange();
+                        }}
+                        className="px-4 py-2 text-xs font-bold text-slate-600 hover:bg-slate-50 cursor-pointer truncate"
+                      >
+                        {service.name || service.serviceName}
+                      </div>
+                    ))}
+                  </div>
+                )}
+              </div>
             </div>
           </section>
 
@@ -507,9 +524,6 @@ const Providers: React.FC = () => {
                     </th>
                     <th className="px-6 py-4 text-[10px] font-bold text-slate-400 uppercase tracking-widest">
                       Eligible services
-                    </th>
-                    <th className="px-6 py-4 text-[10px] font-bold text-slate-400 uppercase tracking-widest">
-                      Active requests
                     </th>
                     <th className="px-6 py-4 text-[10px] font-bold text-slate-400 uppercase tracking-widest">
                       {t('common.status')}
@@ -570,12 +584,6 @@ const Providers: React.FC = () => {
                                 +{provider.services.length - 2}
                               </span>
                             )}
-                          </div>
-                        </td>
-                        <td className="px-6 py-4">
-                          <div className="flex items-center gap-2">
-                            <span className="text-sm font-bold text-slate-900">{provider.activeRequests}</span>
-                            <span className="text-sm text-slate-500">requests</span>
                           </div>
                         </td>
                         <td className="px-6 py-4">
@@ -841,26 +849,7 @@ const Providers: React.FC = () => {
                         </div>
                       </div>
                     </div>
-                    <div className="space-y-4">
-                      <div className="flex items-center gap-3">
-                        <div className="w-8 h-8 bg-amber-50 rounded-lg flex items-center justify-center text-amber-600">
-                          <i className="fa-solid fa-clipboard-list text-sm"></i>
-                        </div>
-                        <div>
-                          <p className="text-xs text-slate-500">Active Requests</p>
-                          <p className="text-sm font-medium text-slate-900">{getTransformedProvider()?.activeRequests} requests</p>
-                        </div>
-                      </div>
-                      <div className="flex items-center gap-3">
-                        <div className="w-8 h-8 bg-slate-50 rounded-lg flex items-center justify-center text-slate-600">
-                          <i className="fa-solid fa-circle-info text-sm"></i>
-                        </div>
-                        <div>
-                          <p className="text-xs text-slate-500">Account Status</p>
-                          <p className="text-sm font-medium text-slate-900 capitalize">{getTransformedProvider()?.status}</p>
-                        </div>
-                      </div>
-                    </div>
+
                   </div>
 
                   {/* Services */}
@@ -872,7 +861,7 @@ const Providers: React.FC = () => {
                           key={index}
                           className="px-3 py-1.5 bg-primary/5 text-primary rounded-lg text-xs font-bold border border-primary/10"
                         >
-                          Service ID: {serviceId}
+                          {serviceIdToNameMap[serviceId] || serviceId}
                         </span>
                       ))}
                     </div>
