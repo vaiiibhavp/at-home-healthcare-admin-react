@@ -63,8 +63,8 @@ const RecentActivity: React.FC = () => {
   }
 
   if (error) {
-    const errorMessage = 'status' in error ? 
-      (error.data as { message?: string })?.message || 'Failed to load recent activity' :
+    const errorMessage = typeof error === 'object' && error !== null && 'status' in error ? 
+      (error as { data?: { message?: string } }).data?.message || 'Failed to load recent activity' :
       (error as { message?: string })?.message || 'An error occurred';
     
     return (
