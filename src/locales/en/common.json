@@ -6,7 +6,7 @@
     "providers": "Providers",
     "services": "Services",
     "requests": "Requests",
-    "forms": "Form Configuration",
+    "forms": "Form Templates",
     "notifications": "Notifications",
     "system": "System",
     "auditLogs": "Audit Logs",
@@ -279,7 +279,7 @@
     "formMappingInfo": "After saving, you can map a specific intake form to this service in the Forms Configuration section."
   },
   "forms": {
-    "title": "Form Configuration Hub",
+    "title": "Form Templates",
     "subtitle": "Map services to intake forms and review data structures.",
     "healthcareServices": "Healthcare Services",
     "total": "Total",
