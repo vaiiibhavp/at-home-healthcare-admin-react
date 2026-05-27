@@ -1,4 +1,5 @@
-import { createApi, fetchBaseQuery } from '@reduxjs/toolkit/query/react';
+import { createApi } from '@reduxjs/toolkit/query/react';
+import { baseQueryWithAuthNoBaseUrl } from '../utils/baseQuery';
 
 export interface NotificationMetadata {
   doctorId?: string;
@@ -84,16 +85,7 @@ export interface GetNotificationsParams {
 
 export const notificationsApi = createApi({
   reducerPath: 'notificationsApi',
-  baseQuery: fetchBaseQuery({
-    baseUrl: `${process.env.REACT_APP_API_BASE_URL || ''}`,
-    prepareHeaders: (headers) => {
-      const token = localStorage.getItem('authToken');
-      if (token) {
-        headers.set('authorization', `Bearer ${token}`);
-      }
-      return headers;
-    },
-  }),
+  baseQuery: baseQueryWithAuthNoBaseUrl,
   tagTypes: ['Notification'],
   endpoints: (builder) => ({
     getNotifications: builder.query<NotificationsResponse, GetNotificationsParams>({
