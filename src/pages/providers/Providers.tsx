@@ -21,21 +21,6 @@ interface Provider {
   activeRequests: number;
 }
 
-// Service mapping from dropdown values to actual backend service names
-const SERVICE_VALUE_TO_NAME: Record<string, string> = {
-  'generic': 'Generic',
-  'wound-care': 'Wound Care',
-  'iv-therapy': 'IV Therapy',
-  'medical-oxygen': 'Medical Oxygen',
-  'artificial-nutrition': 'Artificial Nutrition',
-  'personal-hygiene-care': 'Personal Hygiene care',
-  'pca-pain-management': 'PCA(Pain management)',
-  'pregnancy-related-care': 'Pregnancy related care',
-  'parenteral-nutrition': 'Parenteral nutrition (central line)',
-  'cno': 'CNO',
-  'hydration-infusion': 'Hydration Infusion',
-  'antibiotherapy-infusion': 'Antibiothérapy infusion',
-};
 
 const Providers: React.FC = () => {
   const { t } = useTranslation();
@@ -68,10 +53,10 @@ const Providers: React.FC = () => {
   const { data: providersData, isLoading, error, refetch } = useGetProvidersQuery({
     page: currentPage,
     size: itemsPerPage,
-    status: filterStatus === 'all' ? undefined : 
+    status: filterStatus === 'all' ? undefined :
             filterStatus === 'active' ? 'approved' : 'inactive',
     search: searchTerm || undefined,
-    service: selectedService === 'all' ? undefined : SERVICE_VALUE_TO_NAME[selectedService]
+    service: selectedService === 'all' ? undefined : selectedService
   });
 
   const { data: providerDetails, isLoading: isLoadingProvider } = useGetProviderByIdQuery(selectedProviderForView, {
@@ -339,10 +324,10 @@ const Providers: React.FC = () => {
   const totalPages = providersData?.data?.pagination?.totalPages || 1;
   
   // Client-side service filtering as fallback if API doesn't support it
-  const displayedProviders = selectedService === 'all' 
-    ? providers 
-    : providers.filter(provider => 
-        provider.services.includes(SERVICE_VALUE_TO_NAME[selectedService])
+  const displayedProviders = selectedService === 'all'
+    ? providers
+    : providers.filter(provider =>
+        provider.services.includes(selectedService)
       );
 
   // Pagination handlers
@@ -459,18 +444,11 @@ const Providers: React.FC = () => {
                 className="bg-white border border-slate-200 rounded-xl px-4 py-2 text-xs font-bold text-slate-600 focus:outline-none shadow-sm"
               >
                 <option value="all">{t('services.allServices')}</option>
-                <option value="generic">Generic</option>
-                <option value="wound-care">Wound Care</option>
-                <option value="iv-therapy">IV Therapy</option>
-                <option value="medical-oxygen">Medical Oxygen</option>
-                <option value="artificial-nutrition">Artificial Nutrition</option>
-                <option value="personal-hygiene-care">Personal Hygiene care</option>
-                <option value="pca-pain-management">PCA(Pain management)</option>
-                <option value="pregnancy-related-care">Pregnancy related care</option>
-                <option value="parenteral-nutrition">Parenteral nutrition (central line)</option>
-                <option value="cno">CNO</option>
-                <option value="hydration-infusion">Hydration Infusion</option>
-                <option value="antibiotherapy-infusion">Antibiothérapy infusion</option>
+                {servicesData?.data?.services?.map((service: any) => (
+                  <option key={service._id || service.id} value={service.name || service.serviceName}>
+                    {service.name || service.serviceName}
+                  </option>
+                ))}
               </select>
             </div>
           </section>
