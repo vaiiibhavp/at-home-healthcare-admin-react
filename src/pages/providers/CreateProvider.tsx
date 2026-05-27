@@ -505,25 +505,21 @@ const CreateProvider: React.FC = () => {
 
               {/* Service Suggestions */}
               <div className="grid grid-cols-2 md:grid-cols-3 gap-3">
-                {availableServices.slice(0, showAllServices ? availableServices.length : 5).map((service) => {
-                  const isSelected = formData.assignedServices.includes(service.id);
-                  return (
+                {availableServices
+                  .filter(service => !formData.assignedServices.includes(service.id))
+                  .slice(0, showAllServices ? availableServices.length : 5)
+                  .map((service) => (
                     <button
                       key={service.id}
                       onClick={() => handleAddService(service.id)}
-                      className={`flex items-center justify-between p-3 border rounded-xl transition-all text-left ${
-                        isSelected 
-                          ? 'border-primary/30 bg-primary/5 text-primary' 
-                          : 'border-slate-100 hover:border-primary/30 hover:bg-slate-50'
-                      }`}
+                      className="flex items-center justify-between p-3 border border-slate-100 hover:border-primary/30 hover:bg-slate-50 rounded-xl transition-all text-left"
                     >
-                      <span className={`text-xs font-medium ${isSelected ? 'text-primary font-bold' : 'text-slate-600'}`}>
+                      <span className="text-xs font-medium text-slate-600">
                         {service.name}
                       </span>
                       <i className="fa-solid fa-plus text-[10px] text-slate-300"></i>
                     </button>
-                  );
-                })}
+                  ))}
               </div>
             </div>
           </section>
