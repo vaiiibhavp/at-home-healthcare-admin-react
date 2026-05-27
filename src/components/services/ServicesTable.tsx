@@ -35,7 +35,7 @@ export const ServicesTable: React.FC<ServicesTableProps> = ({
 }) => {
   const { t } = useTranslation();
   const navigate = useNavigate();
-  const [filterStatus, setFilterStatus] = useState<'all' | 'mapped' | 'unmapped'>('all');
+  const [filterStatus, setFilterStatus] = useState<'all' | 'mapped'>('all');
   const [triggerDownload, { isFetching: isDownloading }] = useLazyDownloadServicesQuery();
 
   const handleDownload = async () => {
@@ -61,8 +61,6 @@ export const ServicesTable: React.FC<ServicesTableProps> = ({
     switch (filterStatus) {
       case 'mapped':
         return services.filter(service => service.formMapping.status === 'Mapped');
-      case 'unmapped':
-        return services.filter(service => service.formMapping.status === 'Unmapped');
       default:
         return services;
     }
@@ -72,8 +70,6 @@ export const ServicesTable: React.FC<ServicesTableProps> = ({
     const value = e.target.value;
     if (value === t('services.mappedOnly')) {
       setFilterStatus('mapped');
-    } else if (value === t('services.unmappedOnly')) {
-      setFilterStatus('unmapped');
     } else {
       setFilterStatus('all');
     }
@@ -86,12 +82,11 @@ export const ServicesTable: React.FC<ServicesTableProps> = ({
           <div className="flex gap-2">
             <select 
               className="text-xs font-bold text-slate-500 bg-white border border-slate-200 rounded-lg px-3 py-1.5 focus:outline-none"
-              value={filterStatus === 'all' ? t('services.allStatus') : filterStatus === 'mapped' ? t('services.mappedOnly') : t('services.unmappedOnly')}
+              value={filterStatus === 'all' ? t('services.allStatus') : t('services.mappedOnly')}
               onChange={handleFilterChange}
             >
               <option value={t('services.allStatus')}>{t('services.allStatus')}</option>
               <option value={t('services.mappedOnly')}>{t('services.mappedOnly')}</option>
-              <option value={t('services.unmappedOnly')}>{t('services.unmappedOnly')}</option>
             </select>
           </div>
         </div>
