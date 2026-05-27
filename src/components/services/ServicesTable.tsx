@@ -37,6 +37,7 @@ export const ServicesTable: React.FC<ServicesTableProps> = ({
   const navigate = useNavigate();
   const [filterStatus, setFilterStatus] = useState<'all' | 'mapped'>('all');
   const [triggerDownload, { isFetching: isDownloading }] = useLazyDownloadServicesQuery();
+  const [isRefreshing, setIsRefreshing] = useState(false);
 
   const handleDownload = async () => {
     try {
@@ -54,6 +55,14 @@ export const ServicesTable: React.FC<ServicesTableProps> = ({
     } catch (error) {
       console.error('Download failed:', error);
     }
+  };
+
+  const handleRefreshClick = async () => {
+    setIsRefreshing(true);
+    if (onRefresh) {
+      await onRefresh();
+    }
+    setTimeout(() => setIsRefreshing(false), 1000);
   };
 
   // Filter services based on selected status
@@ -91,12 +100,14 @@ export const ServicesTable: React.FC<ServicesTableProps> = ({
           </div>
         </div>
         <div className="flex items-center gap-2">
-          <button 
-            onClick={onRefresh}
-            className="p-2 text-slate-400 hover:text-primary hover:bg-white rounded-lg transition-all border border-transparent hover:border-slate-200"
+          <button
+            onClick={handleRefreshClick}
+            disabled={isRefreshing}
+            className="p-2 text-slate-400 hover:text-primary hover:bg-white rounded-lg transition-all border border-transparent hover:border-slate-200 disabled:opacity-50 disabled:cursor-not-allowed"
             title="Refresh"
           >
-            <i className="fa-solid fa-rotate"></i>
+            {!isRefreshing && <i className="fa-solid fa-rotate"></i>}
+            {isRefreshing && <i className="fa-solid fa-spinner fa-spin"></i>}
           </button>
           <button 
             onClick={handleDownload}
