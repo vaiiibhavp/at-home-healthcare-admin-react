@@ -100,8 +100,8 @@ const Charts: React.FC = () => {
 
   if (hasError) {
     const error = timeDataError || statusDataError;
-    const errorMessage = error && 'status' in error ? 
-      (error.data as { message?: string })?.message || 'Failed to load chart data' :
+    const errorMessage = error && typeof error === 'object' && error !== null && 'status' in error ? 
+      (error as { data?: { message?: string } }).data?.message || 'Failed to load chart data' :
       (error as { message?: string })?.message || 'An error occurred';
     
     return (

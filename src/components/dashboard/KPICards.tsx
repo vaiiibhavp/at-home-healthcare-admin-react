@@ -92,9 +92,9 @@ const KPICards: React.FC = () => {
   }
 
   if (error) {
-    const errorMessage = 'status' in error ? 
-      (error.data as { message?: string })?.message || 'Failed to load dashboard data' :
-      error.message || 'An error occurred';
+    const errorMessage = typeof error === 'object' && error !== null && 'status' in error ? 
+      (error as { data?: { message?: string } }).data?.message || 'Failed to load dashboard data' :
+      (error as { message?: string })?.message || 'An error occurred';
     
     return (
       <div className="flex justify-center items-center h-screen">
