@@ -1,4 +1,4 @@
-import React, { useState, useMemo } from 'react';
+import React, { useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useNavigate } from 'react-router-dom';
 import { Service, useLazyDownloadServicesQuery } from '../../services/servicesApi';
@@ -35,8 +35,8 @@ export const ServicesTable: React.FC<ServicesTableProps> = ({
 }) => {
   const { t } = useTranslation();
   const navigate = useNavigate();
-  const [filterStatus, setFilterStatus] = useState<'all' | 'mapped'>('all');
   const [triggerDownload, { isFetching: isDownloading }] = useLazyDownloadServicesQuery();
+  const [isRefreshing, setIsRefreshing] = useState(false);
 
   const handleDownload = async () => {
     try {
@@ -56,30 +56,20 @@ export const ServicesTable: React.FC<ServicesTableProps> = ({
     }
   };
 
-  // Filter services based on selected status
-  const filteredServices = useMemo(() => {
-    switch (filterStatus) {
-      case 'mapped':
-        return services.filter(service => service.formMapping.status === 'Mapped');
-      default:
-        return services;
+  const handleRefreshClick = async () => {
+    setIsRefreshing(true);
+    if (onRefresh) {
+      await onRefresh();
     }
-  }, [services, filterStatus]);
-
-  const handleFilterChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
-    const value = e.target.value;
-    if (value === t('services.mappedOnly')) {
-      setFilterStatus('mapped');
-    } else {
-      setFilterStatus('all');
-    }
+    setTimeout(() => setIsRefreshing(false), 1000);
   };
+
   return (
     <section className="bg-white rounded-2xl border border-slate-200 tradingview-shadow overflow-hidden">
       <div className="p-6 border-b border-slate-100 flex items-center justify-between bg-slate-50/30">
         <div className="flex items-center gap-4">
           <h2 className="text-sm font-bold text-slate-800">{t('services.allServices')}</h2>
-          <div className="flex gap-2">
+          {/* <div className="flex gap-2">
             <select 
               className="text-xs font-bold text-slate-500 bg-white border border-slate-200 rounded-lg px-3 py-1.5 focus:outline-none"
               value={filterStatus === 'all' ? t('services.allStatus') : t('services.mappedOnly')}
@@ -88,15 +78,17 @@ export const ServicesTable: React.FC<ServicesTableProps> = ({
               <option value={t('services.allStatus')}>{t('services.allStatus')}</option>
               <option value={t('services.mappedOnly')}>{t('services.mappedOnly')}</option>
             </select>
-          </div>
+          </div> */}
         </div>
         <div className="flex items-center gap-2">
-          <button 
-            onClick={onRefresh}
-            className="p-2 text-slate-400 hover:text-primary hover:bg-white rounded-lg transition-all border border-transparent hover:border-slate-200"
+          <button
+            onClick={handleRefreshClick}
+            disabled={isRefreshing}
+            className="p-2 text-slate-400 hover:text-primary hover:bg-white rounded-lg transition-all border border-transparent hover:border-slate-200 disabled:opacity-50 disabled:cursor-not-allowed"
             title="Refresh"
           >
-            <i className="fa-solid fa-rotate"></i>
+            {!isRefreshing && <i className="fa-solid fa-rotate"></i>}
+            {isRefreshing && <i className="fa-solid fa-spinner fa-spin"></i>}
           </button>
           <button 
             onClick={handleDownload}
@@ -104,11 +96,8 @@ export const ServicesTable: React.FC<ServicesTableProps> = ({
             className="p-2 text-slate-400 hover:text-primary hover:bg-white rounded-lg transition-all border border-transparent hover:border-slate-200 disabled:opacity-50 disabled:cursor-not-allowed"
             title="Download"
           >
-            {isDownloading ? (
-              <i className="fa-solid fa-spinner fa-spin"></i>
-            ) : (
-              <i className="fa-solid fa-download"></i>
-            )}
+            {!isDownloading && <i className="fa-solid fa-download"></i>}
+            {isDownloading && <i className="fa-solid fa-spinner fa-spin"></i>}
           </button>
         </div>
       </div>
@@ -124,9 +113,6 @@ export const ServicesTable: React.FC<ServicesTableProps> = ({
                 {t('services.description')}
               </th>
               <th className="px-6 py-4 text-[10px] font-bold text-slate-400 uppercase tracking-widest">
-                {t('services.formMapped')}
-              </th>
-              <th className="px-6 py-4 text-[10px] font-bold text-slate-400 uppercase tracking-widest">
                 {t('services.assignedProviders')}
               </th>
               <th className="px-6 py-4 text-[10px] font-bold text-slate-400 uppercase tracking-widest text-right">
@@ -135,7 +121,7 @@ export const ServicesTable: React.FC<ServicesTableProps> = ({
             </tr>
           </thead>
           <tbody className="divide-y divide-slate-50">
-            {filteredServices.map((service) => (
+            {services.map((service) => (
               <tr key={service.id} className="hover:bg-slate-50/80 transition-colors group">
                 <td className="px-6 py-4">
                   <div className="flex items-center gap-3">
@@ -147,19 +133,6 @@ export const ServicesTable: React.FC<ServicesTableProps> = ({
                 </td>
                 <td className="px-6 py-4">
                   <p className="text-xs text-slate-500 max-w-xs truncate">{service.description}</p>
-                </td>
-                <td className="px-6 py-4">
-                  {service.formMapping.status === 'Mapped' ? (
-                    <span className="inline-flex items-center gap-1.5 px-2.5 py-1 bg-emerald-50 text-emerald-700 rounded-full text-[10px] font-bold border border-emerald-100 uppercase tracking-wider">
-                      <i className="fa-solid fa-circle-check text-[8px]"></i>
-                      {t('common.yes')}
-                    </span>
-                  ) : (
-                    <span className="inline-flex items-center gap-1.5 px-2.5 py-1 bg-amber-50 text-amber-700 rounded-full text-[10px] font-bold border border-amber-100 uppercase tracking-wider">
-                      <i className="fa-solid fa-circle-exclamation text-[8px]"></i>
-                      {t('common.no')}
-                    </span>
-                  )}
                 </td>
                 <td className="px-6 py-4">
                   {service.assignedProviders && service.assignedProviders.length > 0 ? (
