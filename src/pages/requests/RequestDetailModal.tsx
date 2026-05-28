@@ -24,6 +24,71 @@ export const RequestDetailModal: React.FC<RequestDetailModalProps> = ({
   const [toastMessage, setToastMessage] = useState('');
   const [auditLogs, setAuditLogs] = useState<any[]>([]);
   const [loadingAuditLogs, setLoadingAuditLogs] = useState(false);
+  const [pdfBlobUrl, setPdfBlobUrl] = useState<string | null>(null);
+  const [loadingPdf, setLoadingPdf] = useState(false);
+
+  // Fetch signed PDF with auth headers and create blob URL
+  React.useEffect(() => {
+    const fetchPdf = async () => {
+      if (!request || request.formStatus?.toLowerCase() !== 'signed' || !request.signedPdfUrl) {
+        setPdfBlobUrl(null);
+        return;
+      }
+
+      setLoadingPdf(true);
+      try {
+        const token = localStorage.getItem('authToken');
+        const response = await fetch(
+          `${process.env.REACT_APP_API_BASE_URL}/${request.signedPdfUrl}`,
+          {
+            headers: token ? { Authorization: `Bearer ${token}` } : undefined
+          }
+        );
+        if (!response.ok) throw new Error('Failed to fetch PDF');
+        const blob = await response.blob();
+        const url = URL.createObjectURL(blob);
+        setPdfBlobUrl(url);
+      } catch (error) {
+        console.error('Error fetching signed PDF:', error);
+        setPdfBlobUrl(null);
+      } finally {
+        setLoadingPdf(false);
+      }
+    };
+
+    fetchPdf();
+
+    return () => {
+      if (pdfBlobUrl) {
+        URL.revokeObjectURL(pdfBlobUrl);
+      }
+    };
+  }, [request?.id, request?.signedPdfUrl, request?.formStatus]);
+
+  const handleExportPdf = async () => {
+    if (!request?.signedPdfUrl) return;
+    try {
+      const token = localStorage.getItem('authToken');
+      const response = await fetch(
+        `${process.env.REACT_APP_API_BASE_URL}/${request.signedPdfUrl}`,
+        {
+          headers: token ? { Authorization: `Bearer ${token}` } : undefined
+        }
+      );
+      if (!response.ok) throw new Error('Failed to fetch PDF');
+      const blob = await response.blob();
+      const url = URL.createObjectURL(blob);
+      const link = document.createElement('a');
+      link.href = url;
+      link.download = `${request.requestId || 'request'}.pdf`;
+      document.body.appendChild(link);
+      link.click();
+      document.body.removeChild(link);
+      URL.revokeObjectURL(url);
+    } catch (error) {
+      console.error('Error exporting PDF:', error);
+    }
+  };
 
   const handleZoom = () => {
     setZoomLevel((prev) => (prev >= 1.5 ? 1 : prev + 0.25));
@@ -148,8 +213,11 @@ export const RequestDetailModal: React.FC<RequestDetailModalProps> = ({
                 </div>
               </div>
               <div className="flex items-center gap-3">
-                {request.status === 'completed' && (
-                  <button className="px-4 py-2 bg-white border border-slate-200 rounded-xl text-sm font-bold text-slate-600 hover:bg-slate-50 flex items-center gap-2">
+                {(request.status === 'completed' || request.formStatus?.toLowerCase() === 'signed') && (
+                  <button
+                    onClick={handleExportPdf}
+                    className="px-4 py-2 bg-white border border-slate-200 rounded-xl text-sm font-bold text-slate-600 hover:bg-slate-50 flex items-center gap-2"
+                  >
                     <i className="fa-solid fa-file-pdf text-danger"></i> Export PDF
                   </button>
                 )}
@@ -274,16 +342,16 @@ export const RequestDetailModal: React.FC<RequestDetailModalProps> = ({
                     <div className="flex items-center gap-2">
                       <span className="text-[10px] font-bold text-slate-400 uppercase">Form Status:</span>
                       <span className={`px-2 py-1 text-[10px] font-bold rounded-lg ${
-                        request.formStatus === 'signed' ? 'bg-emerald-50 text-emerald-600 border border-emerald-200' :
-                        request.formStatus === 'awaitingSignature' ? 'bg-blue-50 text-blue-600 border border-blue-200' :
-                        request.formStatus === 'submitted' ? 'bg-amber-50 text-amber-600 border border-amber-200' :
-                        request.formStatus === 'draft' ? 'bg-gray-50 text-gray-600 border border-gray-200' :
+                        request.formStatus?.toLowerCase() === 'signed' ? 'bg-emerald-50 text-emerald-600 border border-emerald-200' :
+                        request.formStatus?.toLowerCase() === 'awaitingsignature' ? 'bg-blue-50 text-blue-600 border border-blue-200' :
+                        request.formStatus?.toLowerCase() === 'submitted' ? 'bg-amber-50 text-amber-600 border border-amber-200' :
+                        request.formStatus?.toLowerCase() === 'draft' ? 'bg-gray-50 text-gray-600 border border-gray-200' :
                         'bg-slate-50 text-slate-600 border border-slate-200'
                       }`}>
-                        {request.formStatus === 'signed' ? 'SIGNED' :
-                         request.formStatus === 'awaitingSignature' ? 'AWAITING SIGNATURE' :
-                         request.formStatus === 'submitted' ? 'SUBMITTED' :
-                         request.formStatus === 'draft' ? 'DRAFT' : (request.formStatus || 'Unknown')}
+                        {request.formStatus?.toLowerCase() === 'signed' ? 'SIGNED' :
+                         request.formStatus?.toLowerCase() === 'awaitingsignature' ? 'AWAITING SIGNATURE' :
+                         request.formStatus?.toLowerCase() === 'submitted' ? 'SUBMITTED' :
+                         request.formStatus?.toLowerCase() === 'draft' ? 'DRAFT' : (request.formStatus || 'Unknown')}
                       </span>
                     </div>
                     <div className="flex items-center gap-3 text-[10px] text-slate-500">
@@ -300,68 +368,87 @@ export const RequestDetailModal: React.FC<RequestDetailModalProps> = ({
                   </div>
                 </div>
                 <div className="p-8 bg-slate-100/30 flex-1 min-h-[500px] overflow-auto">
-                  <div className="max-w-2xl mx-auto bg-white border border-slate-200 p-10 shadow-sm space-y-8 transition-transform origin-top" style={{ transform: `scale(${zoomLevel})` }}>
-                    <div className="flex justify-between items-start border-b pb-6">
-                      <div>
-                        <h2 className="text-xl font-bold text-slate-900">MEDICAL PRESCRIPTION</h2>
-                        <p className="text-xs text-slate-500">ID: {request.requestId || 'N/A'}</p>
+                  {request.formStatus?.toLowerCase() === 'signed' && request.signedPdfUrl ? (
+                    loadingPdf ? (
+                      <div className="flex items-center justify-center h-full min-h-[500px]">
+                        <i className="fa-solid fa-spinner fa-spin text-primary text-xl mr-3"></i>
+                        <span className="text-sm text-slate-600">Loading PDF...</span>
                       </div>
-                      <div className="text-right">
-                        <p className="text-xs font-bold text-slate-800">At-Home Healthcare</p>
-                        <p className="text-[10px] text-slate-500">Digital Health Network</p>
+                    ) : pdfBlobUrl ? (
+                      <iframe
+                        src={`${pdfBlobUrl}#toolbar=0&zoom=page-fit`}
+                        title="Signed Form PDF"
+                        className="w-full h-full min-h-[600px] border border-slate-200 rounded-lg bg-white"
+                      />
+                    ) : (
+                      <div className="flex items-center justify-center h-full min-h-[500px]">
+                        <span className="text-sm text-slate-500">Failed to load PDF</span>
                       </div>
-                    </div>
-                    <div className="grid grid-cols-2 gap-8 text-xs">
-                      <div>
-                        <p className="font-bold text-slate-400 uppercase mb-2">Patient</p>
-                        <p className="text-slate-900 font-medium">{request.patientName || request.patient || 'Unknown Patient'}</p>
-                        <p className="text-slate-500 mt-1">DOB: {request.patientId?.dateOfBirth ? new Date(request.patientId.dateOfBirth).toLocaleDateString('en-US', { 
-                          month: '2-digit', 
-                          day: '2-digit', 
-                          year: 'numeric'
-                        }) : 'Not Available'}</p>
+                    )
+                  ) : (
+                    <div className="max-w-2xl mx-auto bg-white border border-slate-200 p-10 shadow-sm space-y-8 transition-transform origin-top" style={{ transform: `scale(${zoomLevel})` }}>
+                      <div className="flex justify-between items-start border-b pb-6">
+                        <div>
+                          <h2 className="text-xl font-bold text-slate-900">MEDICAL PRESCRIPTION</h2>
+                          <p className="text-xs text-slate-500">ID: {request.requestId || 'N/A'}</p>
+                        </div>
+                        <div className="text-right">
+                          <p className="text-xs font-bold text-slate-800">At-Home Healthcare</p>
+                          <p className="text-[10px] text-slate-500">Digital Health Network</p>
+                        </div>
                       </div>
-                      <div>
-                        <p className="font-bold text-slate-400 uppercase mb-2">Prescriber</p>
-                        <p className="text-slate-900 font-medium capitalize">{request.doctorName || request.doctor?.name || 'Unknown Doctor'}</p>
-                        <p className="text-slate-500 mt-1">License: #{request.doctorId?.rppsNumber || 'N/A'}</p>
+                      <div className="grid grid-cols-2 gap-8 text-xs">
+                        <div>
+                          <p className="font-bold text-slate-400 uppercase mb-2">Patient</p>
+                          <p className="text-slate-900 font-medium">{request.patientName || request.patient || 'Unknown Patient'}</p>
+                          <p className="text-slate-500 mt-1">DOB: {request.patientId?.dateOfBirth ? new Date(request.patientId.dateOfBirth).toLocaleDateString('en-US', { 
+                            month: '2-digit', 
+                            day: '2-digit', 
+                            year: 'numeric'
+                          }) : 'Not Available'}</p>
+                        </div>
+                        <div>
+                          <p className="font-bold text-slate-400 uppercase mb-2">Prescriber</p>
+                          <p className="text-slate-900 font-medium capitalize">{request.doctorName || request.doctor?.name || 'Unknown Doctor'}</p>
+                          <p className="text-slate-500 mt-1">License: #{request.doctorId?.rppsNumber || 'N/A'}</p>
+                        </div>
                       </div>
-                    </div>
-                    <div className="space-y-4">
-                      <p className="text-xs font-bold text-slate-400 uppercase">Analysis Requested</p>
-                      <div className="p-4 bg-slate-50 rounded-lg">
-                        <div className="flex items-start gap-3">
-                          <div className="w-4 h-4 rounded border-2 border-primary flex items-center justify-center mt-0.5">
-                            <i className="fa-solid fa-file-medical text-[10px] text-primary"></i>
-                          </div>
-                          <div className="flex-1">
-                            <p className="text-xs text-slate-800 font-medium leading-relaxed">
-                              {request.patientId?.medicalDescription || 'No medical description available'}
-                            </p>
+                      <div className="space-y-4">
+                        <p className="text-xs font-bold text-slate-400 uppercase">Analysis Requested</p>
+                        <div className="p-4 bg-slate-50 rounded-lg">
+                          <div className="flex items-start gap-3">
+                            <div className="w-4 h-4 rounded border-2 border-primary flex items-center justify-center mt-0.5">
+                              <i className="fa-solid fa-file-medical text-[10px] text-primary"></i>
+                            </div>
+                            <div className="flex-1">
+                              <p className="text-xs text-slate-800 font-medium leading-relaxed">
+                                {request.patientId?.medicalDescription || 'No medical description available'}
+                              </p>
+                            </div>
                           </div>
                         </div>
                       </div>
-                    </div>
-                    <div className="pt-8 flex justify-end">
-                      <div className="text-center">
-                        <div className="w-48 h-12 border-b-2 border-slate-200 flex items-center justify-center italic text-primary font-serif capitalize">
-                          {request.doctorName || request.doctor?.name || 'Unknown Doctor'}
+                      <div className="pt-8 flex justify-end">
+                        <div className="text-center">
+                          <div className="w-48 h-12 border-b-2 border-slate-200 flex items-center justify-center italic text-primary font-serif capitalize">
+                            {request.doctorName || request.doctor?.name || 'Unknown Doctor'}
+                          </div>
+                          <p className="text-[10px] text-slate-400 mt-2">
+                            {request.digitalSignature?.signedAt 
+                              ? `Digitally Signed on ${new Date(request.digitalSignature.signedAt).toLocaleDateString('en-US', { 
+                                  month: '2-digit', 
+                                  day: '2-digit', 
+                                  year: 'numeric'
+                                })}` 
+                              : request.status === 'completed' 
+                                ? 'Digitally Signed'
+                                : 'Awaiting Signature'
+                            }
+                          </p>
                         </div>
-                        <p className="text-[10px] text-slate-400 mt-2">
-                          {request.digitalSignature?.signedAt 
-                            ? `Digitally Signed on ${new Date(request.digitalSignature.signedAt).toLocaleDateString('en-US', { 
-                                month: '2-digit', 
-                                day: '2-digit', 
-                                year: 'numeric'
-                              })}` 
-                            : request.status === 'completed' 
-                              ? 'Digitally Signed'
-                              : 'Awaiting Signature'
-                          }
-                        </p>
                       </div>
                     </div>
-                  </div>
+                  )}
                 </div>
               </div>
 
@@ -661,59 +748,78 @@ export const RequestDetailModal: React.FC<RequestDetailModalProps> = ({
               </button>
             </div>
             <div className="flex-1 overflow-y-auto p-8 bg-slate-100/30">
-              <div className="max-w-2xl mx-auto bg-white border border-slate-200 p-10 shadow-sm space-y-8">
-                <div className="flex justify-between items-start border-b pb-6">
-                  <div>
-                    <h2 className="text-xl font-bold text-slate-900">MEDICAL PRESCRIPTION</h2>
-                    <p className="text-xs text-slate-500">ID: {request.requestId || 'N/A'}</p>
+              {request.formStatus?.toLowerCase() === 'signed' && request.signedPdfUrl ? (
+                loadingPdf ? (
+                  <div className="flex items-center justify-center h-full min-h-[500px]">
+                    <i className="fa-solid fa-spinner fa-spin text-primary text-xl mr-3"></i>
+                    <span className="text-sm text-slate-600">Loading PDF...</span>
                   </div>
-                  <div className="text-right">
-                    <p className="text-xs font-bold text-slate-800">At-Home Healthcare</p>
-                    <p className="text-[10px] text-slate-500">Digital Health Network</p>
+                ) : pdfBlobUrl ? (
+                  <iframe
+                    src={`${pdfBlobUrl}#toolbar=0&zoom=page-fit`}
+                    title="Signed Form PDF"
+                    className="w-full h-full min-h-[600px] border border-slate-200 rounded-lg bg-white"
+                  />
+                ) : (
+                  <div className="flex items-center justify-center h-full min-h-[500px]">
+                    <span className="text-sm text-slate-500">Failed to load PDF</span>
                   </div>
-                </div>
-                <div className="grid grid-cols-2 gap-8 text-xs">
-                  <div>
-                    <p className="font-bold text-slate-400 uppercase mb-2">Patient</p>
-                    <p className="text-slate-900 font-medium">{request.patientName || request.patient || 'Unknown Patient'}</p>
-                    <p className="text-slate-500 mt-1">DOB: {request.patientId?.dateOfBirth ? new Date(request.patientId.dateOfBirth).toLocaleDateString('en-US', { month: '2-digit', day: '2-digit', year: 'numeric' }) : 'Not Available'}</p>
+                )
+              ) : (
+                <div className="max-w-2xl mx-auto bg-white border border-slate-200 p-10 shadow-sm space-y-8">
+                  <div className="flex justify-between items-start border-b pb-6">
+                    <div>
+                      <h2 className="text-xl font-bold text-slate-900">MEDICAL PRESCRIPTION</h2>
+                      <p className="text-xs text-slate-500">ID: {request.requestId || 'N/A'}</p>
+                    </div>
+                    <div className="text-right">
+                      <p className="text-xs font-bold text-slate-800">At-Home Healthcare</p>
+                      <p className="text-[10px] text-slate-500">Digital Health Network</p>
+                    </div>
                   </div>
-                  <div>
-                    <p className="font-bold text-slate-400 uppercase mb-2">Prescriber</p>
-                    <p className="text-slate-900 font-medium capitalize">{request.doctorName || request.doctor?.name || 'Unknown Doctor'}</p>
-                    <p className="text-slate-500 mt-1">License: #{request.doctorId?.rppsNumber || 'N/A'}</p>
+                  <div className="grid grid-cols-2 gap-8 text-xs">
+                    <div>
+                      <p className="font-bold text-slate-400 uppercase mb-2">Patient</p>
+                      <p className="text-slate-900 font-medium">{request.patientName || request.patient || 'Unknown Patient'}</p>
+                      <p className="text-slate-500 mt-1">DOB: {request.patientId?.dateOfBirth ? new Date(request.patientId.dateOfBirth).toLocaleDateString('en-US', { month: '2-digit', day: '2-digit', year: 'numeric' }) : 'Not Available'}</p>
+                    </div>
+                    <div>
+                      <p className="font-bold text-slate-400 uppercase mb-2">Prescriber</p>
+                      <p className="text-slate-900 font-medium capitalize">{request.doctorName || request.doctor?.name || 'Unknown Doctor'}</p>
+                      <p className="text-slate-500 mt-1">License: #{request.doctorId?.rppsNumber || 'N/A'}</p>
+                    </div>
                   </div>
-                </div>
-                <div className="space-y-4">
-                  <p className="text-xs font-bold text-slate-400 uppercase">Analysis Requested</p>
-                  <div className="p-4 bg-slate-50 rounded-lg">
-                    <div className="flex items-start gap-3">
-                      <div className="w-4 h-4 rounded border-2 border-primary flex items-center justify-center mt-0.5">
-                        <i className="fa-solid fa-file-medical text-[10px] text-primary"></i>
-                      </div>
-                      <div className="flex-1">
-                        <p className="text-xs text-slate-800 font-medium leading-relaxed">
-                          {request.patientId?.medicalDescription || 'No medical description available'}
-                        </p>
+                  <div className="space-y-4">
+                    <p className="text-xs font-bold text-slate-400 uppercase">Analysis Requested</p>
+                    <div className="p-4 bg-slate-50 rounded-lg">
+                      <div className="flex items-start gap-3">
+                        <div className="w-4 h-4 rounded border-2 border-primary flex items-center justify-center mt-0.5">
+                          <i className="fa-solid fa-file-medical text-[10px] text-primary"></i>
+                        </div>
+                        <div className="flex-1">
+                          <p className="text-xs text-slate-800 font-medium leading-relaxed">
+                            {request.patientId?.medicalDescription || 'No medical description available'}
+                          </p>
+                        </div>
                       </div>
                     </div>
                   </div>
-                </div>
-                <div className="pt-8 flex justify-end">
-                  <div className="text-center">
-                    <div className="w-48 h-12 border-b-2 border-slate-200 flex items-center justify-center italic text-primary font-serif capitalize">
-                      {request.doctorName || request.doctor?.name || 'Unknown Doctor'}
+                  <div className="pt-8 flex justify-end">
+                    <div className="text-center">
+                      <div className="w-48 h-12 border-b-2 border-slate-200 flex items-center justify-center italic text-primary font-serif capitalize">
+                        {request.doctorName || request.doctor?.name || 'Unknown Doctor'}
+                      </div>
+                      <p className="text-[10px] text-slate-400 mt-2">
+                        {request.digitalSignature?.signedAt
+                          ? `Digitally Signed on ${new Date(request.digitalSignature.signedAt).toLocaleDateString('en-US', { month: '2-digit', day: '2-digit', year: 'numeric' })}`
+                          : request.status === 'completed'
+                            ? 'Digitally Signed'
+                            : 'Awaiting Signature'}
+                      </p>
                     </div>
-                    <p className="text-[10px] text-slate-400 mt-2">
-                      {request.digitalSignature?.signedAt
-                        ? `Digitally Signed on ${new Date(request.digitalSignature.signedAt).toLocaleDateString('en-US', { month: '2-digit', day: '2-digit', year: 'numeric' })}`
-                        : request.status === 'completed'
-                          ? 'Digitally Signed'
-                          : 'Awaiting Signature'}
-                    </p>
                   </div>
                 </div>
-              </div>
+              )}
             </div>
           </div>
         </div>
