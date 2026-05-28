@@ -4,7 +4,6 @@ import { Provider } from 'react-redux';
 import { store } from './store/store';
 import './App.css';
 import './i18n'; // Initialize i18n
-import { useTranslation } from 'react-i18next';
 import { useDocumentTitle } from './hooks/useDocumentTitle';
 import { Login /*, ForgotPassword, ResetPassword */ } from './pages/auth';
 import { Dashboard } from './pages/dashboard';
@@ -31,14 +30,7 @@ window.logout = () => {
 };
 
 function App() {
-  const { i18n } = useTranslation();
-  
   useEffect(() => {
-    // Force language initialization
-    if (!i18n.language || i18n.language === 'dev') {
-      i18n.changeLanguage('en');
-    }
-    
     // Add global styles for authentication
     const style = document.createElement('style');
     style.textContent = `
@@ -52,7 +44,7 @@ function App() {
       }
     `;
     document.head.appendChild(style);
-  }, [i18n]);
+  }, []);
 
   return (
     <Provider store={store}>

@@ -1,7 +1,9 @@
 import React, { useState } from 'react';
+import { useTranslation } from 'react-i18next';
 import { useChangePasswordMutation } from '../../services/api';
 
 const ChangePasswordForm: React.FC = () => {
+  const { t, i18n } = useTranslation();
   const [formData, setFormData] = useState({
     currentPassword: '',
     newPassword: '',
@@ -30,30 +32,30 @@ const ChangePasswordForm: React.FC = () => {
 
     // Validation
     if (!formData.currentPassword || !formData.newPassword || !formData.confirmPassword) {
-      setError('All fields are required');
+      setError(t('auth.allFieldsRequired'));
       return;
     }
 
     if (formData.newPassword !== formData.confirmPassword) {
-      setError('New password and confirm password do not match');
+      setError(t('auth.passwordsDoNotMatch'));
       return;
     }
 
     if (formData.newPassword.length < 6) {
-      setError('New password must be at least 6 characters long');
+      setError(t('auth.passwordMinLength'));
       return;
     }
 
     try {
       const result = await changePasswordMutation(formData).unwrap();
-      setSuccess(result.message || 'Password changed successfully');
+      setSuccess(result.message || t('auth.passwordChangedSuccess'));
       setFormData({
         currentPassword: '',
         newPassword: '',
         confirmPassword: ''
       });
     } catch (err: any) {
-      const errorMessage = err.data?.message || 'Failed to change password';
+      const errorMessage = err.data?.message || t('auth.failedToChangePassword');
       setError(errorMessage);
     }
   };
@@ -74,18 +76,44 @@ const ChangePasswordForm: React.FC = () => {
 
   return (
     <div className="bg-surface rounded-2xl shadow-soft border border-border p-8 md:p-10">
-      <div className="mb-8">
-        <h1 className="text-2xl font-semibold mb-2">Change Password</h1>
-        <p className="text-textMuted text-sm">
-          Enter your current password and set a new one
-        </p>
+      <div className="mb-8 flex items-start justify-between gap-4">
+        <div>
+          <h1 className="text-2xl font-semibold mb-2">{t('auth.changePasswordTitle')}</h1>
+          <p className="text-textMuted text-sm">
+            {t('auth.changePasswordDescription')}
+          </p>
+        </div>
+        <div className="flex items-center gap-1 bg-slate-100 rounded-lg p-1 shrink-0">
+          <button
+            type="button"
+            onClick={() => i18n.changeLanguage('en')}
+            className={`px-2 py-1 text-xs font-medium rounded-md transition-all ${
+              i18n.language.startsWith('en')
+                ? 'bg-white text-primary shadow-sm'
+                : 'text-textMuted hover:text-slate-700'
+            }`}
+          >
+            EN
+          </button>
+          <button
+            type="button"
+            onClick={() => i18n.changeLanguage('fr')}
+            className={`px-2 py-1 text-xs font-medium rounded-md transition-all ${
+              i18n.language.startsWith('fr')
+                ? 'bg-white text-primary shadow-sm'
+                : 'text-textMuted hover:text-slate-700'
+            }`}
+          >
+            FR
+          </button>
+        </div>
       </div>
 
       <form onSubmit={handleSubmit} className="space-y-6">
         {/* Current Password Field */}
         <div className="space-y-2">
           <label htmlFor="currentPassword" className="text-xs font-bold uppercase tracking-wider text-textMuted">
-            Current Password
+            {t('auth.currentPassword')}
           </label>
           <div className="relative">
             <span className="absolute left-4 top-1/2 -translate-y-1/2 text-textMuted/60">
@@ -126,7 +154,7 @@ const ChangePasswordForm: React.FC = () => {
         {/* New Password Field */}
         <div className="space-y-2">
           <label htmlFor="newPassword" className="text-xs font-bold uppercase tracking-wider text-textMuted">
-            New Password
+            {t('auth.newPassword')}
           </label>
           <div className="relative">
             <span className="absolute left-4 top-1/2 -translate-y-1/2 text-textMuted/60">
@@ -167,7 +195,7 @@ const ChangePasswordForm: React.FC = () => {
         {/* Confirm Password Field */}
         <div className="space-y-2">
           <label htmlFor="confirmPassword" className="text-xs font-bold uppercase tracking-wider text-textMuted">
-            Confirm New Password
+            {t('auth.confirmNewPassword')}
           </label>
           <div className="relative">
             <span className="absolute left-4 top-1/2 -translate-y-1/2 text-textMuted/60">
@@ -229,10 +257,10 @@ const ChangePasswordForm: React.FC = () => {
             {isLoading ? (
               <span className="flex items-center justify-center gap-2">
                 <i className="fa-solid fa-spinner fa-spin"></i>
-                Changing Password...
+                {t('auth.changingPassword')}
               </span>
             ) : (
-              'Change Password'
+              t('auth.changePasswordTitle')
             )}
           </button>
         </div>
