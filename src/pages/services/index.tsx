@@ -172,11 +172,11 @@ export const Services: React.FC = () => {
           {/* Services Table */}
           {isLoading ? (
             <div className="bg-white rounded-2xl border border-slate-200 tradingview-shadow p-8">
-              <div className="text-center text-slate-500">Loading services...</div>
+              <div className="text-center text-slate-500">{t('services.loadingServices')}</div>
             </div>
           ) : error ? (
             <div className="bg-white rounded-2xl border border-slate-200 tradingview-shadow p-8">
-              <div className="text-center text-red-500">Error loading services. Please try again.</div>
+              <div className="text-center text-red-500">{t('services.errorLoadingServices')}</div>
             </div>
           ) : (
             <ServicesTable
