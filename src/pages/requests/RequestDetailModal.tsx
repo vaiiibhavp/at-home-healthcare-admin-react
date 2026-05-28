@@ -259,9 +259,10 @@ export const RequestDetailModal: React.FC<RequestDetailModalProps> = ({
                   </div>
                 </div>
                 <div className="mt-4 pt-4 border-t border-slate-50 flex justify-end items-center">
-                  <button className="text-slate-400 hover:text-primary">
-                    <i className="fa-solid fa-phone"></i>
-                  </button>
+                  <span className="text-xs text-slate-500">
+                    <i className="fa-solid fa-phone mr-1"></i>
+                    {request.patientId?.phoneNumber || 'N/A'}
+                  </span>
                 </div>
               </div>
 
