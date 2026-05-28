@@ -49,6 +49,7 @@ const Requests: React.FC = () => {
   // API state
   const [requestsData, setRequestsData] = useState<RequestData[]>([]);
   const [loading, setLoading] = useState(true);
+  const [exporting, setExporting] = useState(false);
   const [totalItems, setTotalItems] = useState(0);
   const [totalPages, setTotalPages] = useState(0);
   const latestRequestId = useRef(0);
@@ -394,20 +395,78 @@ const Requests: React.FC = () => {
   const handleResetStatus = () => {
     // Update the request status from inprogress to submitted
     if (selectedRequestForReset) {
-      setRequestsData(prevData => 
-        prevData.map(req => 
-          req.id === selectedRequestForReset.id 
+      setRequestsData(prevData =>
+        prevData.map(req =>
+          req.id === selectedRequestForReset.id
             ? { ...req, status: 'pending', serviceColor: 'amber' } // 'pending' corresponds to 'submitted' status
             : req
         )
       );
     }
-    
+
     setToastMessage('Request status reset successfully');
     setShowToast(true);
     setShowResetModal(false);
     setSelectedRequestForReset(null);
     setTimeout(() => setShowToast(false), 3000);
+  };
+
+  const handleExport = async () => {
+    setExporting(true);
+    try {
+      const token = localStorage.getItem('authToken');
+      const statusMap: Record<string, string> = {
+        pending: 'PENDING',
+        inprogress: 'IN_PROGRESS',
+        completed: 'COMPLETED',
+        returned: 'RETURNED',
+        draft: 'DRAFT'
+      };
+      const filters: Record<string, string> = {};
+      if (statusFilter) filters.status = statusMap[statusFilter] || statusFilter.toUpperCase();
+      if (startDate) filters.startDate = startDate;
+      if (endDate) filters.endDate = endDate;
+      if (serviceFilter) filters.serviceName = serviceFilter;
+
+      const fields = 'requestId,status,patientName,doctorName,serviceName,formStatus,createdAt,updatedAt';
+      const params = new URLSearchParams({
+        entityType: 'serviceRequests',
+        format: 'csv',
+        filters: JSON.stringify(filters),
+        fields
+      });
+
+      const response = await fetch(
+        `${process.env.REACT_APP_API_BASE_URL || ''}/export?${params}`,
+        {
+          method: 'GET',
+          headers: token ? { Authorization: `Bearer ${token}` } : {}
+        }
+      );
+
+      if (!response.ok) throw new Error('Export failed');
+
+      const blob = await response.blob();
+      const url = window.URL.createObjectURL(blob);
+      const link = document.createElement('a');
+      link.href = url;
+      link.download = `service_requests_${new Date().toISOString().split('T')[0]}.csv`;
+      document.body.appendChild(link);
+      link.click();
+      document.body.removeChild(link);
+      window.URL.revokeObjectURL(url);
+
+      setToastMessage('Export downloaded successfully');
+      setShowToast(true);
+      setTimeout(() => setShowToast(false), 3000);
+    } catch (error) {
+      console.error('Export Error:', error);
+      setToastMessage('Export failed');
+      setShowToast(true);
+      setTimeout(() => setShowToast(false), 3000);
+    } finally {
+      setExporting(false);
+    }
   };
 
   return (
@@ -438,8 +497,12 @@ const Requests: React.FC = () => {
               <i className="fa-solid fa-filter text-sm"></i>
               <span className="absolute -top-1 -right-1 w-4 h-4 bg-primary text-white text-[9px] flex items-center justify-center rounded-full font-bold">2</span>
             </button> */}
-            <button className="px-4 py-2 bg-primary text-white rounded-xl text-sm font-bold flex items-center gap-2 hover:bg-slate-800 transition-all">
-              <i className="fa-solid fa-download"></i> {t('common.export')}
+            <button
+              onClick={handleExport}
+              disabled={exporting}
+              className="px-4 py-2 bg-primary text-white rounded-xl text-sm font-bold flex items-center gap-2 hover:bg-slate-800 transition-all disabled:opacity-70 disabled:cursor-not-allowed"
+            >
+              {exporting ? 'Exporting...' : t('common.export')}
             </button>
             <div className="ml-2">
               <LanguageSwitcher />
