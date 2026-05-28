@@ -229,8 +229,8 @@ export const RequestDetailModal: React.FC<RequestDetailModalProps> = ({
                     className="w-14 h-14 rounded-xl object-cover"
                   />
                   <div>
-                    <p className="text-sm font-bold text-slate-900">{request.doctorName || 'Unknown Doctor'}</p>
-                    <p className="text-xs text-slate-500">{request.doctorSpeciality || 'Unknown Specialty'} • {request.doctorId?.businessAddress || 'Private Practice'}</p>
+                    <p className="text-sm font-bold text-slate-900 capitalize">{request.doctorName || 'Unknown Doctor'}</p>
+                    <p className="text-xs text-slate-500 capitalize">{request.doctorSpeciality || 'Unknown Specialty'} • {request.doctorId?.businessAddress || 'Private Practice'}</p>
                     <p className="text-[11px] font-mono text-primary mt-1">RPPS: {request.doctorId?.rppsNumber || 'N/A'}</p>
                   </div>
                 </div>
@@ -373,7 +373,7 @@ export const RequestDetailModal: React.FC<RequestDetailModalProps> = ({
                       </div>
                       <div>
                         <p className="font-bold text-slate-400 uppercase mb-2">Prescriber</p>
-                        <p className="text-slate-900 font-medium">{request.doctorName || request.doctor?.name || 'Unknown Doctor'}</p>
+                        <p className="text-slate-900 font-medium capitalize">{request.doctorName || request.doctor?.name || 'Unknown Doctor'}</p>
                         <p className="text-slate-500 mt-1">License: #{request.doctorId?.rppsNumber || 'N/A'}</p>
                       </div>
                     </div>
@@ -394,7 +394,7 @@ export const RequestDetailModal: React.FC<RequestDetailModalProps> = ({
                     </div>
                     <div className="pt-8 flex justify-end">
                       <div className="text-center">
-                        <div className="w-48 h-12 border-b-2 border-slate-200 flex items-center justify-center italic text-primary font-serif">
+                        <div className="w-48 h-12 border-b-2 border-slate-200 flex items-center justify-center italic text-primary font-serif capitalize">
                           {request.doctorName || request.doctor?.name || 'Unknown Doctor'}
                         </div>
                         <p className="text-[10px] text-slate-400 mt-2">
@@ -625,8 +625,8 @@ export const RequestDetailModal: React.FC<RequestDetailModalProps> = ({
                   className="w-16 h-16 rounded-xl object-cover"
                 />
                 <div>
-                  <p className="text-sm font-bold text-slate-900">{request.doctorName || 'Unknown Doctor'}</p>
-                  <p className="text-xs text-slate-500">{request.doctorSpeciality || 'Unknown Specialty'}</p>
+                  <p className="text-sm font-bold text-slate-900 capitalize">{request.doctorName || 'Unknown Doctor'}</p>
+                  <p className="text-xs text-slate-500 capitalize">{request.doctorSpeciality || 'Unknown Specialty'}</p>
                 </div>
               </div>
               <div className="space-y-4">
@@ -672,7 +672,7 @@ export const RequestDetailModal: React.FC<RequestDetailModalProps> = ({
                   </div>
                   <div>
                     <p className="text-xs text-slate-500">Specialty</p>
-                    <p className="text-sm font-medium text-slate-900">{request.doctorId?.specialty || 'N/A'}</p>
+                    <p className="text-sm font-medium text-slate-900 capitalize">{request.doctorId?.specialty || 'N/A'}</p>
                   </div>
                 </div>
                 <div className="flex items-center gap-3">
@@ -729,7 +729,7 @@ export const RequestDetailModal: React.FC<RequestDetailModalProps> = ({
                   </div>
                   <div>
                     <p className="font-bold text-slate-400 uppercase mb-2">Prescriber</p>
-                    <p className="text-slate-900 font-medium">{request.doctorName || request.doctor?.name || 'Unknown Doctor'}</p>
+                    <p className="text-slate-900 font-medium capitalize">{request.doctorName || request.doctor?.name || 'Unknown Doctor'}</p>
                     <p className="text-slate-500 mt-1">License: #{request.doctorId?.rppsNumber || 'N/A'}</p>
                   </div>
                 </div>
@@ -750,7 +750,7 @@ export const RequestDetailModal: React.FC<RequestDetailModalProps> = ({
                 </div>
                 <div className="pt-8 flex justify-end">
                   <div className="text-center">
-                    <div className="w-48 h-12 border-b-2 border-slate-200 flex items-center justify-center italic text-primary font-serif">
+                    <div className="w-48 h-12 border-b-2 border-slate-200 flex items-center justify-center italic text-primary font-serif capitalize">
                       {request.doctorName || request.doctor?.name || 'Unknown Doctor'}
                     </div>
                     <p className="text-[10px] text-slate-400 mt-2">
