@@ -248,9 +248,7 @@ export const RequestDetailModal: React.FC<RequestDetailModalProps> = ({
                   <div>
                     <p className="text-sm font-bold text-slate-900">{request.patientName || 'Unknown Patient'}</p>
                     <p className="text-xs text-slate-500">
-                      {request.patientId?.dateOfBirth ? new Date().getFullYear() - new Date(request.patientId.dateOfBirth).getFullYear() : 'N/A'} years • 
-                      {request.patientId?.gender || 'Unknown'} • 
-                      {request.patientId?.bloodGroup || 'Unknown Blood Group'}
+                      {request.patientId?.dateOfBirth ? new Date().getFullYear() - new Date(request.patientId.dateOfBirth).getFullYear() : 'N/A'} years, {request.patientId?.gender || 'Unknown'}
                     </p>
                     <p className="text-[11px] text-slate-500 mt-1">
                       <i className="fa-solid fa-location-dot mr-1"></i> 
