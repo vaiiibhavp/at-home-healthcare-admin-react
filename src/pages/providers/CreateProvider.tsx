@@ -39,23 +39,29 @@ const CreateProvider: React.FC = () => {
   const [toastType, setToastType] = useState<'success' | 'error' | 'info'>('success');
   const [showAllServices, setShowAllServices] = useState(false);
 
+  // Helper to translate service names from API
+  const getTranslatedServiceName = (name: string): string => {
+    const key = name.toLowerCase().replace(/[\s-]+/g, '_').replace(/[^a-z0-9_]/g, '');
+    return t(`serviceNames.${key}`, { defaultValue: name });
+  };
+
   // Use services from backend if available, otherwise fallback to hardcoded list
   const availableServices: Service[] = servicesData?.data?.services?.map((service: any) => ({
     id: service._id || service.id,
-    name: service.name || service.serviceName
+    name: getTranslatedServiceName(service.name || service.serviceName)
   })) || [
-    { id: '69eb112a056b86c571c1a44f', name: 'Generic' },
-    { id: '69eb112b056b86c571c1a450', name: 'Wound Care' },
-    { id: '69eb112c056b86c571c1a451', name: 'IV Therapy' },
-    { id: '69eb112d056b86c571c1a452', name: 'Medical Oxygen' },
-    { id: '69eb112e056b86c571c1a453', name: 'Artificial Nutrition' },
-    { id: '69eb112f056b86c571c1a454', name: 'Personal Hygiene care' },
-    { id: '69eb1130056b86c571c1a455', name: 'PCA(Pain management)' },
-    { id: '69eb1131056b86c571c1a456', name: 'Pregnancy related care' },
-    { id: '69eb1132056b86c571c1a457', name: 'Parenteral nutrition (central line)' },
-    { id: '69eb1133056b86c571c1a458', name: 'CNO' },
-    { id: '69eb1134056b86c571c1a459', name: 'Hydration Infusion' },
-    { id: '69eb1135056b86c571c1a45a', name: 'Antibiothérapy infusion' }
+    { id: '69eb112a056b86c571c1a44f', name: getTranslatedServiceName('Generic') },
+    { id: '69eb112b056b86c571c1a450', name: getTranslatedServiceName('Wound Care') },
+    { id: '69eb112c056b86c571c1a451', name: getTranslatedServiceName('IV Therapy') },
+    { id: '69eb112d056b86c571c1a452', name: getTranslatedServiceName('Medical Oxygen') },
+    { id: '69eb112e056b86c571c1a453', name: getTranslatedServiceName('Artificial Nutrition') },
+    { id: '69eb112f056b86c571c1a454', name: getTranslatedServiceName('Personal Hygiene care') },
+    { id: '69eb1130056b86c571c1a455', name: getTranslatedServiceName('PCA(Pain management)') },
+    { id: '69eb1131056b86c571c1a456', name: getTranslatedServiceName('Pregnancy related care') },
+    { id: '69eb1132056b86c571c1a457', name: getTranslatedServiceName('Parenteral nutrition (central line)') },
+    { id: '69eb1133056b86c571c1a458', name: getTranslatedServiceName('CNO') },
+    { id: '69eb1134056b86c571c1a459', name: getTranslatedServiceName('Hydration Infusion') },
+    { id: '69eb1135056b86c571c1a45a', name: getTranslatedServiceName('Antibiothérapy infusion') }
   ];
 
   useEffect(() => {
@@ -127,14 +133,14 @@ const CreateProvider: React.FC = () => {
     }
 
     if (!formData.phoneNumber) {
-      showToastMessage('Phone number is required', 'error');
+      showToastMessage(t('providers.phoneRequired'), 'error');
       return;
     }
 
     // Registration ID is optional, no validation needed
 
     if (formData.assignedServices.length === 0 && !isEditMode) {
-      showToastMessage('At least one service must be selected', 'error');
+      showToastMessage(t('providers.serviceRequired'), 'error');
       return;
     }
 
@@ -186,13 +192,11 @@ const CreateProvider: React.FC = () => {
         }, 3000);
       } else {
         // Other error cases
-        const action = isEditMode ? 'update' : 'create';
-        showToastMessage(`Failed to ${action} provider: ${response?.message || 'Unknown error'}`, 'error');
+        showToastMessage(t(isEditMode ? 'providers.updateFailed' : 'providers.createFailed', { message: response?.message || 'Unknown error' }), 'error');
       }
     } catch (err: any) {
       // Handle error with more detail
-      const action = isEditMode ? 'update' : 'create';
-      const errorMessage = err?.data?.message || err?.message || `Failed to ${action} provider. Please try again.`;
+      const errorMessage = err?.data?.message || err?.message || t(isEditMode ? 'providers.updateFailed' : 'providers.createFailed', { message: 'Unknown error' });
       
       // Check if it's a partial success scenario
       if (err?.data?.status === 400 && err?.data?.data?.providerId) {
@@ -236,7 +240,7 @@ const CreateProvider: React.FC = () => {
         <div className="flex-1 flex items-center justify-center">
           <div className="flex items-center gap-3">
             <div className="w-6 h-6 border-2 border-primary border-t-transparent rounded-full animate-spin"></div>
-            <span className="text-sm text-slate-500">Loading services...</span>
+            <span className="text-sm text-slate-500">{t('providers.loadingServices')}</span>
           </div>
         </div>
       </div>
@@ -251,7 +255,7 @@ const CreateProvider: React.FC = () => {
         <div className="flex-1 flex items-center justify-center">
           <div className="flex items-center gap-3">
             <div className="w-6 h-6 border-2 border-primary border-t-transparent rounded-full animate-spin"></div>
-            <span className="text-sm text-slate-500">Loading provider data...</span>
+            <span className="text-sm text-slate-500">{t('providers.loadingProviderData')}</span>
           </div>
         </div>
       </div>
@@ -291,7 +295,7 @@ const CreateProvider: React.FC = () => {
               onClick={handleCancel}
               className="px-4 py-2 text-sm font-bold text-slate-600 hover:bg-slate-100 rounded-xl transition-all"
             >
-              Discard
+              {t('providers.discard')}
             </button>
             <button 
               onClick={handleSubmit}
@@ -318,7 +322,7 @@ const CreateProvider: React.FC = () => {
                 <div className="w-8 h-8 bg-primary/10 rounded-lg flex items-center justify-center text-primary text-sm">
                   <i className="fa-solid fa-id-card"></i>
                 </div>
-                <h2 className="text-sm font-semibold text-slate-800">Provider Details</h2>
+                <h2 className="text-sm font-semibold text-slate-800">{t('providers.providerDetailsSection')}</h2>
               </div>
               {isEditMode && (
                 <div className="flex items-center gap-3">
@@ -410,7 +414,7 @@ const CreateProvider: React.FC = () => {
                 </div>
               </div>
               <div className="space-y-2">
-                <label className="text-[11px] font-bold text-slate-400 uppercase tracking-widest">Registration ID (Optional)</label>
+                <label className="text-[11px] font-bold text-slate-400 uppercase tracking-widest">{t('providers.registrationId')}</label>
                 <div className="relative">
                   <i className="fa-solid fa-fingerprint absolute left-4 top-1/2 -translate-y-1/2 text-slate-300"></i>
                   <input
@@ -425,7 +429,7 @@ const CreateProvider: React.FC = () => {
               </div>
               {isEditMode && (
                 <div className="space-y-2">
-                  <label className="text-[11px] font-bold text-slate-400 uppercase tracking-widest">Email Notifications</label>
+                  <label className="text-[11px] font-bold text-slate-400 uppercase tracking-widest">{t('providers.emailNotifications')}</label>
                   <div className="flex items-center gap-3">
                     <label className="relative inline-flex items-center cursor-pointer">
                       <input
@@ -441,7 +445,7 @@ const CreateProvider: React.FC = () => {
                       <div className="w-11 h-6 bg-slate-200 peer-focus:outline-none rounded-full transition-all after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-emerald-500 peer-checked:after:translate-x-full"></div>
                     </label>
                     <span className={`text-xs font-bold ${formData.emailNotificationsEnabled ? 'text-emerald-600' : 'text-slate-400'}`}>
-                      {formData.emailNotificationsEnabled ? 'Enabled' : 'Disabled'}
+                      {formData.emailNotificationsEnabled ? t('providers.enabled') : t('providers.disabled')}
                     </span>
                   </div>
                 </div>
@@ -456,9 +460,9 @@ const CreateProvider: React.FC = () => {
                 <div className="w-8 h-8 bg-primary/10 rounded-lg flex items-center justify-center text-primary text-sm">
                   <i className="fa-solid fa-briefcase-medical"></i>
                 </div>
-                <h2 className="text-sm font-semibold text-slate-800">Service Eligibility</h2>
+                <h2 className="text-sm font-semibold text-slate-800">{t('providers.serviceEligibility')}</h2>
               </div>
-              <span className="text-[10px] font-bold text-slate-400 bg-slate-100 px-2 py-1 rounded">MULTI-SELECT</span>
+              <span className="text-[10px] font-bold text-slate-400 bg-slate-100 px-2 py-1 rounded">{t('providers.multiSelect')}</span>
             </div>
             <div className="p-6 space-y-6">
               <div className="relative">
@@ -468,7 +472,7 @@ const CreateProvider: React.FC = () => {
                 <div className="flex gap-2">
                   <input
                     type="text"
-                    placeholder="Search and add services"
+                    placeholder={t('providers.searchAndAddServices')}
                     className="flex-1 pl-11 pr-4 py-2.5 bg-slate-50 border border-slate-200 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-primary/20 transition-all"
                   />
                   <button 
@@ -476,7 +480,7 @@ const CreateProvider: React.FC = () => {
                     className="flex items-center justify-center px-4 py-2.5 border border-dashed border-slate-200 rounded-xl hover:bg-slate-50 transition-all group"
                   >
                     <span className="text-[10px] font-bold text-slate-400 group-hover:text-primary tracking-widest">
-                      {showAllServices ? 'HIDE SERVICES' : 'VIEW ALL SERVICES'}
+                      {showAllServices ? t('providers.hideServices') : t('providers.viewAllServices')}
                     </span>
                   </button>
                 </div>
@@ -490,7 +494,7 @@ const CreateProvider: React.FC = () => {
                         key={index}
                         className="flex items-center gap-2 bg-primary/10 text-primary border border-primary/20 px-3 py-1.5 rounded-lg text-xs font-bold"
                       >
-                        {service?.name || 'Unknown Service'}
+                        {service?.name || t('providers.unknownService')}
                         <button 
                           onClick={() => handleRemoveService(serviceId)}
                           className="hover:text-danger"
@@ -558,22 +562,22 @@ const CreateProvider: React.FC = () => {
             <div className="w-16 h-16 bg-amber-50 text-amber-500 rounded-full flex items-center justify-center mx-auto mb-4">
               <i className="fa-solid fa-circle-question text-2xl"></i>
             </div>
-            <h3 className="text-xl font-bold text-slate-900">Discard Changes</h3>
+            <h3 className="text-xl font-bold text-slate-900">{t('providers.discardChangesTitle')}</h3>
             <p className="text-slate-500 text-sm mt-2">
-              Are you sure you want to discard your changes?
+              {t('providers.discardChangesMessage')}
             </p>
             <div className="mt-8 flex gap-3">
               <button
                 onClick={handleStay}
                 className="flex-1 px-4 py-2.5 text-sm font-bold text-slate-600 bg-slate-100 hover:bg-slate-200 rounded-xl"
               >
-                Stay
+                {t('providers.stay')}
               </button>
               <button
                 onClick={handleConfirmLeave}
                 className="flex-1 px-4 py-2.5 text-sm font-bold text-white bg-primary hover:bg-slate-800 rounded-xl"
               >
-                Discard
+                {t('providers.discard')}
               </button>
             </div>
           </div>

@@ -54,6 +54,12 @@ const Requests: React.FC = () => {
   const [totalPages, setTotalPages] = useState(0);
   const latestRequestId = useRef(0);
   const [servicesList, setServicesList] = useState<Array<{ id: string; serviceName: string }>>([]);
+
+  // Helper to translate service names from API
+  const getTranslatedServiceName = (name: string): string => {
+    const key = name.toLowerCase().replace(/[\s-]+/g, '_').replace(/[^a-z0-9_]/g, '');
+    return t(`serviceNames.${key}`, { defaultValue: name });
+  };
   
   const handleNotificationAction = (notificationId: string, action: string) => {
     console.log('Notification action:', notificationId, action);
@@ -627,7 +633,7 @@ const Requests: React.FC = () => {
               >
                 <option value="">{t('requests.allServices')}</option>
                 {servicesList.map((svc) => (
-                  <option key={svc.id} value={svc.serviceName}>{svc.serviceName}</option>
+                  <option key={svc.id} value={svc.serviceName}>{getTranslatedServiceName(svc.serviceName)}</option>
                 ))}
               </select>
             </div>
@@ -692,7 +698,7 @@ const Requests: React.FC = () => {
                       <td className="px-6 py-4">
                         <div className="flex items-center gap-2">
                           <span className={`w-2 h-2 rounded-full bg-${request.serviceColor}-400`}></span>
-                          <span className="text-xs text-slate-600">{request.serviceType}</span>
+                          <span className="text-xs text-slate-600">{getTranslatedServiceName(request.serviceType)}</span>
                         </div>
                       </td>
                       <td className="px-6 py-4">

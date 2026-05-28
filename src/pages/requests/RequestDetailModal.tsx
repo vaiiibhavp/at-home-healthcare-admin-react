@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import { useTranslation } from 'react-i18next';
 import { RequestData } from './RequestTypes';
 
 interface RequestDetailModalProps {
@@ -16,7 +17,13 @@ export const RequestDetailModal: React.FC<RequestDetailModalProps> = ({
   fetchAuditLogs,
   onCancelRequest
 }) => {
-  // const { t } = useTranslation(); // Commented out as it's not currently used
+  const { t } = useTranslation();
+
+  const getTranslatedServiceName = (name: string): string => {
+    const key = name.toLowerCase().replace(/[\s-]+/g, '_').replace(/[^a-z0-9_]/g, '');
+    return t(`serviceNames.${key}`, { defaultValue: name });
+  };
+
   const [showResetModal, setShowResetModal] = useState(false);
   const [showAuditModal, setShowAuditModal] = useState(false);
   const [showPhysicianModal, setShowPhysicianModal] = useState(false);
@@ -345,7 +352,7 @@ export const RequestDetailModal: React.FC<RequestDetailModalProps> = ({
                 <div className="space-y-3">
                   <div className="flex justify-between">
                     <span className="text-xs text-slate-500">Service</span>
-                    <span className="text-xs font-bold text-slate-900">{request.serviceName || request.serviceType || 'Unknown Service'}</span>
+                    <span className="text-xs font-bold text-slate-900">{getTranslatedServiceName(request.serviceName || request.serviceType || 'Unknown Service')}</span>
                   </div>
                   <div className="flex justify-between">
                     <span className="text-xs text-slate-500">Description</span>
