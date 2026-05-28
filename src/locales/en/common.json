@@ -1,5 +1,5 @@
 {
-  "_cacheBust": "2025-04-15-15-05",
+  "_cacheBust": "2025-05-28-20-00",
   "navigation": {
     "dashboard": "Dashboard Overview",
     "doctors": "Doctors",
@@ -84,7 +84,8 @@
       "totalDoctors": "Total Doctors",
       "pendingApprovals": "Doctors Pending Approvals",
       "pending": "Pending",
-      "urgentReview": "8 requiring urgent review",
+      "urgentReview": "requiring urgent review",
+      "allClear": "all clear",
       "activeRequests": "Active Requests",
       "providers": "Providers",
       "stable": "Stable",
@@ -110,18 +111,43 @@
       "last30Days": "Last 30Days",
       "requestsByStatus": "Requests by Status"
     },
+    "loading": "Loading...",
+    "errorLoading": "Failed to load dashboard data",
+    "errorLoadingCharts": "Failed to load chart data",
+    "errorLoadingActivity": "Failed to load recent activity",
+    "loadingChartData": "Loading chart data...",
+    "loadingRecentActivity": "Loading recent activity...",
+    "exportFailed": "Failed to export report. Please try again.",
+    "userAvatar": "User {{number}}",
+    "timeAgo": {
+      "justNow": "Just now",
+      "minutesAgo": "{{count}} minutes ago",
+      "hoursAgo": "{{count}} hours ago",
+      "daysAgo": "{{count}} days ago"
+    },
     "recentActivity": {
       "title": "Recent Activity",
       "viewAll": "View All",
-      "serviceCompleted": "Service Completed",
-      "serviceCompletedDesc": "Home visit request #8942 was marked as completed.",
-      "twoMinutesAgo": "2 minutes ago",
-      "formReturned": "Form Returned",
-      "formReturnedDesc": "Dr. Sarah Jenkins returned Patient Intake Form for correction.",
-      "fifteenMinutesAgo": "15 minutes ago",
-      "newDoctorRegistration": "New Doctor Registration",
-      "newDoctorRegistrationDesc": "Dr. Michael Chen submitted registration for approval.",
-      "oneHourAgo": "1 hour ago"
+      "types": {
+        "doctor_registration": "New Doctor Registration",
+        "completed": "Service Completed",
+        "returned": "Form Returned",
+        "pending": "Request Submitted",
+        "submitted": "Request Submitted",
+        "cancelled": "Request Cancelled",
+        "approved": "Request Approved",
+        "rejected": "Request Rejected",
+        "in_progress": "Request In Progress",
+        "default": "New Activity"
+      },
+      "descriptions": {
+        "doctor_registration": "Registration submitted by {{user}} for approval.",
+        "completed": "Request #{{referenceId}} was marked as completed.",
+        "returned": "{{user}} returned a form for correction.",
+        "pending": "New request #{{referenceId}} was submitted.",
+        "submitted": "New request #{{referenceId}} was submitted.",
+        "default": "{{user}} performed an action on request #{{referenceId}}."
+      }
     }
   },
   "doctors": {

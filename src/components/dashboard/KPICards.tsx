@@ -33,12 +33,12 @@ const KPICards: React.FC = () => {
     {
       title: t('dashboard.kpi.pendingApprovals'),
       value: dashboardData.data.pendingApprovals.toLocaleString(),
-      change: dashboardData.data.pendingApprovals > 0 ? t('dashboard.kpi.pending') : 'pending',
+      change: dashboardData.data.pendingApprovals > 0 ? t('dashboard.kpi.pending') : t('dashboard.kpi.pending'),
       changeType: 'neutral',
       icon: 'fa-clock-rotate-left',
       iconBg: 'bg-amber-50',
       iconColor: 'text-amber-600',
-      subtitle: dashboardData.data.pendingApprovals > 0 ? 'requiring urgent review' : 'all clear'
+      subtitle: dashboardData.data.pendingApprovals > 0 ? t('dashboard.kpi.urgentReview') : t('dashboard.kpi.allClear')
     },
     {
       title: t('dashboard.kpi.activeRequests'),
@@ -86,19 +86,19 @@ const KPICards: React.FC = () => {
   if (isLoading) {
     return (
       <div className="flex justify-center items-center h-screen">
-        <p className="text-slate-500 text-lg font-bold">Loading...</p>
+        <p className="text-slate-500 text-lg font-bold">{t('dashboard.loading')}</p>
       </div>
     );
   }
 
   if (error) {
-    const errorMessage = typeof error === 'object' && error !== null && 'status' in error ? 
-      (error as { data?: { message?: string } }).data?.message || 'Failed to load dashboard data' :
-      (error as { message?: string })?.message || 'An error occurred';
-    
+    const errorMessage = typeof error === 'object' && error !== null && 'status' in error ?
+      (error as { data?: { message?: string } }).data?.message || t('dashboard.errorLoading') :
+      (error as { message?: string })?.message || t('common.error');
+
     return (
       <div className="flex justify-center items-center h-screen">
-        <p className="text-error text-lg font-bold">Error: {errorMessage}</p>
+        <p className="text-error text-lg font-bold">{t('common.error')}: {errorMessage}</p>
       </div>
     );
   }
@@ -137,7 +137,7 @@ const KPICards: React.FC = () => {
                 <img
                   key={avatarIndex}
                   src={avatar}
-                  alt={`User ${avatarIndex + 1}`}
+                  alt={t('dashboard.userAvatar', { number: avatarIndex + 1 })}
                   className="w-6 h-6 rounded-full border-2 border-white"
                 />
               ))}

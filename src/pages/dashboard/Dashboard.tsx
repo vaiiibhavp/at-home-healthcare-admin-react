@@ -37,7 +37,7 @@ const Dashboard: React.FC = () => {
       });
 
       if (!response.ok) {
-        throw new Error('Failed to export dashboard data');
+        throw new Error(t('dashboard.errorLoading'));
       }
 
       const blob = await response.blob();
@@ -51,7 +51,7 @@ const Dashboard: React.FC = () => {
       window.URL.revokeObjectURL(url);
     } catch (error) {
       console.error('Export failed:', error);
-      alert('Failed to export report. Please try again.');
+      alert(t('dashboard.exportFailed'));
     } finally {
       setIsExporting(false);
     }
@@ -79,8 +79,8 @@ const Dashboard: React.FC = () => {
           <div className="flex justify-between items-end">
             <div>
               <h2 className="text-2xl font-bold text-slate-900 tracking-tight">
-                {t('dashboard.title') || 'Dashboard Overview'}</h2>
-              <p className="text-slate-500 text-sm mt-1">{t('dashboard.subtitle') || 'Real-time healthcare operations monitoring and analytics.'}</p>
+                {t('dashboard.title')}</h2>
+              <p className="text-slate-500 text-sm mt-1">{t('dashboard.subtitle')}</p>
             </div>
             <div className="flex gap-3">
               <button
@@ -88,12 +88,12 @@ const Dashboard: React.FC = () => {
                 disabled={isExporting}
                 className="px-4 py-2 bg-white border border-slate-200 rounded-lg text-sm font-semibold text-slate-700 hover:bg-slate-50 transition-colors flex items-center gap-2 disabled:opacity-50 disabled:cursor-not-allowed">
                 <i className="fa-solid fa-download"></i> 
-                {t('dashboard.exportReport') || 'Export Report'}
+                {t('dashboard.exportReport')}
               </button>
               <button
                 onClick={handleViewRequest}
                 className="px-4 py-2 bg-primary text-white rounded-lg text-sm font-semibold hover:bg-slate-800 transition-colors flex items-center gap-2">
-                <i className="fa-solid fa-eye"></i> {t('dashboard.viewRequest') || 'View Request'}
+                <i className="fa-solid fa-eye"></i> {t('dashboard.viewRequest')}
               </button>
             </div>
           </div>
