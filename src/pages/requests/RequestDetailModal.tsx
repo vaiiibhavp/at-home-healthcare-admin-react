@@ -69,7 +69,7 @@ export const RequestDetailModal: React.FC<RequestDetailModalProps> = ({
         URL.revokeObjectURL(pdfBlobUrl);
       }
     };
-  }, [request?.id, request?.signedPdfUrl, request?.formStatus]);
+  }, [request, request?.id, request?.signedPdfUrl, request?.formStatus, pdfBlobUrl]);
 
   const handleExportPdf = async () => {
     if (!request?.signedPdfUrl) return;

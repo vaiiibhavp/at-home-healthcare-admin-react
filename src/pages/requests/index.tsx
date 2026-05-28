@@ -48,9 +48,7 @@ const Requests: React.FC = () => {
   
   // API state
   const [requestsData, setRequestsData] = useState<RequestData[]>([]);
-  const [loading, setLoading] = useState(true);
   const [exporting, setExporting] = useState(false);
-  const [cancellingId, setCancellingId] = useState<string | null>(null);
   const [totalItems, setTotalItems] = useState(0);
   const [totalPages, setTotalPages] = useState(0);
   const latestRequestId = useRef(0);
@@ -127,7 +125,6 @@ const Requests: React.FC = () => {
   // API function to fetch requests
   const fetchRequests = useCallback(async (page: number = 1, size: number = 10, status?: string, startDate?: string, endDate?: string, service?: string) => {
     const requestId = ++latestRequestId.current;
-    setLoading(true);
     try {
       const params = new URLSearchParams({
         page: page.toString(),
@@ -209,9 +206,7 @@ const Requests: React.FC = () => {
         setTotalPages(0);
       }
     } finally {
-      if (latestRequestId.current === requestId) {
-        setLoading(false);
-      }
+      // no-op
     }
   }, []); // Empty dependency array since this function doesn't depend on any props/state
 
@@ -380,7 +375,6 @@ const Requests: React.FC = () => {
   };
 
   const handleCancelRequest = async (request: RequestData) => {
-    setCancellingId(request.id);
     try {
       const token = localStorage.getItem('authToken');
       const response = await fetch(
@@ -408,7 +402,7 @@ const Requests: React.FC = () => {
       setShowToast(true);
       setTimeout(() => setShowToast(false), 3000);
     } finally {
-      setCancellingId(null);
+      // no-op
     }
   };
 
