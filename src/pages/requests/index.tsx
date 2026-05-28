@@ -52,6 +52,7 @@ const Requests: React.FC = () => {
   const [totalItems, setTotalItems] = useState(0);
   const [totalPages, setTotalPages] = useState(0);
   const latestRequestId = useRef(0);
+  const [servicesList, setServicesList] = useState<Array<{ id: string; serviceName: string }>>([]);
   
   const handleNotificationAction = (notificationId: string, action: string) => {
     console.log('Notification action:', notificationId, action);
@@ -101,8 +102,29 @@ const Requests: React.FC = () => {
     return 'PENDING';
   };
 
+  // API function to fetch services for filter dropdown
+  const fetchServices = useCallback(async () => {
+    try {
+      const token = localStorage.getItem('authToken');
+      const headers: HeadersInit = { 'Content-Type': 'application/json' };
+      if (token) headers['Authorization'] = `Bearer ${token}`;
+
+      const response = await fetch(`${process.env.REACT_APP_API_BASE_URL || ''}/services`, {
+        method: 'GET',
+        headers
+      });
+      const data = await response.json();
+
+      if (data.status === 200 && data.data?.services) {
+        setServicesList(data.data.services);
+      }
+    } catch (error) {
+      console.error('Fetch Services Error:', error);
+    }
+  }, []);
+
   // API function to fetch requests
-  const fetchRequests = useCallback(async (page: number = 1, size: number = 10, status?: string, startDate?: string, endDate?: string) => {
+  const fetchRequests = useCallback(async (page: number = 1, size: number = 10, status?: string, startDate?: string, endDate?: string, service?: string) => {
     const requestId = ++latestRequestId.current;
     setLoading(true);
     try {
@@ -111,7 +133,8 @@ const Requests: React.FC = () => {
         size: size.toString(),
         ...(status && { status }),
         ...(startDate && { startDate }),
-        ...(endDate && { endDate })
+        ...(endDate && { endDate }),
+        ...(service && { service })
       });
       
       // Get auth token from localStorage
@@ -255,10 +278,15 @@ const Requests: React.FC = () => {
     }
   }, []);
 
-  // Fetch data on component mount and when pagination changes
+  // Fetch services on component mount
   useEffect(() => {
-    fetchRequests(currentPage, itemsPerPage, statusFilter, startDate, endDate);
-  }, [currentPage, itemsPerPage, statusFilter, startDate, endDate, fetchRequests]);
+    fetchServices();
+  }, [fetchServices]);
+
+  // Fetch data on component mount and when pagination/filters change
+  useEffect(() => {
+    fetchRequests(currentPage, itemsPerPage, statusFilter, startDate, endDate, serviceFilter);
+  }, [currentPage, itemsPerPage, statusFilter, startDate, endDate, serviceFilter, fetchRequests]);
 
   // Display requests from API (already paginated)
   const displayedRequests = requestsData;
@@ -505,18 +533,9 @@ const Requests: React.FC = () => {
                 }}
               >
                 <option value="">{t('requests.allServices')}</option>
-                <option>Generic</option>
-                <option>Wound Care</option>
-                <option>IV Therapy</option>
-                <option>Medical Oxygen</option>
-                <option>Artificial Nutrition</option>
-                <option>Personal Hygiene care</option>
-                <option>PCA(Pain management)</option>
-                <option>Pregnancy related care</option>
-                <option>Parenteral nutrition (central line)</option>
-                <option>CNO</option>
-                <option>Hydration Infusion</option>
-                <option>Antibiothérapy infusion</option>
+                {servicesList.map((svc) => (
+                  <option key={svc.id} value={svc.serviceName}>{svc.serviceName}</option>
+                ))}
               </select>
             </div>
           </section>
