@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import { useTranslation } from 'react-i18next';
 import { RequestData } from '../RequestTypes';
 
 interface RequestDetailModalProps {
@@ -16,7 +17,13 @@ export const RequestDetailModal: React.FC<RequestDetailModalProps> = ({
   fetchAuditLogs,
   onCancelRequest
 }) => {
-  // const { t } = useTranslation(); // Commented out as it's not currently used
+  const { t } = useTranslation();
+
+  const getTranslatedServiceName = (name: string): string => {
+    const key = name.toLowerCase().replace(/[\s-]+/g, '_').replace(/[^a-z0-9_]/g, '');
+    return t(`serviceNames.${key}`, { defaultValue: name });
+  };
+
   const [showResetModal, setShowResetModal] = useState(false);
   const [showAuditModal, setShowAuditModal] = useState(false);
   const [showToast, setShowToast] = useState(false);
@@ -372,7 +379,7 @@ export const RequestDetailModal: React.FC<RequestDetailModalProps> = ({
                     <i className="fa-solid fa-stethoscope"></i>
                   </div>
                   <div>
-                    <p className="text-sm font-bold text-slate-900">{request.serviceName || 'Unknown Service'}</p>
+                    <p className="text-sm font-bold text-slate-900">{getTranslatedServiceName(request.serviceName || 'Unknown Service')}</p>
                     <p className="text-xs text-slate-500">{request.serviceId?.description || 'No description available'}</p>
                     <p className="text-[11px] font-mono text-primary mt-1">
                       Category: {request.serviceId?.category || 'General'}

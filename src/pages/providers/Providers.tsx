@@ -66,9 +66,16 @@ const Providers: React.FC = () => {
 
   const { data: servicesData } = useGetServicesQuery({ page: 1, size: 100 });
 
-  // Create a map of service ID to service name
+  // Helper to translate service names from API
+  const getTranslatedServiceName = (name: string): string => {
+    const key = name.toLowerCase().replace(/[\s-]+/g, '_').replace(/[^a-z0-9_]/g, '');
+    return t(`serviceNames.${key}`, { defaultValue: name });
+  };
+
+  // Create a map of service ID to translated service name
   const serviceIdToNameMap = servicesData?.data?.services?.reduce((map: Record<string, string>, service: any) => {
-    map[service._id || service.id] = service.name || service.serviceName;
+    const rawName = service.name || service.serviceName;
+    map[service._id || service.id] = getTranslatedServiceName(rawName);
     return map;
   }, {}) || {};
 
@@ -147,13 +154,13 @@ const Providers: React.FC = () => {
   const handleBulkDeactivate = () => {
     if (!showCheckboxes) {
       setShowCheckboxes(true);
-      setToastMessage('Select providers to deactivate');
+      setToastMessage(t('providers.selectProvidersToDeactivate'));
       setShowToast(true);
       setTimeout(() => setShowToast(false), 3000);
       return;
     }
     if (selectedProviders.length === 0) {
-      setToastMessage('Please select at least one provider to deactivate');
+      setToastMessage(t('providers.selectAtLeastOne'));
       setShowToast(true);
       setTimeout(() => setShowToast(false), 3000);
       return;
@@ -170,11 +177,11 @@ const Providers: React.FC = () => {
       setShowBulkDeactivateModal(false);
       setShowCheckboxes(false);
       setSelectedProviders([]);
-      setToastMessage(`${result.data.deactivatedCount} provider(s) deactivated successfully`);
+      setToastMessage(t('providers.providersDeactivated', { count: result.data.deactivatedCount }));
       setShowToast(true);
       setTimeout(() => setShowToast(false), 3000);
     } catch (error) {
-      setToastMessage('Failed to deactivate providers. Please try again.');
+      setToastMessage(t('providers.deactivateProvidersFailed'));
       setShowToast(true);
       setTimeout(() => setShowToast(false), 3000);
     }
@@ -219,11 +226,11 @@ const Providers: React.FC = () => {
       document.body.removeChild(link);
       window.URL.revokeObjectURL(url);
       
-      setToastMessage('Providers exported successfully');
+      setToastMessage(t('providers.exportSuccess'));
       setShowToast(true);
       setTimeout(() => setShowToast(false), 3000);
     } catch (error) {
-      setToastMessage('Failed to export providers. Please try again.');
+      setToastMessage(t('providers.exportFailed'));
       setShowToast(true);
       setTimeout(() => setShowToast(false), 3000);
     }
@@ -269,7 +276,7 @@ const Providers: React.FC = () => {
     } catch (error) {
       console.error('Deactivate error:', error);
       setUpdatingProviderId(null);
-      setToastMessage('Failed to deactivate provider. Please try again.');
+      setToastMessage(t('providers.deactivateFailed'));
       setShowToast(true);
       setTimeout(() => setShowToast(false), 3000);
     }
@@ -293,13 +300,13 @@ const Providers: React.FC = () => {
       console.log('Activate success');
       await refetch();
       setUpdatingProviderId(null);
-      setToastMessage('Provider activated successfully');
+      setToastMessage(t('providers.activatedSuccessfully'));
       setShowToast(true);
       setTimeout(() => setShowToast(false), 3000);
     } catch (error) {
       console.error('Activate error:', error);
       setUpdatingProviderId(null);
-      setToastMessage('Failed to activate provider. Please try again.');
+      setToastMessage(t('providers.activateFailed'));
       setShowToast(true);
       setTimeout(() => setShowToast(false), 3000);
     }
@@ -390,7 +397,7 @@ const Providers: React.FC = () => {
               <i className="fa-solid fa-magnifying-glass absolute left-3 top-1/2 -translate-y-1/2 text-slate-400 text-sm"></i>
               <input
                 type="text"
-                placeholder="Search providers by name and email..."
+                placeholder={t('providers.searchPlaceholder')}
                 value={searchTerm}
                 onChange={(e) => setSearchTerm(e.target.value)}
                 className="w-full pl-10 pr-4 py-2 bg-slate-50 border border-slate-200 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-primary/10 transition-all"
@@ -467,7 +474,7 @@ const Providers: React.FC = () => {
                   className="bg-white border border-slate-200 rounded-xl px-4 py-2 text-xs font-bold text-slate-600 focus:outline-none shadow-sm flex items-center justify-between w-48"
                 >
                   <span className="truncate">
-                    {selectedService === 'all' ? t('services.allServices') : selectedService}
+                    {selectedService === 'all' ? t('services.allServices') : getTranslatedServiceName(selectedService)}
                   </span>
                     <span
                       className={`ml-2 transition-transform duration-200 ${
@@ -499,7 +506,7 @@ const Providers: React.FC = () => {
                         }}
                         className="px-4 py-2 text-xs font-bold text-slate-600 hover:bg-slate-50 cursor-pointer truncate"
                       >
-                        {service.name || service.serviceName}
+                        {getTranslatedServiceName(service.name || service.serviceName)}
                       </div>
                     ))}
                   </div>
@@ -514,14 +521,14 @@ const Providers: React.FC = () => {
               <div className="flex items-center justify-center py-12">
                 <div className="flex items-center gap-3">
                   <div className="w-6 h-6 border-2 border-primary border-t-transparent rounded-full animate-spin"></div>
-                  <span className="text-sm text-slate-500">Loading providers...</span>
+                  <span className="text-sm text-slate-500">{t('providers.loadingProviders')}</span>
                 </div>
               </div>
             ) : error ? (
               <div className="flex items-center justify-center py-12">
                 <div className="text-center">
                   <i className="fa-solid fa-triangle-exclamation text-danger text-2xl mb-3"></i>
-                  <p className="text-sm text-slate-500">Error loading providers. Please try again.</p>
+                  <p className="text-sm text-slate-500">{t('providers.errorLoadingProviders')}</p>
                 </div>
               </div>
             ) : (
@@ -537,7 +544,7 @@ const Providers: React.FC = () => {
                             onChange={selectAllProviders}
                             className="w-4 h-4 text-primary border-slate-300 rounded focus:ring-primary"
                           />
-                          <span>Select All</span>
+                          <span>{t('providers.selectAll')}</span>
                         </div>
                       </th>
                     )}
@@ -548,7 +555,7 @@ const Providers: React.FC = () => {
                       {t('common.contact')}
                     </th>
                     <th className="px-6 py-4 text-[10px] font-bold text-slate-400 uppercase tracking-widest">
-                      Eligible services
+                      {t('providers.eligibleServices')}
                     </th>
                     <th className="px-6 py-4 text-[10px] font-bold text-slate-400 uppercase tracking-widest">
                       {t('common.status')}
@@ -564,7 +571,7 @@ const Providers: React.FC = () => {
                       <td colSpan={showCheckboxes ? 7 : 6} className="px-6 py-12 text-center">
                         <div className="text-center">
                           <i className="fa-solid fa-inbox text-slate-300 text-3xl mb-3"></i>
-                          <p className="text-sm text-slate-500">No providers found</p>
+                          <p className="text-sm text-slate-500">{t('providers.noProvidersFound')}</p>
                         </div>
                       </td>
                     </tr>
@@ -601,7 +608,7 @@ const Providers: React.FC = () => {
                                 key={index}
                                 className="px-2 py-0.5 bg-slate-100 text-slate-600 rounded-md text-[10px] font-bold border border-slate-200"
                               >
-                                {service}
+                                {getTranslatedServiceName(service)}
                               </span>
                             ))}
                             {provider.services.length > 2 && (
@@ -637,7 +644,7 @@ const Providers: React.FC = () => {
                               <button
                                 onClick={() => handleDeactivate(provider.id)}
                                 className="p-2 text-slate-400 hover:text-danger hover:bg-white rounded-lg transition-all relative z-10"
-                                title="Deactivate Provider"
+                                title={t('providers.deactivateProvider')}
                               >
                                 <i className="fa-solid fa-ban"></i>
                               </button>
@@ -645,7 +652,7 @@ const Providers: React.FC = () => {
                               <button
                                 onClick={() => handleActivate(provider.id)}
                                 className="p-2 text-emerald-500 hover:text-emerald-600 hover:bg-white rounded-lg transition-all relative z-10"
-                                title="Activate Provider"
+                                title={t('providers.activateProvider')}
                               >
                                 <i className="fa-solid fa-circle-check"></i>
                               </button>
@@ -675,7 +682,7 @@ const Providers: React.FC = () => {
                 {isExporting && (
                   <div className="w-3 h-3 border-2 border-slate-600 border-t-transparent rounded-full animate-spin"></div>
                 )}
-                {isExporting ? 'Exporting...' : `${t('common.export')} CSV`}
+                {isExporting ? t('providers.exporting') : `${t('common.export')} CSV`}
               </button>
             </div>
             <PaginationComponent
@@ -697,9 +704,9 @@ const Providers: React.FC = () => {
             <div className="w-16 h-16 bg-danger/10 text-danger rounded-full flex items-center justify-center mx-auto mb-4">
               <i className="fa-solid fa-triangle-exclamation text-2xl"></i>
             </div>
-            <h3 className="text-xl font-bold text-slate-900">Bulk Deactivate Providers?</h3>
+            <h3 className="text-xl font-bold text-slate-900">{t('providers.bulkDeactivateTitle')}</h3>
             <p className="text-slate-500 text-sm mt-2">
-              Are you sure you want to deactivate {selectedProviders.length} selected provider(s)?
+              {t('providers.bulkDeactivateConfirm', { count: selectedProviders.length })}
             </p>
             <div className="mt-4 mb-6">
               <div className="bg-slate-50 rounded-lg p-3 max-h-32 overflow-y-auto">
@@ -728,7 +735,7 @@ const Providers: React.FC = () => {
                 {isBulkDeactivating && (
                   <div className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin"></div>
                 )}
-                {isBulkDeactivating ? 'Deactivating...' : t('common.deactivate')} All
+                {isBulkDeactivating ? t('providers.deactivating') : t('providers.deactivateAll')}
               </button>
             </div>
           </div>
@@ -761,7 +768,7 @@ const Providers: React.FC = () => {
                 {isDeactivating && (
                   <div className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin"></div>
                 )}
-                {isDeactivating ? 'Deactivating...' : t('common.deactivate')}
+                {isDeactivating ? t('providers.deactivating') : t('common.deactivate')}
               </button>
             </div>
           </div>
@@ -775,9 +782,9 @@ const Providers: React.FC = () => {
             <div className="w-16 h-16 bg-emerald-50 text-emerald-600 rounded-full flex items-center justify-center mx-auto mb-4">
               <i className="fa-solid fa-circle-check text-2xl"></i>
             </div>
-            <h3 className="text-xl font-bold text-slate-900">Activate Provider?</h3>
+            <h3 className="text-xl font-bold text-slate-900">{t('providers.activateProviderTitle')}</h3>
             <p className="text-slate-500 text-sm mt-2">
-              Are you sure you want to activate {providers.find(p => p.id === selectedProviderForActivate)?.name || 'Unknown Provider'}? This will allow them to accept new service requests.
+              {t('providers.activateConfirm', { providerName: providers.find(p => p.id === selectedProviderForActivate)?.name || 'Unknown Provider' })}
             </p>
             <div className="mt-8 flex gap-3">
               <button
@@ -794,7 +801,7 @@ const Providers: React.FC = () => {
                 {isActivating && (
                   <div className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin"></div>
                 )}
-                {isActivating ? 'Activating...' : 'Activate'}
+                {isActivating ? t('providers.activating') : t('providers.activate')}
               </button>
             </div>
           </div>
@@ -820,7 +827,7 @@ const Providers: React.FC = () => {
               <div className="p-12 flex items-center justify-center">
                 <div className="flex items-center gap-3">
                   <div className="w-6 h-6 border-2 border-primary border-t-transparent rounded-full animate-spin"></div>
-                  <span className="text-sm text-slate-500">Loading provider details...</span>
+                  <span className="text-sm text-slate-500">{t('providers.loadingDetails')}</span>
                 </div>
               </div>
             ) : (
@@ -848,7 +855,7 @@ const Providers: React.FC = () => {
                 <div className="p-6 space-y-6">
                   {/* Status Badge */}
                   <div className="flex items-center justify-between">
-                    <h3 className="text-sm font-bold text-slate-400 uppercase tracking-widest">Status</h3>
+                    <h3 className="text-sm font-bold text-slate-400 uppercase tracking-widest">{t('common.status')}</h3>
                     {getTransformedProvider() && getStatusBadge(getTransformedProvider()!.status)}
                   </div>
 
@@ -860,7 +867,7 @@ const Providers: React.FC = () => {
                           <i className="fa-solid fa-envelope text-sm"></i>
                         </div>
                         <div>
-                          <p className="text-xs text-slate-500">Email</p>
+                          <p className="text-xs text-slate-500">{t('common.email')}</p>
                           <p className="text-sm font-medium text-slate-900">{getTransformedProvider()?.email}</p>
                         </div>
                       </div>
@@ -869,7 +876,7 @@ const Providers: React.FC = () => {
                           <i className="fa-solid fa-phone text-sm"></i>
                         </div>
                         <div>
-                          <p className="text-xs text-slate-500">Phone</p>
+                          <p className="text-xs text-slate-500">{t('common.phone')}</p>
                           <p className="text-sm font-medium text-slate-900">{getTransformedProvider()?.phone}</p>
                         </div>
                       </div>
@@ -879,7 +886,7 @@ const Providers: React.FC = () => {
 
                   {/* Services */}
                   <div>
-                    <h3 className="text-sm font-bold text-slate-400 uppercase tracking-widest mb-3">Eligible Services</h3>
+                    <h3 className="text-sm font-bold text-slate-400 uppercase tracking-widest mb-3">{t('providers.eligibleServices')}</h3>
                     <div className="flex flex-wrap gap-2">
                       {providerDetails?.data?.assignedServices?.map((serviceId, index) => (
                         <span
@@ -894,12 +901,12 @@ const Providers: React.FC = () => {
 
                   {/* Additional Information */}
                   <div className="bg-slate-50 rounded-xl p-4">
-                    <p className="text-xs font-medium text-slate-600 mb-1">Provider Information</p>
+                    <p className="text-xs font-medium text-slate-600 mb-1">{t('providers.providerInfo')}</p>
                     <p className="text-xs text-slate-500">
-                      This provider has been verified and meets all quality standards. 
+                      {t('providers.verifiedDescription')}
                       {getTransformedProvider()?.status === 'active' 
-                        ? ' Currently accepting new service requests.' 
-                        : ' Currently not accepting new service requests.'}
+                        ? t('providers.acceptingRequests') 
+                        : t('providers.notAcceptingRequests')}
                     </p>
                   </div>
                 </div>
@@ -912,7 +919,7 @@ const Providers: React.FC = () => {
                     onClick={() => setShowViewModal(false)}
                   >
                     <button className="w-full px-4 py-2.5 text-sm font-bold text-white bg-primary hover:bg-slate-800 rounded-xl transition-all">
-                      Edit Provider
+                      {t('providers.editProviderButton')}
                     </button>
                   </Link>
                 </div>
