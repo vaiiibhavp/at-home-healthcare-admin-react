@@ -110,6 +110,7 @@ export const RequestDetailModal: React.FC<RequestDetailModalProps> = ({
       inprogress: 'In Progress',
       completed: 'Completed',
       returned: 'Returned',
+      cancelled: 'Cancelled',
       draft: 'Request Created',
       pending: 'Pending'
     };
@@ -118,6 +119,7 @@ export const RequestDetailModal: React.FC<RequestDetailModalProps> = ({
       inprogress: 'fa-spinner',
       completed: 'fa-flag-checkered',
       returned: 'fa-undo',
+      cancelled: 'fa-ban',
       draft: 'fa-check',
       pending: 'fa-clock'
     };
@@ -147,7 +149,8 @@ export const RequestDetailModal: React.FC<RequestDetailModalProps> = ({
       pending: 'status-chip bg-blue-50 text-blue-600 border-blue-200',
       completed: 'status-chip bg-emerald-50 text-emerald-600 border-emerald-200',
       inprogress: 'status-chip bg-blue-50 text-blue-600 border-blue-200',
-      returned: 'status-chip bg-amber-50 text-amber-600 border-amber-200'
+      returned: 'status-chip bg-amber-50 text-amber-600 border-amber-200',
+      cancelled: 'status-chip bg-red-50 text-red-600 border-red-200'
     };
     return statusClasses[status as keyof typeof statusClasses] || 'status-chip bg-slate-50 text-slate-600 border-slate-200';
   };
@@ -157,7 +160,8 @@ export const RequestDetailModal: React.FC<RequestDetailModalProps> = ({
       pending: 'Submitted',
       completed: 'Completed',
       inprogress: 'In Progress',
-      returned: 'Returned'
+      returned: 'Returned',
+      cancelled: 'Cancelled'
     };
     return statusTexts[status as keyof typeof statusTexts] || status;
   };
@@ -267,7 +271,7 @@ export const RequestDetailModal: React.FC<RequestDetailModalProps> = ({
           </div>
 
           {/* Cancelled Banner */}
-          {request.status === 'returned' && (
+          {(request.status === 'returned' || request.status === 'cancelled') && (
             <div className="bg-red-50 border-b border-red-200 px-8 py-3 flex items-center gap-3">
               <i className="fa-solid fa-circle-exclamation text-red-500"></i>
               <p className="text-sm font-bold text-red-700">Request cancelled by admin</p>
@@ -520,7 +524,7 @@ export const RequestDetailModal: React.FC<RequestDetailModalProps> = ({
                 </div>
 
                 {/* Admin Controls */}
-                {request.status !== 'completed' && request.status !== 'returned' && (
+                {request.status !== 'completed' && request.status !== 'returned' && request.status !== 'cancelled' && (
                   <div className="bg-white p-6 rounded-2xl border border-slate-200 tradingview-shadow">
                     <h3 className="text-[10px] font-bold text-slate-400 uppercase tracking-widest mb-4">
                       Admin Controls

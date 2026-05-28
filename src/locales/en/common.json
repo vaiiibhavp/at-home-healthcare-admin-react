@@ -344,6 +344,7 @@
     "allServices": "All Services",
     "inProgress": "In Progress",
     "returned": "Returned",
+    "cancelled": "Cancelled",
     "requestSubmitted": "Request Submitted",
     "request": "Request",
     "submittedOn": "Submitted on",

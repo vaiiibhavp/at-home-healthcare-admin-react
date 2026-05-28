@@ -12,7 +12,7 @@ export interface RequestData {
   doctorProfileImage: string | null;
   patientName: string;
   serviceName: string;
-  status: 'pending' | 'completed' | 'inprogress' | 'returned' | 'draft';
+  status: 'pending' | 'completed' | 'inprogress' | 'returned' | 'cancelled' | 'draft';
   createdAt: string;
   updatedAt: string;
   priorityLevel: string;
@@ -85,6 +85,7 @@ export interface RequestData {
     submitted: number | null;
     inProgress: number | null;
     returned: number | null;
+    cancelled: number | null;
     completed: number | null;
   };
   lastAdminAction?: {

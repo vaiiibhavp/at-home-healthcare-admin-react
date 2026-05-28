@@ -153,6 +153,22 @@ export const RequestDetailModal: React.FC<RequestDetailModalProps> = ({
       });
     }
     
+    // Cancelled (only show if timestamp exists)
+    if (timestamps?.cancelled) {
+      events.push({
+        status: 'Cancelled',
+        date: new Date(timestamps.cancelled).toLocaleDateString('en-US', { 
+          month: 'short', 
+          day: 'numeric', 
+          hour: '2-digit',
+          minute: '2-digit'
+        }),
+        icon: 'fa-ban',
+        isActive: request.status === 'cancelled',
+        isCompleted: request.status === 'cancelled'
+      });
+    }
+    
     return events;
   }, [request]);
 
@@ -162,6 +178,7 @@ export const RequestDetailModal: React.FC<RequestDetailModalProps> = ({
       completed: 'status-chip bg-emerald-50 text-emerald-600 border-emerald-200',
       inprogress: 'status-chip bg-blue-50 text-blue-600 border-blue-200',
       returned: 'status-chip bg-amber-50 text-amber-600 border-amber-200',
+      cancelled: 'status-chip bg-red-50 text-red-600 border-red-200',
       draft: 'status-chip bg-slate-50 text-slate-600 border-slate-200'
     };
     return statusClasses[status as keyof typeof statusClasses] || 'status-chip bg-slate-50 text-slate-600 border-slate-200';
@@ -173,6 +190,7 @@ export const RequestDetailModal: React.FC<RequestDetailModalProps> = ({
       completed: 'SIGNED',
       inprogress: 'AWAITING SIGNATURE',
       returned: 'RETURNED',
+      cancelled: 'CANCELLED',
       draft: 'NOT STARTED'
     };
     return statusTexts[status as keyof typeof statusTexts] || status;
@@ -278,7 +296,7 @@ export const RequestDetailModal: React.FC<RequestDetailModalProps> = ({
           </div>
 
           {/* Cancelled Banner */}
-          {request.status === 'returned' && (
+          {(request.status === 'returned' || request.status === 'cancelled') && (
             <div className="bg-red-50 border-b border-red-200 px-8 py-3 flex items-center gap-3">
               <i className="fa-solid fa-circle-exclamation text-red-500"></i>
               <p className="text-sm font-bold text-red-700">Request cancelled by admin</p>

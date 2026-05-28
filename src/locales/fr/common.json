@@ -337,6 +337,7 @@
     "allServices": "Tous les services",
     "inProgress": "En cours",
     "returned": "Retourné",
+    "cancelled": "Annulé",
     "draft": "Brouillon",
     "requestSubmitted": "Demande soumise",
     "request": "Demande",

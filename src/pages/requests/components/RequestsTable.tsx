@@ -22,6 +22,7 @@ export const RequestsTable: React.FC<RequestsTableProps> = ({
       completed: 'status-chip status-completed',
       inprogress: 'status-chip status-inprogress',
       returned: 'status-chip status-returned',
+      cancelled: 'status-chip status-returned',
       draft: 'status-chip status-draft'
     };
     return statusClasses[status as keyof typeof statusClasses] || 'status-chip';
@@ -33,6 +34,7 @@ export const RequestsTable: React.FC<RequestsTableProps> = ({
       completed: 'SIGNED',
       inprogress: 'IN PROGRESS',
       returned: 'RETURNED',
+      cancelled: 'CANCELLED',
       draft: 'DRAFT'
     };
     return statusTexts[status as keyof typeof statusTexts] || status;
@@ -132,7 +134,7 @@ export const RequestsTable: React.FC<RequestsTableProps> = ({
                         <i className="fa-solid fa-undo text-sm"></i>
                       </button>
                     )}
-                    {request.status !== 'completed' && request.status !== 'returned' && (
+                    {request.status !== 'completed' && request.status !== 'returned' && request.status !== 'cancelled' && (
                       <button 
                         onClick={(e) => {
                           e.stopPropagation();
