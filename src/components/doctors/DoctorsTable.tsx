@@ -82,7 +82,7 @@ const DoctorsTable = ({ doctors, loading = false, onApprove, onReject, onView, o
         return (
           <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-slate-50 text-slate-600 border border-slate-200">
             <i className="fa-solid fa-circle text-[6px] mr-1.5"></i>
-            Inactive
+            {t('status.inactive') || 'Inactive'}
           </span>
         );
       default:
@@ -128,6 +128,11 @@ const DoctorsTable = ({ doctors, loading = false, onApprove, onReject, onView, o
   // Get doctor's full name
   const getDoctorName = (doctor: Doctor) => {
     return `Dr. ${doctor.fullName}`;
+  };
+
+  const getTranslatedSpecialty = (specialty: string) => {
+    const translation = t(`doctors.${specialty}`);
+    return translation.startsWith('doctors.') ? capitalizeFirst(specialty) : translation;
   };
 
   // Handle approve action
@@ -194,7 +199,7 @@ const DoctorsTable = ({ doctors, loading = false, onApprove, onReject, onView, o
               : 'text-slate-500 hover:text-slate-700'
           }`}
         >
-          Pending Approvals 
+          {t('doctors.pendingApprovals')} 
           <span className="ml-2 px-2 py-0.5 bg-amber-100 text-amber-700 rounded-full text-xs">{totalPendingDoctors !== undefined ? totalPendingDoctors : pendingDoctors.length}</span>
         </button>
         <button
@@ -205,7 +210,7 @@ const DoctorsTable = ({ doctors, loading = false, onApprove, onReject, onView, o
               : 'text-slate-500 hover:text-slate-700'
           }`}
         >
-          Approved Doctors
+          {t('doctors.approvedDoctors')}
           <span className="ml-2 px-2 py-0.5 bg-emerald-100 text-emerald-700 rounded-full text-xs">{totalApprovedDoctors !== undefined ? totalApprovedDoctors : approvedDoctors.length}</span>
         </button>
       </div>
@@ -243,16 +248,16 @@ const DoctorsTable = ({ doctors, loading = false, onApprove, onReject, onView, o
             <thead>
               <tr className="bg-slate-50/50 border-b border-slate-100">
                 <th className="px-6 py-4 text-xs font-bold text-slate-500 uppercase tracking-wider">
-                  Doctor Name
+                  {t('doctors.doctorName')}
                 </th>
                 <th className="px-6 py-4 text-xs font-bold text-slate-500 uppercase tracking-wider">
-                  Email Address
+                  {t('doctors.emailAddress')}
                 </th>
                 <th className="px-6 py-4 text-xs font-bold text-slate-500 uppercase tracking-wider">
-                  Specialty
+                  {t('doctors.specialty')}
                 </th>
                 <th className="px-6 py-4 text-xs font-bold text-slate-500 uppercase tracking-wider text-right">
-                  Actions
+                  {t('common.actions')}
                 </th>
               </tr>
             </thead>
@@ -270,26 +275,26 @@ const DoctorsTable = ({ doctors, loading = false, onApprove, onReject, onView, o
                     </div>
                   </td>
                   <td className="px-6 py-4 text-sm text-slate-600">{doctor.email}</td>
-                  <td className="px-6 py-4 text-sm text-slate-600">{capitalizeFirst(doctor.specialty)}</td>
+                  <td className="px-6 py-4 text-sm text-slate-600">{getTranslatedSpecialty(doctor.specialty)}</td>
                   <td className="px-6 py-4 text-right">
                     <div className="flex justify-end gap-2">
                       <button
                         onClick={() => handleApprove(doctor)}
-                        title="Approve"
+                        title={t('doctors.approve')}
                         className="p-2 text-emerald-600 hover:bg-emerald-50 rounded-lg transition-colors"
                       >
                         <i className="fa-solid fa-check"></i>
                       </button>
                       <button
                         onClick={() => handleReject(doctor)}
-                        title="Reject"
+                        title={t('doctors.reject')}
                         className="p-2 text-danger hover:bg-red-50 rounded-lg transition-colors"
                       >
                         <i className="fa-solid fa-xmark"></i>
                       </button>
                       <button
                         onClick={() => navigate(`/doctors/${doctor.id}?approved=${getApprovedParam()}`)}
-                        title="View Details"
+                        title={t('doctors.viewDetails')}
                         className="p-2 text-slate-400 hover:bg-slate-100 rounded-lg transition-colors"
                       >
                         <i className="fa-solid fa-eye"></i>
@@ -310,16 +315,16 @@ const DoctorsTable = ({ doctors, loading = false, onApprove, onReject, onView, o
             <thead>
               <tr className="bg-slate-50/50 border-b border-slate-100">
                 <th className="px-6 py-4 text-xs font-bold text-slate-500 uppercase tracking-wider">
-                  Doctor Name
+                  {t('doctors.doctorName')}
                 </th>
                 <th className="px-6 py-4 text-xs font-bold text-slate-500 uppercase tracking-wider">
-                  Specialty
+                  {t('doctors.specialty')}
                 </th>
                 <th className="px-6 py-4 text-xs font-bold text-slate-500 uppercase tracking-wider">
-                  Status
+                  {t('common.status')}
                 </th>
                 <th className="px-6 py-4 text-xs font-bold text-slate-500 uppercase tracking-wider text-right">
-                  Actions
+                  {t('common.actions')}
                 </th>
               </tr>
             </thead>
@@ -339,7 +344,7 @@ const DoctorsTable = ({ doctors, loading = false, onApprove, onReject, onView, o
                       </div>
                     </div>
                   </td>
-                  <td className="px-6 py-4 text-sm text-slate-600">{capitalizeFirst(doctor.specialty)}</td>
+                  <td className="px-6 py-4 text-sm text-slate-600">{getTranslatedSpecialty(doctor.specialty)}</td>
                   <td className="px-6 py-4">{getStatusBadge(doctor.status)}</td>
                   <td className="px-6 py-4 text-right">
                     <div className="flex justify-end gap-2">
@@ -347,7 +352,7 @@ const DoctorsTable = ({ doctors, loading = false, onApprove, onReject, onView, o
                         onClick={() => navigate(`/doctors/${doctor.id}?approved=${getApprovedParam()}`)}
                         className="px-3 py-1.5 text-xs font-bold text-primary hover:bg-slate-100 rounded-lg transition-colors"
                       >
-                        View
+                        {t('doctors.view')}
                       </button>
                       <button 
                         onClick={() => handleDisable(doctor)}
@@ -357,7 +362,7 @@ const DoctorsTable = ({ doctors, loading = false, onApprove, onReject, onView, o
                             : 'text-danger hover:bg-red-50'
                         }`}
                       >
-                        {doctor.status === 'inactive' ? 'Activate' : 'Disable'}
+                        {doctor.status === 'inactive' ? t('doctors.activate') : t('doctors.disable')}
                       </button>
                     </div>
                   </td>

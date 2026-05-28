@@ -71,7 +71,9 @@
   },
   "status": {
     "pending": "En attente",
-    "active": "Actif"
+    "active": "Actif",
+    "rejected": "Rejeté",
+    "inactive": "Inactif"
   },
   "dashboard": {
     "title": "Aperçu du tableau de bord",
@@ -211,6 +213,43 @@
     "approved": "Approuvé",
     "cancel": "Annuler",
     "confirmReject": "Confirmer le rejet",
+    "pendingApprovals": "Approbations en attente",
+    "approvedDoctors": "Médecins approuvés",
+    "emailAddress": "Adresse e-mail",
+    "specialty": "Spécialité",
+    "viewDetails": "Voir les détails",
+    "view": "Voir",
+    "activate": "Activer",
+    "disable": "Désactiver",
+    "inactive": "Inactif",
+    "statusChangeSuccess": "{{doctorName}} {{status}} avec succès",
+    "activated": "activé",
+    "disabled": "désactivé",
+    "notesRequired": "Veuillez saisir des notes avant d'enregistrer",
+    "notesSaved": "Notes internes enregistrées avec succès",
+    "notesSaveError": "Erreur lors de l'enregistrement des notes internes. Veuillez réessayer.",
+    "selectReason": "Sélectionnez une raison...",
+    "additionalComments": "Commentaires supplémentaires...",
+    "selectRejectionReason": "Veuillez sélectionner une raison de rejet.",
+    "rejectApplicationTitle": "Rejeter la demande",
+    "rejectionDescription": "Veuillez sélectionner une raison de rejet. Cela sera communiqué au médecin.",
+    "rejectionReasons": {
+      "invalidRpps": "Numéro RPPS invalide",
+      "missingDocs": "Documents requis manquants",
+      "expiredInsurance": "Assurance responsabilité civile expirée",
+      "other": "Autre raison"
+    },
+    "stepStatus": {
+      "pendingApproval": "en attente d'approbation",
+      "approved": "approuvé",
+      "rejected": "rejeté",
+      "inactive": "inactif"
+    },
+    "verificationStates": {
+      "verified": "Vérifié",
+      "notVerified": "Non vérifié",
+      "pendingAdminApproval": "En attente d'approbation admin"
+    },
     "documents": {
       "identity": "Document d'identité.pdf",
       "medicalDiploma": "Diplôme médical.pdf",
