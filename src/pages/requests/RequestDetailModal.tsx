@@ -17,6 +17,7 @@ export const RequestDetailModal: React.FC<RequestDetailModalProps> = ({
   // const { t } = useTranslation(); // Commented out as it's not currently used
   const [showResetModal, setShowResetModal] = useState(false);
   const [showAuditModal, setShowAuditModal] = useState(false);
+  const [showPhysicianModal, setShowPhysicianModal] = useState(false);
   const [showToast, setShowToast] = useState(false);
   const [toastMessage, setToastMessage] = useState('');
   const [auditLogs, setAuditLogs] = useState<any[]>([]);
@@ -228,7 +229,7 @@ export const RequestDetailModal: React.FC<RequestDetailModalProps> = ({
                   </div>
                 </div>
                 <div className="mt-4 pt-4 border-t border-slate-50 flex justify-between items-center">
-                  <button className="text-xs font-bold text-primary hover:underline">View Full Profile</button>
+                  <button onClick={() => setShowPhysicianModal(true)} className="text-xs font-bold text-primary hover:underline">View Full Profile</button>
                   <button className="text-slate-400 hover:text-primary">
                     <i className="fa-solid fa-envelope"></i>
                   </button>
@@ -490,7 +491,7 @@ export const RequestDetailModal: React.FC<RequestDetailModalProps> = ({
 
       {/* Reset Status Modal */}
       {showResetModal && (
-        <div className="fixed inset-0 z-[60] flex items-center justify-center p-4 modal-overlay">
+        <div className="fixed inset-0 z-[60] flex items-center justify-center p-4 bg-black/30 backdrop-blur-sm">
           <div className="bg-white w-full max-w-md rounded-2xl overflow-hidden tradingview-shadow">
             <div className="p-6 border-b border-slate-100 flex items-center justify-between">
               <h3 className="text-lg font-bold text-slate-900">Reset Request Status</h3>
@@ -542,7 +543,7 @@ export const RequestDetailModal: React.FC<RequestDetailModalProps> = ({
 
       {/* Audit Log Modal */}
       {showAuditModal && (
-        <div className="fixed inset-0 z-[60] flex items-center justify-center p-4 modal-overlay">
+        <div className="fixed inset-0 z-[60] flex items-center justify-center p-4 bg-black/30 backdrop-blur-sm">
           <div className="bg-white w-full max-w-3xl rounded-2xl overflow-hidden tradingview-shadow max-h-[80vh] flex flex-col">
             <div className="p-6 border-b border-slate-100 flex items-center justify-between flex-shrink-0">
               <h3 className="text-lg font-bold text-slate-900">Audit Log - Request #{request?.requestId || request?.id}</h3>
@@ -596,6 +597,98 @@ export const RequestDetailModal: React.FC<RequestDetailModalProps> = ({
                   ))}
                 </div>
               )}
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* Physician Profile Modal */}
+      {showPhysicianModal && (
+        <div className="fixed inset-0 z-[60] flex items-center justify-center p-4 bg-black/30 backdrop-blur-sm">
+          <div className="bg-white w-full max-w-md rounded-2xl overflow-hidden tradingview-shadow">
+            <div className="p-6 border-b border-slate-100 flex items-center justify-between">
+              <h3 className="text-lg font-bold text-slate-900">Physician Profile</h3>
+              <button onClick={() => setShowPhysicianModal(false)} className="text-slate-400 hover:text-slate-600">
+                <i className="fa-solid fa-xmark"></i>
+              </button>
+            </div>
+            <div className="p-6 space-y-6">
+              <div className="flex items-center gap-4">
+                <img
+                  src={request.doctorProfileImage || "https://storage.googleapis.com/uxpilot-auth.appspot.com/avatars/avatar-3.jpg"}
+                  alt={`${request.doctorName || 'Unknown Doctor'} - Doctor Avatar`}
+                  className="w-16 h-16 rounded-xl object-cover"
+                />
+                <div>
+                  <p className="text-sm font-bold text-slate-900">{request.doctorName || 'Unknown Doctor'}</p>
+                  <p className="text-xs text-slate-500">{request.doctorSpeciality || 'Unknown Specialty'}</p>
+                </div>
+              </div>
+              <div className="space-y-4">
+                <div className="flex items-center gap-3">
+                  <div className="w-8 h-8 bg-emerald-50 rounded-lg flex items-center justify-center text-emerald-600">
+                    <i className="fa-solid fa-envelope text-sm"></i>
+                  </div>
+                  <div>
+                    <p className="text-xs text-slate-500">Email</p>
+                    <p className="text-sm font-medium text-slate-900">{request.doctorId?.email || 'N/A'}</p>
+                  </div>
+                </div>
+                <div className="flex items-center gap-3">
+                  <div className="w-8 h-8 bg-blue-50 rounded-lg flex items-center justify-center text-blue-600">
+                    <i className="fa-solid fa-phone text-sm"></i>
+                  </div>
+                  <div>
+                    <p className="text-xs text-slate-500">Phone</p>
+                    <p className="text-sm font-medium text-slate-900">{request.doctorId?.phoneNumber || 'N/A'}</p>
+                  </div>
+                </div>
+                <div className="flex items-center gap-3">
+                  <div className="w-8 h-8 bg-purple-50 rounded-lg flex items-center justify-center text-purple-600">
+                    <i className="fa-solid fa-id-card text-sm"></i>
+                  </div>
+                  <div>
+                    <p className="text-xs text-slate-500">RPPS Number</p>
+                    <p className="text-sm font-medium text-slate-900">{request.doctorId?.rppsNumber || 'N/A'}</p>
+                  </div>
+                </div>
+                <div className="flex items-center gap-3">
+                  <div className="w-8 h-8 bg-orange-50 rounded-lg flex items-center justify-center text-orange-600">
+                    <i className="fa-solid fa-building text-sm"></i>
+                  </div>
+                  <div>
+                    <p className="text-xs text-slate-500">FINESS Number</p>
+                    <p className="text-sm font-medium text-slate-900">{request.doctorId?.finessNumber || 'N/A'}</p>
+                  </div>
+                </div>
+                <div className="flex items-center gap-3">
+                  <div className="w-8 h-8 bg-pink-50 rounded-lg flex items-center justify-center text-pink-600">
+                    <i className="fa-solid fa-stethoscope text-sm"></i>
+                  </div>
+                  <div>
+                    <p className="text-xs text-slate-500">Specialty</p>
+                    <p className="text-sm font-medium text-slate-900">{request.doctorId?.specialty || 'N/A'}</p>
+                  </div>
+                </div>
+                <div className="flex items-center gap-3">
+                  <div className="w-8 h-8 bg-teal-50 rounded-lg flex items-center justify-center text-teal-600">
+                    <i className="fa-solid fa-location-dot text-sm"></i>
+                  </div>
+                  <div>
+                    <p className="text-xs text-slate-500">Business Address</p>
+                    <p className="text-sm font-medium text-slate-900">{request.doctorId?.businessAddress || 'N/A'}</p>
+                  </div>
+                </div>
+                <div className="flex items-center gap-3">
+                  <div className="w-8 h-8 bg-indigo-50 rounded-lg flex items-center justify-center text-indigo-600">
+                    <i className="fa-solid fa-hospital text-sm"></i>
+                  </div>
+                  <div>
+                    <p className="text-xs text-slate-500">Practice Type</p>
+                    <p className="text-sm font-medium text-slate-900 capitalize">{request.doctorId?.practiceType || 'N/A'}</p>
+                  </div>
+                </div>
+              </div>
             </div>
           </div>
         </div>
