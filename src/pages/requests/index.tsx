@@ -88,18 +88,17 @@ const Requests: React.FC = () => {
     return colorMap[status as keyof typeof colorMap] || 'gray';
   };
 
-  // Helper function to get form status based on request data
-  const getFormStatus = (request: any): string => {
-    if (request.digitalSignature?.signedAt) {
-      return 'SIGNED';
-    }
-    if (request.formData) {
-      return 'SUBMITTED';
-    }
-    if (request.status === 'draft') {
-      return 'DRAFT';
-    }
-    return 'PENDING';
+  // Helper function to format form status from API response
+  const formatFormStatus = (status?: string): string => {
+    if (!status) return 'PENDING';
+    const statusMap: Record<string, string> = {
+      draft: 'DRAFT',
+      signed: 'SIGNED',
+      submitted: 'SUBMITTED',
+      awaitingSignature: 'AWAITING SIGNATURE',
+      cancelled: 'CANCELLED',
+    };
+    return statusMap[status] || status.toUpperCase();
   };
 
   // API function to fetch services for filter dropdown
@@ -182,7 +181,7 @@ const Requests: React.FC = () => {
             minute: '2-digit'
           }) : 'Unknown Date',
           serviceColor: getServiceColor(apiRequest.status),
-          formStatus: getFormStatus(apiRequest)
+          formStatus: formatFormStatus(apiRequest.formStatus)
         }));
         
         setRequestsData(transformedRequests);
@@ -355,7 +354,7 @@ const Requests: React.FC = () => {
           minute: '2-digit'
         }) : request.lastUpdated,
         serviceColor: getServiceColor(detailedData.status),
-        formStatus: getFormStatus(detailedData)
+        formStatus: formatFormStatus(detailedData.formStatus)
       };
       
       setSelectedRequest(completeRequestData);
