@@ -22,6 +22,9 @@ export const RequestDetailModal: React.FC<RequestDetailModalProps> = ({
   const [zoomLevel, setZoomLevel] = useState(1);
   const [showToast, setShowToast] = useState(false);
   const [toastMessage, setToastMessage] = useState('');
+  const [newResetStatus, setNewResetStatus] = useState('');
+  const [resetReason, setResetReason] = useState('');
+  const [resetting, setResetting] = useState(false);
   const [auditLogs, setAuditLogs] = useState<any[]>([]);
   const [loadingAuditLogs, setLoadingAuditLogs] = useState(false);
   const [pdfBlobUrl, setPdfBlobUrl] = useState<string | null>(null);
@@ -156,11 +159,40 @@ export const RequestDetailModal: React.FC<RequestDetailModalProps> = ({
     return statusTexts[status as keyof typeof statusTexts] || status;
   };
 
-  const handleResetStatus = () => {
-    setToastMessage('Request status reset successfully');
-    setShowToast(true);
-    setShowResetModal(false);
-    setTimeout(() => setShowToast(false), 3000);
+  const handleResetStatus = async () => {
+    if (!request || !newResetStatus || !resetReason.trim()) return;
+    setResetting(true);
+    try {
+      const token = localStorage.getItem('authToken');
+      const response = await fetch(
+        `${process.env.REACT_APP_API_BASE_URL}/admin/requests/${request.requestId || request.id}/reset-status`,
+        {
+          method: 'PUT',
+          headers: {
+            'Content-Type': 'application/json',
+            ...(token ? { Authorization: `Bearer ${token}` } : {})
+          },
+          body: JSON.stringify({
+            newStatus: newResetStatus,
+            reason: resetReason.trim()
+          })
+        }
+      );
+      if (!response.ok) throw new Error('Failed to reset status');
+      setToastMessage('Request status reset successfully');
+      setShowToast(true);
+      setShowResetModal(false);
+      setNewResetStatus('');
+      setResetReason('');
+      setTimeout(() => setShowToast(false), 3000);
+    } catch (error) {
+      console.error('Error resetting status:', error);
+      setToastMessage('Failed to reset status');
+      setShowToast(true);
+      setTimeout(() => setShowToast(false), 3000);
+    } finally {
+      setResetting(false);
+    }
   };
 
   
@@ -477,20 +509,26 @@ export const RequestDetailModal: React.FC<RequestDetailModalProps> = ({
                 </div>
 
                 {/* Admin Controls */}
-                <div className="bg-white p-6 rounded-2xl border border-slate-200 tradingview-shadow">
-                  <h3 className="text-[10px] font-bold text-slate-400 uppercase tracking-widest mb-4">
-                    Admin Controls
-                  </h3>
-                  <div className="space-y-3">
-                    <button className="w-full px-4 py-3 bg-white border border-slate-200 text-slate-600 rounded-xl text-sm font-bold flex items-center justify-center gap-2 hover:bg-slate-50 transition-all">
-                      <i className="fa-solid fa-rotate-left"></i> Reset Status
-                    </button>
-                    <div className="h-px bg-slate-100 my-2"></div>
-                    <button className="w-full px-4 py-3 bg-danger/5 text-danger rounded-xl text-sm font-bold flex items-center justify-center gap-2 hover:bg-danger/10 transition-all">
-                      <i className="fa-solid fa-ban"></i> Cancel Request
-                    </button>
+                {request.status !== 'completed' && (
+                  <div className="bg-white p-6 rounded-2xl border border-slate-200 tradingview-shadow">
+                    <h3 className="text-[10px] font-bold text-slate-400 uppercase tracking-widest mb-4">
+                      Admin Controls
+                    </h3>
+                    <div className="space-y-3">
+                      {request.status === 'inprogress' && (
+                        <button
+                          onClick={() => setShowResetModal(true)}
+                          className="w-full px-4 py-3 bg-white border border-slate-200 text-slate-600 rounded-xl text-sm font-bold flex items-center justify-center gap-2 hover:bg-slate-50 transition-all"
+                        >
+                          <i className="fa-solid fa-rotate-left"></i> Reset Status
+                        </button>
+                      )}
+                      <button className="w-full px-4 py-3 bg-danger/5 text-danger rounded-xl text-sm font-bold flex items-center justify-center gap-2 hover:bg-danger/10 transition-all">
+                        <i className="fa-solid fa-ban"></i> Cancel Request
+                      </button>
+                    </div>
                   </div>
-                </div>
+                )}
                 
                 {/* Internal Notes */}
                 <div className="bg-white p-6 rounded-2xl border border-slate-200 tradingview-shadow">
@@ -551,17 +589,23 @@ export const RequestDetailModal: React.FC<RequestDetailModalProps> = ({
               </div>
               <div className="space-y-1">
                 <label className="text-[10px] font-bold text-slate-400 uppercase">Reset To Status</label>
-                <select className="w-full bg-slate-50 border border-slate-200 rounded-xl px-4 py-3 text-sm outline-none focus:ring-2 focus:ring-primary/20">
-                  <option>Select status...</option>
-                  <option>Draft</option>
-                  <option>Submitted</option>
-                  <option>Provider Assigned</option>
+                <select
+                  value={newResetStatus}
+                  onChange={(e) => setNewResetStatus(e.target.value)}
+                  className="w-full bg-slate-50 border border-slate-200 rounded-xl px-4 py-3 text-sm outline-none focus:ring-2 focus:ring-primary/20"
+                >
+                  <option value="">Select status...</option>
+                  <option value="pending">Pending</option>
+                  <option value="submitted">Submitted</option>
+                  <option value="draft">Draft</option>
                 </select>
               </div>
               <div className="space-y-1">
                 <label className="text-[10px] font-bold text-slate-400 uppercase">Reason</label>
-                <textarea 
-                  placeholder="Explain the reason for reset..." 
+                <textarea
+                  value={resetReason}
+                  onChange={(e) => setResetReason(e.target.value)}
+                  placeholder="Explain the reason for reset..."
                   className="w-full bg-slate-50 border border-slate-200 rounded-xl px-4 py-3 text-sm outline-none focus:ring-2 focus:ring-primary/20 h-24"
                 />
               </div>
@@ -573,11 +617,18 @@ export const RequestDetailModal: React.FC<RequestDetailModalProps> = ({
               >
                 Cancel
               </button>
-              <button 
+              <button
                 onClick={handleResetStatus}
-                className="flex-1 px-4 py-3 bg-danger text-white rounded-xl text-sm font-bold hover:bg-red-600 transition-all"
+                disabled={!newResetStatus || !resetReason.trim() || resetting}
+                className="flex-1 px-4 py-3 bg-danger text-white rounded-xl text-sm font-bold hover:bg-red-600 transition-all disabled:opacity-50 disabled:cursor-not-allowed"
               >
-                Reset Request Status
+                {resetting ? (
+                  <>
+                    <i className="fa-solid fa-spinner fa-spin mr-2"></i> Resetting...
+                  </>
+                ) : (
+                  'Reset Request Status'
+                )}
               </button>
             </div>
           </div>
