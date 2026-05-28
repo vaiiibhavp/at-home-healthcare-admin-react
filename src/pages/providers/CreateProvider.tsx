@@ -468,7 +468,7 @@ const CreateProvider: React.FC = () => {
                 <div className="flex gap-2">
                   <input
                     type="text"
-                    placeholder="Search and add services (e.g. Blood Test, Nursing...)"
+                    placeholder="Search and add services"
                     className="flex-1 pl-11 pr-4 py-2.5 bg-slate-50 border border-slate-200 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-primary/20 transition-all"
                   />
                   <button 
