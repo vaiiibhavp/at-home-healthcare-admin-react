@@ -4,6 +4,14 @@ import { useNavigate } from 'react-router-dom';
 import { Service, useLazyDownloadServicesQuery } from '../../services/servicesApi';
 import PaginationComponent from '../ui/PaginationComponent';
 
+const getServiceKey = (name: string): string => {
+  const overrides: Record<string, string> = {
+    'Antibiothérapy infusion': 'antibiotherapy_infusion',
+  };
+  if (overrides[name]) return overrides[name];
+  return name.toLowerCase().replace(/[^a-z0-9]+/g, '_').replace(/^_+|_+$/g, '');
+};
+
 interface ServicesTableProps {
   services: Service[];
   onEdit: (service: Service) => void;
@@ -85,16 +93,16 @@ export const ServicesTable: React.FC<ServicesTableProps> = ({
             onClick={handleRefreshClick}
             disabled={isRefreshing}
             className="p-2 text-slate-400 hover:text-primary hover:bg-white rounded-lg transition-all border border-transparent hover:border-slate-200 disabled:opacity-50 disabled:cursor-not-allowed"
-            title="Refresh"
+            title={t('services.refresh')}
           >
             {!isRefreshing && <i className="fa-solid fa-rotate"></i>}
             {isRefreshing && <i className="fa-solid fa-spinner fa-spin"></i>}
           </button>
-          <button 
+          <button
             onClick={handleDownload}
             disabled={isDownloading}
             className="p-2 text-slate-400 hover:text-primary hover:bg-white rounded-lg transition-all border border-transparent hover:border-slate-200 disabled:opacity-50 disabled:cursor-not-allowed"
-            title="Download"
+            title={t('services.download')}
           >
             {!isDownloading && <i className="fa-solid fa-download"></i>}
             {isDownloading && <i className="fa-solid fa-spinner fa-spin"></i>}
@@ -128,11 +136,11 @@ export const ServicesTable: React.FC<ServicesTableProps> = ({
                     <div className={`w-8 h-8 bg-slate-50 text-slate-600 rounded-lg flex items-center justify-center`}>
                       <i className={`fa-solid fa-kit-medical text-xs`}></i>
                     </div>
-                    <span className="text-sm font-bold text-slate-700">{service.serviceName}</span>
+                    <span className="text-sm font-bold text-slate-700">{t(`serviceNames.${getServiceKey(service.serviceName)}`, service.serviceName)}</span>
                   </div>
                 </td>
                 <td className="px-6 py-4">
-                  <p className="text-xs text-slate-500 max-w-xs truncate">{service.description}</p>
+                  <p className="text-xs text-slate-500 max-w-xs truncate">{t(`serviceDescriptions.${getServiceKey(service.serviceName)}`, service.description)}</p>
                 </td>
                 <td className="px-6 py-4">
                   {service.assignedProviders ? (
@@ -151,7 +159,7 @@ export const ServicesTable: React.FC<ServicesTableProps> = ({
                         navigate(`/forms?serviceId=${service.id}&serviceName=${encodeURIComponent(service.serviceName)}&formMapped=${service.formMapping.status === 'Mapped'}`);
                       }}
                       className="p-2 text-slate-400 hover:text-primary hover:bg-white rounded-lg transition-all border border-transparent hover:border-slate-200"
-                      title={service.formMapping.status === 'Mapped' ? "View Form" : "Assign Form"}
+                      title={service.formMapping.status === 'Mapped' ? t('services.viewForm') : t('services.assignForm')}
                     >
                       <i className={`fa-solid ${service.formMapping.status === 'Mapped' ? 'fa-file-lines' : 'fa-link'}`}></i>
                     </button>
