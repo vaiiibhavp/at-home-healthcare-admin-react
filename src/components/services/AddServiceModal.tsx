@@ -64,19 +64,19 @@ export const AddServiceModal: React.FC<AddServiceModalProps> = ({
               className="w-full px-4 py-3 bg-slate-50 border border-slate-200 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-primary/20 transition-all"
               required
             >
-              <option value="">Select a service...</option>
-              <option value="Generic">Generic</option>
-              <option value="Wound Care">Wound Care</option>
-              <option value="IV Therapy">IV Therapy</option>
-              <option value="Medical Oxygen">Medical Oxygen</option>
-              <option value="Artificial Nutrition">Artificial Nutrition</option>
-              <option value="Personal Hygiene care">Personal Hygiene care</option>
-              <option value="PCA(Pain management)">PCA(Pain management)</option>
-              <option value="Pregnancy related care">Pregnancy related care</option>
-              <option value="Parenteral nutrition (central line)">Parenteral nutrition (central line)</option>
-              <option value="CNO">CNO</option>
-              <option value="Hydration Infusion">Hydration Infusion</option>
-              <option value="Antibiothérapy infusion">Antibiothérapy infusion</option>
+              <option value="">{t('services.selectService')}</option>
+              <option value="Generic">{t('serviceNames.generic')}</option>
+              <option value="Wound Care">{t('serviceNames.wound_care')}</option>
+              <option value="IV Therapy">{t('serviceNames.iv_therapy')}</option>
+              <option value="Medical Oxygen">{t('serviceNames.medical_oxygen')}</option>
+              <option value="Artificial Nutrition">{t('serviceNames.artificial_nutrition')}</option>
+              <option value="Personal Hygiene care">{t('serviceNames.personal_hygiene_care')}</option>
+              <option value="PCA(Pain management)">{t('serviceNames.pca_pain_management')}</option>
+              <option value="Pregnancy related care">{t('serviceNames.pregnancy_related_care')}</option>
+              <option value="Parenteral nutrition (central line)">{t('serviceNames.parenteral_nutrition_central_line')}</option>
+              <option value="CNO">{t('serviceNames.cno')}</option>
+              <option value="Hydration Infusion">{t('serviceNames.hydration_infusion')}</option>
+              <option value="Antibiothérapy infusion">{t('serviceNames.antibiotherapy_infusion')}</option>
             </select>
           </div>
 
@@ -88,7 +88,7 @@ export const AddServiceModal: React.FC<AddServiceModalProps> = ({
               name="description"
               value={formData.description}
               onChange={handleInputChange}
-              placeholder="Provide a brief description of the service..."
+              placeholder={t('services.serviceDescriptionPlaceholder')}
               rows={3}
               className="w-full px-4 py-3 bg-slate-50 border border-slate-200 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-primary/20 transition-all resize-none"
               required
@@ -126,14 +126,14 @@ export const AddServiceModal: React.FC<AddServiceModalProps> = ({
             onClick={onClose}
             className="px-5 py-2.5 text-sm font-bold text-slate-600 hover:bg-slate-200 rounded-xl transition-all"
           >
-            Cancel
+            {t('common.cancel')}
           </button>
           <button
             type="submit"
             onClick={handleSubmit}
             className="px-6 py-2.5 bg-primary text-white rounded-xl text-sm font-bold hover:bg-slate-800 transition-all shadow-md"
           >
-            {service ? 'Update Service' : 'Save Service'}
+            {service ? t('services.updateService') : t('services.saveService')}
           </button>
         </div>
       </div>

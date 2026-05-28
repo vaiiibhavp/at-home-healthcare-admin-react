@@ -1,4 +1,5 @@
 import React from 'react';
+import { useTranslation } from 'react-i18next';
 import { Service } from '../../services/servicesApi';
 
 interface ViewServiceModalProps {
@@ -7,11 +8,20 @@ interface ViewServiceModalProps {
   service: Service | null;
 }
 
+const getServiceKey = (name: string): string => {
+  const overrides: Record<string, string> = {
+    'Antibiothérapy infusion': 'antibiotherapy_infusion',
+  };
+  if (overrides[name]) return overrides[name];
+  return name.toLowerCase().replace(/[^a-z0-9]+/g, '_').replace(/^_+|_+$/g, '');
+};
+
 export const ViewServiceModal: React.FC<ViewServiceModalProps> = ({
   isOpen,
   onClose,
   service
 }) => {
+  const { t } = useTranslation();
 
   if (!isOpen || !service) return null;
 
@@ -19,7 +29,7 @@ export const ViewServiceModal: React.FC<ViewServiceModalProps> = ({
     <div className="fixed inset-0 z-50 flex items-center justify-center p-4 modal-backdrop">
       <div className="bg-white w-full max-w-lg rounded-2xl tradingview-shadow overflow-hidden">
         <div className="p-6 border-b border-slate-100 flex items-center justify-between">
-          <h3 className="text-lg font-bold text-slate-900">Service Details</h3>
+          <h3 className="text-lg font-bold text-slate-900">{t('services.serviceDetails')}</h3>
           <button
             onClick={onClose}
             className="text-slate-400 hover:text-slate-600"
@@ -35,44 +45,44 @@ export const ViewServiceModal: React.FC<ViewServiceModalProps> = ({
               <i className={`fa-solid fa-kit-medical text-lg`}></i>
             </div>
             <div>
-              <h4 className="text-lg font-bold text-slate-900">{service?.serviceName || 'N/A'}</h4>
-              <p className="text-sm text-slate-500">{service?.category || 'No category'}</p>
+              <h4 className="text-lg font-bold text-slate-900">{service?.serviceName ? t(`serviceNames.${getServiceKey(service.serviceName)}`, service.serviceName) : t('services.na')}</h4>
+              <p className="text-sm text-slate-500">{service?.category || t('services.noCategory')}</p>
             </div>
           </div>
 
           {/* Description */}
           <div className="space-y-2">
             <label className="text-[11px] font-bold text-slate-400 uppercase tracking-widest">
-              Description
+              {t('services.description')}
             </label>
             <p className="text-sm text-slate-600 leading-relaxed bg-slate-50 p-4 rounded-xl">
-              {service?.description || 'No description available'}
+              {service?.serviceName ? t(`serviceDescriptions.${getServiceKey(service.serviceName)}`, service?.description || '') || t('services.noDescription') : t('services.noDescription')}
             </p>
           </div>
 
           {/* Service Stats */}
           <div className="grid grid-cols-2 gap-4">
             <div className="bg-slate-50 p-4 rounded-xl">
-              <p className="text-[10px] font-bold text-slate-400 uppercase tracking-widest mb-1">Form Status</p>
+              <p className="text-[10px] font-bold text-slate-400 uppercase tracking-widest mb-1">{t('services.formStatus')}</p>
               <div className="flex items-center gap-2">
                 {service?.formMapping?.status === 'Mapped' ? (
                   <>
                     <i className="fa-solid fa-circle-check text-emerald-500 text-sm"></i>
-                    <span className="text-sm font-bold text-emerald-700">Mapped</span>
+                    <span className="text-sm font-bold text-emerald-700">{t('services.mapped')}</span>
                   </>
                 ) : (
                   <>
                     <i className="fa-solid fa-circle-exclamation text-amber-500 text-sm"></i>
-                    <span className="text-sm font-bold text-amber-700">Not Mapped</span>
+                    <span className="text-sm font-bold text-amber-700">{t('services.notMapped')}</span>
                   </>
                 )}
               </div>
             </div>
             <div className="bg-slate-50 p-4 rounded-xl">
-              <p className="text-[10px] font-bold text-slate-400 uppercase tracking-widest mb-1">Status</p>
+              <p className="text-[10px] font-bold text-slate-400 uppercase tracking-widest mb-1">{t('common.status')}</p>
               <div className="flex items-center gap-2">
                 <i className={`fa-solid fa-circle text-${service?.isActive ? 'emerald' : 'amber'}-500 text-sm`}></i>
-                <span className="text-sm font-bold text-slate-700">{service?.isActive ? 'Active' : 'Inactive'}</span>
+                <span className="text-sm font-bold text-slate-700">{service?.isActive ? t('status.active') : t('status.inactive')}</span>
               </div>
             </div>
           </div>
@@ -83,7 +93,7 @@ export const ViewServiceModal: React.FC<ViewServiceModalProps> = ({
             onClick={onClose}
             className="px-6 py-2.5 bg-primary text-white rounded-xl text-sm font-bold hover:bg-slate-800 transition-all shadow-md"
           >
-            Close
+            {t('common.close')}
           </button>
         </div>
       </div>
