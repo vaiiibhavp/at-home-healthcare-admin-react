@@ -184,8 +184,33 @@ const Providers: React.FC = () => {
     try {
       const result = await exportProvidersCSV().unwrap();
       
+      // Parse the CSV blob to replace service IDs with names
+      const text = await result.text();
+      const lines = text.split('\n');
+      
+      // Find the index of the services column (assuming it's named something like "Services" or "assignedServices")
+      const header = lines[0].split(',');
+      const servicesIndex = header.findIndex(h => h.toLowerCase().includes('service'));
+      
+      let processedLines = lines;
+      if (servicesIndex !== -1) {
+        processedLines = lines.map((line, index) => {
+          if (index === 0) return line; // Skip header
+          const columns = line.split(',');
+          if (columns[servicesIndex]) {
+            const serviceIds = columns[servicesIndex].split(';').map(id => id.trim());
+            const serviceNames = serviceIds.map(id => serviceIdToNameMap[id] || id).join('; ');
+            columns[servicesIndex] = serviceNames;
+          }
+          return columns.join(',');
+        });
+      }
+      
+      const processedText = processedLines.join('\n');
+      const processedBlob = new Blob([processedText], { type: 'text/csv' });
+      
       // Create a blob URL and trigger download
-      const url = window.URL.createObjectURL(result);
+      const url = window.URL.createObjectURL(processedBlob);
       const link = document.createElement('a');
       link.href = url;
       link.setAttribute('download', `providers_${new Date().toISOString().split('T')[0]}.csv`);
