@@ -182,7 +182,7 @@ export const RequestDetailModal: React.FC<RequestDetailModalProps> = ({
                 </button>
                 <div>
                   <div className="flex items-center gap-3">
-                    <h1 className="text-xl font-bold text-slate-900">Request #{request.id}</h1>
+                    <h1 className="text-xl font-bold text-slate-900">Request #{request.requestId || request.id}</h1>
                     <span className={getStatusChipClass(request.status)}>
                       {getStatusText(request.status)}
                     </span>
@@ -499,7 +499,7 @@ export const RequestDetailModal: React.FC<RequestDetailModalProps> = ({
         <div className="fixed inset-0 z-[60] flex items-center justify-center p-4 modal-overlay">
           <div className="bg-white w-full max-w-3xl rounded-2xl overflow-hidden tradingview-shadow max-h-[80vh] flex flex-col">
             <div className="p-6 border-b border-slate-100 flex items-center justify-between flex-shrink-0">
-              <h3 className="text-lg font-bold text-slate-900">Audit Log - Request #{request?.id}</h3>
+              <h3 className="text-lg font-bold text-slate-900">Audit Log - Request #{request?.requestId || request?.id}</h3>
               <button onClick={() => setShowAuditModal(false)} className="text-slate-400 hover:text-slate-600">
                 <i className="fa-solid fa-xmark"></i>
               </button>

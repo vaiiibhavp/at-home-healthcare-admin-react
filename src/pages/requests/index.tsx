@@ -331,6 +331,7 @@ const Requests: React.FC = () => {
       const completeRequestData: RequestData = {
         ...request, // Keep basic fields
         ...detailedData, // Add all detailed API fields
+        requestId: request.requestId, // Always preserve human-readable request ID from list data
         // Keep backward compatibility for existing UI
         doctor: {
           name: detailedData.doctorId?.fName + ' ' + detailedData.doctorId?.lName || request.doctorName || 'Unknown Doctor',
@@ -578,7 +579,7 @@ const Requests: React.FC = () => {
                       className="hover:bg-slate-50/80 transition-colors group cursor-pointer"
                     >
                       <td className="px-6 py-4">
-                        <span className="text-xs font-mono font-bold text-slate-500">#{request.id}</span>
+                        <span className="text-xs font-mono font-bold text-slate-500">#{request.requestId || request.id}</span>
                       </td>
                       <td className="px-6 py-4">
                         <div className="flex items-center gap-3">
