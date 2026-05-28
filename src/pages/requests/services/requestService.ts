@@ -172,6 +172,9 @@ const getServiceColor = (status: string): string => {
 
 // Helper function to get form status based on request data
 const getFormStatus = (request: any): string => {
+  if (request.status === 'returned' || request.formStatus?.toLowerCase() === 'cancelled') {
+    return 'CANCELLED';
+  }
   if (request.digitalSignature?.signedAt) {
     return 'SIGNED';
   }

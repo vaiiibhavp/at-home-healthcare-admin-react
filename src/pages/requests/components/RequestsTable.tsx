@@ -132,7 +132,7 @@ export const RequestsTable: React.FC<RequestsTableProps> = ({
                         <i className="fa-solid fa-undo text-sm"></i>
                       </button>
                     )}
-                    {request.status !== 'completed' && (
+                    {request.status !== 'completed' && request.status !== 'returned' && (
                       <button 
                         onClick={(e) => {
                           e.stopPropagation();

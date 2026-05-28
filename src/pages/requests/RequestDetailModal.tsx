@@ -6,112 +6,137 @@ interface RequestDetailModalProps {
   onClose: () => void;
   request: RequestData | null;
   fetchAuditLogs?: (requestId: string) => Promise<any>;
+  onCancelRequest?: (request: RequestData) => void;
 }
 
 export const RequestDetailModal: React.FC<RequestDetailModalProps> = ({
   isOpen,
   onClose,
   request,
-  fetchAuditLogs
+  fetchAuditLogs,
+  onCancelRequest
 }) => {
   // const { t } = useTranslation(); // Commented out as it's not currently used
   const [showResetModal, setShowResetModal] = useState(false);
   const [showAuditModal, setShowAuditModal] = useState(false);
+  const [showPhysicianModal, setShowPhysicianModal] = useState(false);
+  const [showExpandModal, setShowExpandModal] = useState(false);
+  const [zoomLevel, setZoomLevel] = useState(1);
   const [showToast, setShowToast] = useState(false);
   const [toastMessage, setToastMessage] = useState('');
+  const [newResetStatus, setNewResetStatus] = useState('');
+  const [resetReason, setResetReason] = useState('');
+  const [resetting, setResetting] = useState(false);
   const [auditLogs, setAuditLogs] = useState<any[]>([]);
   const [loadingAuditLogs, setLoadingAuditLogs] = useState(false);
+  const [pdfBlobUrl, setPdfBlobUrl] = useState<string | null>(null);
+  const [loadingPdf, setLoadingPdf] = useState(false);
 
-  // Move useMemo before early return to satisfy React Hook rules
+  // Fetch signed PDF with auth headers and create blob URL
+  React.useEffect(() => {
+    const fetchPdf = async () => {
+      if (!request || request.formStatus?.toLowerCase() !== 'signed' || !request.signedPdfUrl) {
+        setPdfBlobUrl(null);
+        return;
+      }
+
+      setLoadingPdf(true);
+      try {
+        const token = localStorage.getItem('authToken');
+        const response = await fetch(
+          `${process.env.REACT_APP_API_BASE_URL}/${request.signedPdfUrl}`,
+          {
+            headers: token ? { Authorization: `Bearer ${token}` } : undefined
+          }
+        );
+        if (!response.ok) throw new Error('Failed to fetch PDF');
+        const blob = await response.blob();
+        const url = URL.createObjectURL(blob);
+        setPdfBlobUrl(url);
+      } catch (error) {
+        console.error('Error fetching signed PDF:', error);
+        setPdfBlobUrl(null);
+      } finally {
+        setLoadingPdf(false);
+      }
+    };
+
+    fetchPdf();
+
+    return () => {
+      if (pdfBlobUrl) {
+        URL.revokeObjectURL(pdfBlobUrl);
+      }
+    };
+  }, [request, request?.id, request?.signedPdfUrl, request?.formStatus, pdfBlobUrl]);
+
+  const handleExportPdf = async () => {
+    if (!request?.signedPdfUrl) return;
+    try {
+      const token = localStorage.getItem('authToken');
+      const response = await fetch(
+        `${process.env.REACT_APP_API_BASE_URL}/${request.signedPdfUrl}`,
+        {
+          headers: token ? { Authorization: `Bearer ${token}` } : undefined
+        }
+      );
+      if (!response.ok) throw new Error('Failed to fetch PDF');
+      const blob = await response.blob();
+      const url = URL.createObjectURL(blob);
+      const link = document.createElement('a');
+      link.href = url;
+      link.download = `${request.requestId || 'request'}.pdf`;
+      document.body.appendChild(link);
+      link.click();
+      document.body.removeChild(link);
+      URL.revokeObjectURL(url);
+    } catch (error) {
+      console.error('Error exporting PDF:', error);
+    }
+  };
+
+  const handleZoom = () => {
+    setZoomLevel((prev) => (prev >= 1.5 ? 1 : prev + 0.25));
+  };
+
+  // Build timeline from API statusHistory
   const timelineEvents = React.useMemo(() => {
-    if (!request) return [];
-    
-    const events = [];
-    const timestamps = request.statusTimestamps;
-    
-    // Only show statuses that have actual timestamps in API data
-    
-    // Draft/Request Created (always show if timestamp exists)
-    if (timestamps?.draft) {
-      events.push({
-        status: 'Request Created',
-        date: `${new Date(timestamps.draft).toLocaleDateString('en-US', { 
-            month: 'short', 
-            day: 'numeric', 
-            hour: '2-digit',
-            minute: '2-digit'
-          })} by ${request.createdBy?.fName && request.createdBy?.lName ? `${request.createdBy.fName} ${request.createdBy.lName}` : request.createdBy?.email || 'Unknown User'}`,
-        icon: 'fa-check',
-        isActive: true,
-        isCompleted: true
-      });
-    }
-    
-    // Submitted (only show if timestamp exists)
-    if (timestamps?.submitted) {
-      events.push({
-        status: 'Submitted',
-        date: new Date(timestamps.submitted).toLocaleDateString('en-US', { 
-          month: 'short', 
-          day: 'numeric', 
+    if (!request || !request.statusHistory || request.statusHistory.length === 0) return [];
+
+    const history = request.statusHistory;
+    const statusMap: Record<string, string> = {
+      submitted: 'Submitted',
+      inprogress: 'In Progress',
+      completed: 'Completed',
+      returned: 'Returned',
+      draft: 'Request Created',
+      pending: 'Pending'
+    };
+    const iconMap: Record<string, string> = {
+      submitted: 'fa-paper-plane',
+      inprogress: 'fa-spinner',
+      completed: 'fa-flag-checkered',
+      returned: 'fa-undo',
+      draft: 'fa-check',
+      pending: 'fa-clock'
+    };
+
+    return history.map((item: any, index: number) => {
+      const isLast = index === history.length - 1;
+      return {
+        status: statusMap[item.status] || item.status.charAt(0).toUpperCase() + item.status.slice(1),
+        date: new Date(item.changedAt).toLocaleDateString('en-US', {
+          month: 'short',
+          day: 'numeric',
           hour: '2-digit',
           minute: '2-digit'
         }),
-        icon: 'fa-paper-plane',
-        isActive: request.status === 'pending' || request.status === 'inprogress' || request.status === 'completed',
-        isCompleted: request.status === 'inprogress' || request.status === 'completed'
-      });
-    }
-    
-    // In Progress (only show if timestamp exists)
-    if (timestamps?.inProgress) {
-      events.push({
-        status: 'In Progress',
-        date: new Date(timestamps.inProgress).toLocaleDateString('en-US', { 
-          month: 'short', 
-          day: 'numeric', 
-          hour: '2-digit',
-          minute: '2-digit'
-        }),
-        icon: 'fa-spinner',
-        isActive: request.status === 'inprogress' || request.status === 'completed',
-        isCompleted: request.status === 'completed'
-      });
-    }
-    
-    // Completed (only show if timestamp exists)
-    if (timestamps?.completed) {
-      events.push({
-        status: 'Completed',
-        date: new Date(timestamps.completed).toLocaleDateString('en-US', { 
-          month: 'short', 
-          day: 'numeric', 
-          hour: '2-digit',
-          minute: '2-digit'
-        }),
-        icon: 'fa-flag-checkered',
-        isActive: request.status === 'completed',
-        isCompleted: request.status === 'completed'
-      });
-    }
-    
-    // Returned (only show if timestamp exists)
-    if (timestamps?.returned) {
-      events.push({
-        status: 'Returned',
-        date: new Date(timestamps.returned).toLocaleDateString('en-US', { 
-          month: 'short', 
-          day: 'numeric', 
-          hour: '2-digit',
-          minute: '2-digit'
-        }),
-        icon: 'fa-undo',
-        isActive: request.status === 'returned',
-        isCompleted: request.status === 'returned'
-      });
-    }
-    
-    return events;
+        notes: item.notes,
+        icon: iconMap[item.status] || 'fa-circle',
+        isActive: isLast,
+        isCompleted: !isLast
+      };
+    });
   }, [request]);
 
   if (!isOpen || !request) return null;
@@ -136,11 +161,40 @@ export const RequestDetailModal: React.FC<RequestDetailModalProps> = ({
     return statusTexts[status as keyof typeof statusTexts] || status;
   };
 
-  const handleResetStatus = () => {
-    setToastMessage('Request status reset successfully');
-    setShowToast(true);
-    setShowResetModal(false);
-    setTimeout(() => setShowToast(false), 3000);
+  const handleResetStatus = async () => {
+    if (!request || !newResetStatus || !resetReason.trim()) return;
+    setResetting(true);
+    try {
+      const token = localStorage.getItem('authToken');
+      const response = await fetch(
+        `${process.env.REACT_APP_API_BASE_URL}/admin/requests/${request.requestId || request.id}/reset-status`,
+        {
+          method: 'PUT',
+          headers: {
+            'Content-Type': 'application/json',
+            ...(token ? { Authorization: `Bearer ${token}` } : {})
+          },
+          body: JSON.stringify({
+            newStatus: newResetStatus,
+            reason: resetReason.trim()
+          })
+        }
+      );
+      if (!response.ok) throw new Error('Failed to reset status');
+      setToastMessage('Request status reset successfully');
+      setShowToast(true);
+      setShowResetModal(false);
+      setNewResetStatus('');
+      setResetReason('');
+      setTimeout(() => setShowToast(false), 3000);
+    } catch (error) {
+      console.error('Error resetting status:', error);
+      setToastMessage('Failed to reset status');
+      setShowToast(true);
+      setTimeout(() => setShowToast(false), 3000);
+    } finally {
+      setResetting(false);
+    }
   };
 
   
@@ -181,7 +235,7 @@ export const RequestDetailModal: React.FC<RequestDetailModalProps> = ({
                 </button>
                 <div>
                   <div className="flex items-center gap-3">
-                    <h1 className="text-xl font-bold text-slate-900">Request #{request.id}</h1>
+                    <h1 className="text-xl font-bold text-slate-900">Request #{request.requestId || request.id}</h1>
                     <span className={getStatusChipClass(request.status)}>
                       {getStatusText(request.status)}
                     </span>
@@ -193,10 +247,15 @@ export const RequestDetailModal: React.FC<RequestDetailModalProps> = ({
                 </div>
               </div>
               <div className="flex items-center gap-3">
-                <button className="px-4 py-2 bg-white border border-slate-200 rounded-xl text-sm font-bold text-slate-600 hover:bg-slate-50 flex items-center gap-2">
-                  <i className="fa-solid fa-file-pdf text-danger"></i> Export PDF
-                </button>
-                <button 
+                {(request.status === 'completed' || request.formStatus?.toLowerCase() === 'signed') && (
+                  <button
+                    onClick={handleExportPdf}
+                    className="px-4 py-2 bg-white border border-slate-200 rounded-xl text-sm font-bold text-slate-600 hover:bg-slate-50 flex items-center gap-2"
+                  >
+                    <i className="fa-solid fa-file-pdf text-danger"></i> Export PDF
+                  </button>
+                )}
+                <button
                   onClick={handleOpenAuditModal}
                   className="px-4 py-2 bg-white border border-slate-200 rounded-xl text-sm font-bold text-slate-600 hover:bg-slate-50 flex items-center gap-2"
                 >
@@ -205,6 +264,14 @@ export const RequestDetailModal: React.FC<RequestDetailModalProps> = ({
               </div>
             </div>
           </div>
+
+          {/* Cancelled Banner */}
+          {request.status === 'returned' && (
+            <div className="bg-red-50 border-b border-red-200 px-8 py-3 flex items-center gap-3">
+              <i className="fa-solid fa-circle-exclamation text-red-500"></i>
+              <p className="text-sm font-bold text-red-700">Request cancelled by admin</p>
+            </div>
+          )}
 
           {/* Main Content */}
           <div className="flex-1 overflow-y-auto p-8 space-y-6 bg-slate-50">
@@ -222,13 +289,13 @@ export const RequestDetailModal: React.FC<RequestDetailModalProps> = ({
                     className="w-14 h-14 rounded-xl object-cover"
                   />
                   <div>
-                    <p className="text-sm font-bold text-slate-900">{request.doctorName || 'Unknown Doctor'}</p>
-                    <p className="text-xs text-slate-500">{request.doctorSpeciality || 'Unknown Specialty'} • {request.doctorId?.businessAddress || 'Private Practice'}</p>
+                    <p className="text-sm font-bold text-slate-900 capitalize">{request.doctorName || 'Unknown Doctor'}</p>
+                    <p className="text-xs text-slate-500 capitalize">{request.doctorSpeciality || 'Unknown Specialty'} • {request.doctorId?.businessAddress || 'Private Practice'}</p>
                     <p className="text-[11px] font-mono text-primary mt-1">RPPS: {request.doctorId?.rppsNumber || 'N/A'}</p>
                   </div>
                 </div>
                 <div className="mt-4 pt-4 border-t border-slate-50 flex justify-between items-center">
-                  <button className="text-xs font-bold text-primary hover:underline">View Full Profile</button>
+                  <button onClick={() => setShowPhysicianModal(true)} className="text-xs font-bold text-primary hover:underline">View Full Profile</button>
                   <button className="text-slate-400 hover:text-primary">
                     <i className="fa-solid fa-envelope"></i>
                   </button>
@@ -247,9 +314,7 @@ export const RequestDetailModal: React.FC<RequestDetailModalProps> = ({
                   <div>
                     <p className="text-sm font-bold text-slate-900">{request.patientName || 'Unknown Patient'}</p>
                     <p className="text-xs text-slate-500">
-                      {request.patientId?.dateOfBirth ? new Date().getFullYear() - new Date(request.patientId.dateOfBirth).getFullYear() : 'N/A'} years • 
-                      {request.patientId?.gender || 'Unknown'} • 
-                      {request.patientId?.bloodGroup || 'Unknown Blood Group'}
+                      {request.patientId?.dateOfBirth ? new Date().getFullYear() - new Date(request.patientId.dateOfBirth).getFullYear() : 'N/A'} years, {request.patientId?.gender || 'Unknown'}
                     </p>
                     <p className="text-[11px] text-slate-500 mt-1">
                       <i className="fa-solid fa-location-dot mr-1"></i> 
@@ -260,9 +325,10 @@ export const RequestDetailModal: React.FC<RequestDetailModalProps> = ({
                   </div>
                 </div>
                 <div className="mt-4 pt-4 border-t border-slate-50 flex justify-end items-center">
-                  <button className="text-slate-400 hover:text-primary">
-                    <i className="fa-solid fa-phone"></i>
-                  </button>
+                  <span className="text-xs text-slate-500">
+                    <i className="fa-solid fa-phone mr-1"></i>
+                    {request.patientId?.phoneNumber || 'N/A'}
+                  </span>
                 </div>
               </div>
 
@@ -306,10 +372,10 @@ export const RequestDetailModal: React.FC<RequestDetailModalProps> = ({
                       <h3 className="text-sm font-bold text-slate-800">Form: Laboratory Prescription V2.1</h3>
                     </div>
                     <div className="flex gap-2">
-                      <button className="p-2 hover:bg-slate-200 rounded-lg text-slate-400 transition-all">
+                      <button onClick={handleZoom} className="p-2 hover:bg-slate-200 rounded-lg text-slate-400 transition-all" title="Zoom">
                         <i className="fa-solid fa-magnifying-glass-plus"></i>
                       </button>
-                      <button className="p-2 hover:bg-slate-200 rounded-lg text-slate-400 transition-all">
+                      <button onClick={() => setShowExpandModal(true)} className="p-2 hover:bg-slate-200 rounded-lg text-slate-400 transition-all" title="Expand">
                         <i className="fa-solid fa-expand"></i>
                       </button>
                     </div>
@@ -318,18 +384,16 @@ export const RequestDetailModal: React.FC<RequestDetailModalProps> = ({
                     <div className="flex items-center gap-2">
                       <span className="text-[10px] font-bold text-slate-400 uppercase">Form Status:</span>
                       <span className={`px-2 py-1 text-[10px] font-bold rounded-lg ${
-                        request.status === 'completed' ? 'bg-emerald-50 text-emerald-600 border border-emerald-200' :
-                        request.status === 'inprogress' ? 'bg-blue-50 text-blue-600 border border-blue-200' :
-                        request.status === 'pending' ? 'bg-amber-50 text-amber-600 border border-amber-200' :
-                        request.status === 'returned' ? 'bg-amber-50 text-amber-600 border border-amber-200' :
-                        request.status === 'draft' ? 'bg-gray-50 text-gray-600 border border-gray-200' :
+                        request.formStatus?.toLowerCase() === 'signed' ? 'bg-emerald-50 text-emerald-600 border border-emerald-200' :
+                        request.formStatus?.toLowerCase() === 'awaitingsignature' ? 'bg-blue-50 text-blue-600 border border-blue-200' :
+                        request.formStatus?.toLowerCase() === 'submitted' ? 'bg-amber-50 text-amber-600 border border-amber-200' :
+                        request.formStatus?.toLowerCase() === 'draft' ? 'bg-gray-50 text-gray-600 border border-gray-200' :
                         'bg-slate-50 text-slate-600 border border-slate-200'
                       }`}>
-                        {request.status === 'completed' ? 'SIGNED' :
-                         request.status === 'inprogress' ? 'AWAITING SIGNATURE' :
-                         request.status === 'pending' ? 'SUBMITTED' :
-                         request.status === 'returned' ? 'RETURNED' :
-                         request.status === 'draft' ? 'NOT STARTED' : 'Unknown'}
+                        {request.formStatus?.toLowerCase() === 'signed' ? 'SIGNED' :
+                         request.formStatus?.toLowerCase() === 'awaitingsignature' ? 'AWAITING SIGNATURE' :
+                         request.formStatus?.toLowerCase() === 'submitted' ? 'SUBMITTED' :
+                         request.formStatus?.toLowerCase() === 'draft' ? 'DRAFT' : (request.formStatus || 'Unknown')}
                       </span>
                     </div>
                     <div className="flex items-center gap-3 text-[10px] text-slate-500">
@@ -345,69 +409,88 @@ export const RequestDetailModal: React.FC<RequestDetailModalProps> = ({
                     </div>
                   </div>
                 </div>
-                <div className="p-8 bg-slate-100/30 flex-1 min-h-[500px]">
-                  <div className="max-w-2xl mx-auto bg-white border border-slate-200 p-10 shadow-sm space-y-8">
-                    <div className="flex justify-between items-start border-b pb-6">
-                      <div>
-                        <h2 className="text-xl font-bold text-slate-900">MEDICAL PRESCRIPTION</h2>
-                        <p className="text-xs text-slate-500">ID: {request.requestId || 'N/A'}</p>
+                <div className="p-8 bg-slate-100/30 flex-1 min-h-[500px] overflow-auto">
+                  {request.formStatus?.toLowerCase() === 'signed' && request.signedPdfUrl ? (
+                    loadingPdf ? (
+                      <div className="flex items-center justify-center h-full min-h-[500px]">
+                        <i className="fa-solid fa-spinner fa-spin text-primary text-xl mr-3"></i>
+                        <span className="text-sm text-slate-600">Loading PDF...</span>
                       </div>
-                      <div className="text-right">
-                        <p className="text-xs font-bold text-slate-800">At-Home Healthcare</p>
-                        <p className="text-[10px] text-slate-500">Digital Health Network</p>
+                    ) : pdfBlobUrl ? (
+                      <iframe
+                        src={`${pdfBlobUrl}#toolbar=0&zoom=page-fit`}
+                        title="Signed Form PDF"
+                        className="w-full h-full min-h-[600px] border border-slate-200 rounded-lg bg-white"
+                      />
+                    ) : (
+                      <div className="flex items-center justify-center h-full min-h-[500px]">
+                        <span className="text-sm text-slate-500">Failed to load PDF</span>
                       </div>
-                    </div>
-                    <div className="grid grid-cols-2 gap-8 text-xs">
-                      <div>
-                        <p className="font-bold text-slate-400 uppercase mb-2">Patient</p>
-                        <p className="text-slate-900 font-medium">{request.patientName || request.patient || 'Unknown Patient'}</p>
-                        <p className="text-slate-500 mt-1">DOB: {request.patientId?.dateOfBirth ? new Date(request.patientId.dateOfBirth).toLocaleDateString('en-US', { 
-                          month: '2-digit', 
-                          day: '2-digit', 
-                          year: 'numeric'
-                        }) : 'Not Available'}</p>
+                    )
+                  ) : (
+                    <div className="max-w-2xl mx-auto bg-white border border-slate-200 p-10 shadow-sm space-y-8 transition-transform origin-top" style={{ transform: `scale(${zoomLevel})` }}>
+                      <div className="flex justify-between items-start border-b pb-6">
+                        <div>
+                          <h2 className="text-xl font-bold text-slate-900">MEDICAL PRESCRIPTION</h2>
+                          <p className="text-xs text-slate-500">ID: {request.requestId || 'N/A'}</p>
+                        </div>
+                        <div className="text-right">
+                          <p className="text-xs font-bold text-slate-800">At-Home Healthcare</p>
+                          <p className="text-[10px] text-slate-500">Digital Health Network</p>
+                        </div>
                       </div>
-                      <div>
-                        <p className="font-bold text-slate-400 uppercase mb-2">Prescriber</p>
-                        <p className="text-slate-900 font-medium">{request.doctorName || request.doctor?.name || 'Unknown Doctor'}</p>
-                        <p className="text-slate-500 mt-1">License: #{request.doctorId?.rppsNumber || 'N/A'}</p>
+                      <div className="grid grid-cols-2 gap-8 text-xs">
+                        <div>
+                          <p className="font-bold text-slate-400 uppercase mb-2">Patient</p>
+                          <p className="text-slate-900 font-medium">{request.patientName || request.patient || 'Unknown Patient'}</p>
+                          <p className="text-slate-500 mt-1">DOB: {request.patientId?.dateOfBirth ? new Date(request.patientId.dateOfBirth).toLocaleDateString('en-US', { 
+                            month: '2-digit', 
+                            day: '2-digit', 
+                            year: 'numeric'
+                          }) : 'Not Available'}</p>
+                        </div>
+                        <div>
+                          <p className="font-bold text-slate-400 uppercase mb-2">Prescriber</p>
+                          <p className="text-slate-900 font-medium capitalize">{request.doctorName || request.doctor?.name || 'Unknown Doctor'}</p>
+                          <p className="text-slate-500 mt-1">License: #{request.doctorId?.rppsNumber || 'N/A'}</p>
+                        </div>
                       </div>
-                    </div>
-                    <div className="space-y-4">
-                      <p className="text-xs font-bold text-slate-400 uppercase">Analysis Requested</p>
-                      <div className="p-4 bg-slate-50 rounded-lg">
-                        <div className="flex items-start gap-3">
-                          <div className="w-4 h-4 rounded border-2 border-primary flex items-center justify-center mt-0.5">
-                            <i className="fa-solid fa-file-medical text-[10px] text-primary"></i>
-                          </div>
-                          <div className="flex-1">
-                            <p className="text-xs text-slate-800 font-medium leading-relaxed">
-                              {request.patientId?.medicalDescription || 'No medical description available'}
-                            </p>
+                      <div className="space-y-4">
+                        <p className="text-xs font-bold text-slate-400 uppercase">Analysis Requested</p>
+                        <div className="p-4 bg-slate-50 rounded-lg">
+                          <div className="flex items-start gap-3">
+                            <div className="w-4 h-4 rounded border-2 border-primary flex items-center justify-center mt-0.5">
+                              <i className="fa-solid fa-file-medical text-[10px] text-primary"></i>
+                            </div>
+                            <div className="flex-1">
+                              <p className="text-xs text-slate-800 font-medium leading-relaxed">
+                                {request.patientId?.medicalDescription || 'No medical description available'}
+                              </p>
+                            </div>
                           </div>
                         </div>
                       </div>
-                    </div>
-                    <div className="pt-8 flex justify-end">
-                      <div className="text-center">
-                        <div className="w-48 h-12 border-b-2 border-slate-200 flex items-center justify-center italic text-primary font-serif">
-                          {request.doctorName || request.doctor?.name || 'Unknown Doctor'}
+                      <div className="pt-8 flex justify-end">
+                        <div className="text-center">
+                          <div className="w-48 h-12 border-b-2 border-slate-200 flex items-center justify-center italic text-primary font-serif capitalize">
+                            {request.doctorName || request.doctor?.name || 'Unknown Doctor'}
+                          </div>
+                          <p className="text-[10px] text-slate-400 mt-2">
+                            {request.digitalSignature?.signedAt 
+                              ? `Digitally Signed on ${new Date(request.digitalSignature.signedAt).toLocaleDateString('en-US', { 
+                                  month: '2-digit', 
+                                  day: '2-digit', 
+                                  year: 'numeric'
+                                })}` 
+                              : request.status === 'completed' 
+                                ? 'Digitally Signed'
+                                : 'Awaiting Signature'
+                            }
+                          </p>
                         </div>
-                        <p className="text-[10px] text-slate-400 mt-2">
-                          {request.digitalSignature?.signedAt 
-                            ? `Digitally Signed on ${new Date(request.digitalSignature.signedAt).toLocaleDateString('en-US', { 
-                                month: '2-digit', 
-                                day: '2-digit', 
-                                year: 'numeric'
-                              })}` 
-                            : request.status === 'completed' 
-                              ? 'Digitally Signed'
-                              : 'Awaiting Signature'
-                          }
-                        </p>
                       </div>
                     </div>
-                  </div>
+                  )}
                 </div>
               </div>
 
@@ -428,6 +511,7 @@ export const RequestDetailModal: React.FC<RequestDetailModalProps> = ({
                         <div className={`${!event.isActive ? 'opacity-40' : ''}`}>
                           <p className="text-sm font-bold text-slate-900">{event.status}</p>
                           <p className="text-xs text-slate-500">{event.date}</p>
+                          {event.notes && <p className="text-[10px] text-slate-400 mt-1 italic">{event.notes}</p>}
                         </div>
                       </div>
                     ))}
@@ -435,20 +519,29 @@ export const RequestDetailModal: React.FC<RequestDetailModalProps> = ({
                 </div>
 
                 {/* Admin Controls */}
-                <div className="bg-white p-6 rounded-2xl border border-slate-200 tradingview-shadow">
-                  <h3 className="text-[10px] font-bold text-slate-400 uppercase tracking-widest mb-4">
-                    Admin Controls
-                  </h3>
-                  <div className="space-y-3">
-                    <button className="w-full px-4 py-3 bg-white border border-slate-200 text-slate-600 rounded-xl text-sm font-bold flex items-center justify-center gap-2 hover:bg-slate-50 transition-all">
-                      <i className="fa-solid fa-rotate-left"></i> Reset Status
-                    </button>
-                    <div className="h-px bg-slate-100 my-2"></div>
-                    <button className="w-full px-4 py-3 bg-danger/5 text-danger rounded-xl text-sm font-bold flex items-center justify-center gap-2 hover:bg-danger/10 transition-all">
-                      <i className="fa-solid fa-ban"></i> Cancel Request
-                    </button>
+                {request.status !== 'completed' && request.status !== 'returned' && (
+                  <div className="bg-white p-6 rounded-2xl border border-slate-200 tradingview-shadow">
+                    <h3 className="text-[10px] font-bold text-slate-400 uppercase tracking-widest mb-4">
+                      Admin Controls
+                    </h3>
+                    <div className="space-y-3">
+                      {request.status === 'inprogress' && (
+                        <button
+                          onClick={() => setShowResetModal(true)}
+                          className="w-full px-4 py-3 bg-white border border-slate-200 text-slate-600 rounded-xl text-sm font-bold flex items-center justify-center gap-2 hover:bg-slate-50 transition-all"
+                        >
+                          <i className="fa-solid fa-rotate-left"></i> Reset Status
+                        </button>
+                      )}
+                      <button
+                        onClick={() => request && onCancelRequest?.(request)}
+                        className="w-full px-4 py-3 bg-danger/5 text-danger rounded-xl text-sm font-bold flex items-center justify-center gap-2 hover:bg-danger/10 transition-all"
+                      >
+                        <i className="fa-solid fa-ban"></i> Cancel Request
+                      </button>
+                    </div>
                   </div>
-                </div>
+                )}
                 
                 {/* Internal Notes */}
                 <div className="bg-white p-6 rounded-2xl border border-slate-200 tradingview-shadow">
@@ -492,7 +585,7 @@ export const RequestDetailModal: React.FC<RequestDetailModalProps> = ({
 
       {/* Reset Status Modal */}
       {showResetModal && (
-        <div className="fixed inset-0 z-[60] flex items-center justify-center p-4 modal-overlay">
+        <div className="fixed inset-0 z-[60] flex items-center justify-center p-4 bg-black/30 backdrop-blur-sm">
           <div className="bg-white w-full max-w-md rounded-2xl overflow-hidden tradingview-shadow">
             <div className="p-6 border-b border-slate-100 flex items-center justify-between">
               <h3 className="text-lg font-bold text-slate-900">Reset Request Status</h3>
@@ -509,17 +602,23 @@ export const RequestDetailModal: React.FC<RequestDetailModalProps> = ({
               </div>
               <div className="space-y-1">
                 <label className="text-[10px] font-bold text-slate-400 uppercase">Reset To Status</label>
-                <select className="w-full bg-slate-50 border border-slate-200 rounded-xl px-4 py-3 text-sm outline-none focus:ring-2 focus:ring-primary/20">
-                  <option>Select status...</option>
-                  <option>Draft</option>
-                  <option>Submitted</option>
-                  <option>Provider Assigned</option>
+                <select
+                  value={newResetStatus}
+                  onChange={(e) => setNewResetStatus(e.target.value)}
+                  className="w-full bg-slate-50 border border-slate-200 rounded-xl px-4 py-3 text-sm outline-none focus:ring-2 focus:ring-primary/20"
+                >
+                  <option value="">Select status...</option>
+                  <option value="pending">Pending</option>
+                  <option value="submitted">Submitted</option>
+                  <option value="draft">Draft</option>
                 </select>
               </div>
               <div className="space-y-1">
                 <label className="text-[10px] font-bold text-slate-400 uppercase">Reason</label>
-                <textarea 
-                  placeholder="Explain the reason for reset..." 
+                <textarea
+                  value={resetReason}
+                  onChange={(e) => setResetReason(e.target.value)}
+                  placeholder="Explain the reason for reset..."
                   className="w-full bg-slate-50 border border-slate-200 rounded-xl px-4 py-3 text-sm outline-none focus:ring-2 focus:ring-primary/20 h-24"
                 />
               </div>
@@ -531,11 +630,18 @@ export const RequestDetailModal: React.FC<RequestDetailModalProps> = ({
               >
                 Cancel
               </button>
-              <button 
+              <button
                 onClick={handleResetStatus}
-                className="flex-1 px-4 py-3 bg-danger text-white rounded-xl text-sm font-bold hover:bg-red-600 transition-all"
+                disabled={!newResetStatus || !resetReason.trim() || resetting}
+                className="flex-1 px-4 py-3 bg-danger text-white rounded-xl text-sm font-bold hover:bg-red-600 transition-all disabled:opacity-50 disabled:cursor-not-allowed"
               >
-                Reset Request Status
+                {resetting ? (
+                  <>
+                    <i className="fa-solid fa-spinner fa-spin mr-2"></i> Resetting...
+                  </>
+                ) : (
+                  'Reset Request Status'
+                )}
               </button>
             </div>
           </div>
@@ -544,10 +650,10 @@ export const RequestDetailModal: React.FC<RequestDetailModalProps> = ({
 
       {/* Audit Log Modal */}
       {showAuditModal && (
-        <div className="fixed inset-0 z-[60] flex items-center justify-center p-4 modal-overlay">
+        <div className="fixed inset-0 z-[60] flex items-center justify-center p-4 bg-black/30 backdrop-blur-sm">
           <div className="bg-white w-full max-w-3xl rounded-2xl overflow-hidden tradingview-shadow max-h-[80vh] flex flex-col">
             <div className="p-6 border-b border-slate-100 flex items-center justify-between flex-shrink-0">
-              <h3 className="text-lg font-bold text-slate-900">Audit Log - Request #{request?.id}</h3>
+              <h3 className="text-lg font-bold text-slate-900">Audit Log - Request #{request?.requestId || request?.id}</h3>
               <button onClick={() => setShowAuditModal(false)} className="text-slate-400 hover:text-slate-600">
                 <i className="fa-solid fa-xmark"></i>
               </button>
@@ -596,6 +702,186 @@ export const RequestDetailModal: React.FC<RequestDetailModalProps> = ({
                       </div>
                     </div>
                   ))}
+                </div>
+              )}
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* Physician Profile Modal */}
+      {showPhysicianModal && (
+        <div className="fixed inset-0 z-[60] flex items-center justify-center p-4 bg-black/30 backdrop-blur-sm">
+          <div className="bg-white w-full max-w-md rounded-2xl overflow-hidden tradingview-shadow">
+            <div className="p-6 border-b border-slate-100 flex items-center justify-between">
+              <h3 className="text-lg font-bold text-slate-900">Physician Profile</h3>
+              <button onClick={() => setShowPhysicianModal(false)} className="text-slate-400 hover:text-slate-600">
+                <i className="fa-solid fa-xmark"></i>
+              </button>
+            </div>
+            <div className="p-6 space-y-6">
+              <div className="flex items-center gap-4">
+                <img
+                  src={request.doctorProfileImage || "https://storage.googleapis.com/uxpilot-auth.appspot.com/avatars/avatar-3.jpg"}
+                  alt={`${request.doctorName || 'Unknown Doctor'} - Doctor Avatar`}
+                  className="w-16 h-16 rounded-xl object-cover"
+                />
+                <div>
+                  <p className="text-sm font-bold text-slate-900 capitalize">{request.doctorName || 'Unknown Doctor'}</p>
+                  <p className="text-xs text-slate-500 capitalize">{request.doctorSpeciality || 'Unknown Specialty'}</p>
+                </div>
+              </div>
+              <div className="space-y-4">
+                <div className="flex items-center gap-3">
+                  <div className="w-8 h-8 bg-emerald-50 rounded-lg flex items-center justify-center text-emerald-600">
+                    <i className="fa-solid fa-envelope text-sm"></i>
+                  </div>
+                  <div>
+                    <p className="text-xs text-slate-500">Email</p>
+                    <p className="text-sm font-medium text-slate-900">{request.doctorId?.email || 'N/A'}</p>
+                  </div>
+                </div>
+                <div className="flex items-center gap-3">
+                  <div className="w-8 h-8 bg-blue-50 rounded-lg flex items-center justify-center text-blue-600">
+                    <i className="fa-solid fa-phone text-sm"></i>
+                  </div>
+                  <div>
+                    <p className="text-xs text-slate-500">Phone</p>
+                    <p className="text-sm font-medium text-slate-900">{request.doctorId?.phoneNumber || 'N/A'}</p>
+                  </div>
+                </div>
+                <div className="flex items-center gap-3">
+                  <div className="w-8 h-8 bg-purple-50 rounded-lg flex items-center justify-center text-purple-600">
+                    <i className="fa-solid fa-id-card text-sm"></i>
+                  </div>
+                  <div>
+                    <p className="text-xs text-slate-500">RPPS Number</p>
+                    <p className="text-sm font-medium text-slate-900">{request.doctorId?.rppsNumber || 'N/A'}</p>
+                  </div>
+                </div>
+                <div className="flex items-center gap-3">
+                  <div className="w-8 h-8 bg-orange-50 rounded-lg flex items-center justify-center text-orange-600">
+                    <i className="fa-solid fa-building text-sm"></i>
+                  </div>
+                  <div>
+                    <p className="text-xs text-slate-500">FINESS Number</p>
+                    <p className="text-sm font-medium text-slate-900">{request.doctorId?.finessNumber || 'N/A'}</p>
+                  </div>
+                </div>
+                <div className="flex items-center gap-3">
+                  <div className="w-8 h-8 bg-pink-50 rounded-lg flex items-center justify-center text-pink-600">
+                    <i className="fa-solid fa-stethoscope text-sm"></i>
+                  </div>
+                  <div>
+                    <p className="text-xs text-slate-500">Specialty</p>
+                    <p className="text-sm font-medium text-slate-900 capitalize">{request.doctorId?.specialty || 'N/A'}</p>
+                  </div>
+                </div>
+                <div className="flex items-center gap-3">
+                  <div className="w-8 h-8 bg-teal-50 rounded-lg flex items-center justify-center text-teal-600">
+                    <i className="fa-solid fa-location-dot text-sm"></i>
+                  </div>
+                  <div>
+                    <p className="text-xs text-slate-500">Business Address</p>
+                    <p className="text-sm font-medium text-slate-900">{request.doctorId?.businessAddress || 'N/A'}</p>
+                  </div>
+                </div>
+                <div className="flex items-center gap-3">
+                  <div className="w-8 h-8 bg-indigo-50 rounded-lg flex items-center justify-center text-indigo-600">
+                    <i className="fa-solid fa-hospital text-sm"></i>
+                  </div>
+                  <div>
+                    <p className="text-xs text-slate-500">Practice Type</p>
+                    <p className="text-sm font-medium text-slate-900 capitalize">{request.doctorId?.practiceType || 'N/A'}</p>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* Expand Modal */}
+      {showExpandModal && (
+        <div className="fixed inset-0 z-[60] flex items-center justify-center p-8 bg-black/50 backdrop-blur-sm">
+          <div className="bg-white w-full max-w-4xl max-h-[90vh] rounded-2xl overflow-hidden tradingview-shadow flex flex-col">
+            <div className="p-4 border-b border-slate-100 flex items-center justify-between flex-shrink-0">
+              <h3 className="text-lg font-bold text-slate-900">Form Preview</h3>
+              <button onClick={() => setShowExpandModal(false)} className="text-slate-400 hover:text-slate-600">
+                <i className="fa-solid fa-xmark"></i>
+              </button>
+            </div>
+            <div className="flex-1 overflow-y-auto p-8 bg-slate-100/30">
+              {request.formStatus?.toLowerCase() === 'signed' && request.signedPdfUrl ? (
+                loadingPdf ? (
+                  <div className="flex items-center justify-center h-full min-h-[500px]">
+                    <i className="fa-solid fa-spinner fa-spin text-primary text-xl mr-3"></i>
+                    <span className="text-sm text-slate-600">Loading PDF...</span>
+                  </div>
+                ) : pdfBlobUrl ? (
+                  <iframe
+                    src={`${pdfBlobUrl}#toolbar=0&zoom=page-fit`}
+                    title="Signed Form PDF"
+                    className="w-full h-full min-h-[600px] border border-slate-200 rounded-lg bg-white"
+                  />
+                ) : (
+                  <div className="flex items-center justify-center h-full min-h-[500px]">
+                    <span className="text-sm text-slate-500">Failed to load PDF</span>
+                  </div>
+                )
+              ) : (
+                <div className="max-w-2xl mx-auto bg-white border border-slate-200 p-10 shadow-sm space-y-8">
+                  <div className="flex justify-between items-start border-b pb-6">
+                    <div>
+                      <h2 className="text-xl font-bold text-slate-900">MEDICAL PRESCRIPTION</h2>
+                      <p className="text-xs text-slate-500">ID: {request.requestId || 'N/A'}</p>
+                    </div>
+                    <div className="text-right">
+                      <p className="text-xs font-bold text-slate-800">At-Home Healthcare</p>
+                      <p className="text-[10px] text-slate-500">Digital Health Network</p>
+                    </div>
+                  </div>
+                  <div className="grid grid-cols-2 gap-8 text-xs">
+                    <div>
+                      <p className="font-bold text-slate-400 uppercase mb-2">Patient</p>
+                      <p className="text-slate-900 font-medium">{request.patientName || request.patient || 'Unknown Patient'}</p>
+                      <p className="text-slate-500 mt-1">DOB: {request.patientId?.dateOfBirth ? new Date(request.patientId.dateOfBirth).toLocaleDateString('en-US', { month: '2-digit', day: '2-digit', year: 'numeric' }) : 'Not Available'}</p>
+                    </div>
+                    <div>
+                      <p className="font-bold text-slate-400 uppercase mb-2">Prescriber</p>
+                      <p className="text-slate-900 font-medium capitalize">{request.doctorName || request.doctor?.name || 'Unknown Doctor'}</p>
+                      <p className="text-slate-500 mt-1">License: #{request.doctorId?.rppsNumber || 'N/A'}</p>
+                    </div>
+                  </div>
+                  <div className="space-y-4">
+                    <p className="text-xs font-bold text-slate-400 uppercase">Analysis Requested</p>
+                    <div className="p-4 bg-slate-50 rounded-lg">
+                      <div className="flex items-start gap-3">
+                        <div className="w-4 h-4 rounded border-2 border-primary flex items-center justify-center mt-0.5">
+                          <i className="fa-solid fa-file-medical text-[10px] text-primary"></i>
+                        </div>
+                        <div className="flex-1">
+                          <p className="text-xs text-slate-800 font-medium leading-relaxed">
+                            {request.patientId?.medicalDescription || 'No medical description available'}
+                          </p>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                  <div className="pt-8 flex justify-end">
+                    <div className="text-center">
+                      <div className="w-48 h-12 border-b-2 border-slate-200 flex items-center justify-center italic text-primary font-serif capitalize">
+                        {request.doctorName || request.doctor?.name || 'Unknown Doctor'}
+                      </div>
+                      <p className="text-[10px] text-slate-400 mt-2">
+                        {request.digitalSignature?.signedAt
+                          ? `Digitally Signed on ${new Date(request.digitalSignature.signedAt).toLocaleDateString('en-US', { month: '2-digit', day: '2-digit', year: 'numeric' })}`
+                          : request.status === 'completed'
+                            ? 'Digitally Signed'
+                            : 'Awaiting Signature'}
+                      </p>
+                    </div>
+                  </div>
                 </div>
               )}
             </div>
