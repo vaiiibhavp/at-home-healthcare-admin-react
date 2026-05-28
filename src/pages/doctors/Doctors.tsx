@@ -97,11 +97,12 @@ const Doctors: React.FC = () => {
   };
 
   const handleDisable = (doctor: Doctor) => {
-    const status = doctor.status === 'inactive' ? 'Activated' : 'Disabled';
+    const statusKey = doctor.status === 'inactive' ? 'doctors.activated' : 'doctors.disabled';
+    const status = t(statusKey);
     const doctorName = `Dr. ${doctor.fullName}`;
     setToast({
       show: true,
-      message: `${doctorName} ${status} successfully`
+      message: t('doctors.statusChangeSuccess', { doctorName, status })
     });
   };
 
@@ -118,7 +119,7 @@ const Doctors: React.FC = () => {
   };
 
   const confirmAction = () => {
-    const status = modalState.type === 'approve' ? 'Approved' : 'Rejected';
+    const status = modalState.type === 'approve' ? t('doctors.approved') : t('status.rejected');
     setToast({
       show: true,
       message: t('doctors.statusUpdate', { status, doctorName: modalState.doctorName })

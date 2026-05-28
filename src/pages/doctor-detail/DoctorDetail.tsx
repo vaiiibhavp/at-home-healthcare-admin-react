@@ -64,7 +64,7 @@ const DoctorDetail: React.FC<DoctorDetailProps> = ({ isApproved: propIsApproved 
     if (!doctorId || !internalNotes.trim()) {
       setToast({
         show: true,
-        message: 'Please enter some notes before saving'
+        message: t('doctors.notesRequired')
       });
       return;
     }
@@ -77,13 +77,13 @@ const DoctorDetail: React.FC<DoctorDetailProps> = ({ isApproved: propIsApproved 
       
       setToast({
         show: true,
-        message: 'Internal notes saved successfully'
+        message: t('doctors.notesSaved')
       });
     } catch (error) {
       console.error('Error saving internal notes:', error);
       setToast({
         show: true,
-        message: 'Error saving internal notes. Please try again.'
+        message: t('doctors.notesSaveError')
       });
     }
   };
@@ -209,7 +209,7 @@ const DoctorDetail: React.FC<DoctorDetailProps> = ({ isApproved: propIsApproved 
       
       setToast({
         show: true,
-        message: t('doctors.statusUpdate', { status: status === 'approved' ? 'Approved' : 'Rejected', doctorName: modalState.doctorName })
+        message: t('doctors.statusUpdate', { status: status === 'approved' ? t('doctors.approved') : t('status.rejected'), doctorName: modalState.doctorName })
       });
     } catch (error) {
       setToast({
@@ -255,7 +255,7 @@ const DoctorDetail: React.FC<DoctorDetailProps> = ({ isApproved: propIsApproved 
                 isInactive ? 'fa-pause' : 
                 'fa-clock'
               }`}></i> 
-              {isApproved ? t('doctors.approved') : isInactive ? 'Inactive' : t('doctors.pendingApproval')}
+              {isApproved ? t('doctors.approved') : isInactive ? t('common.inactive') : t('doctors.pendingApproval')}
             </div>
           </div>
         </header>
@@ -357,10 +357,7 @@ const DoctorDetail: React.FC<DoctorDetailProps> = ({ isApproved: propIsApproved 
                       <span className="text-xs font-bold text-slate-500 uppercase tracking-wider">{t('doctors.auditSnippet')}</span>
                     </div>
                     <p className="text-sm text-slate-600 italic">
-                      {verification?.automatedChecks?.rppsValid !== null && verification?.automatedChecks?.addressMatchesPublicRecords !== null 
-                        ? "\"RPPS database check confirmed identity. Professional address matches public records. Documents uploaded are high quality and legible.\""
-                        : t('doctors.auditSnippetText')
-                      }
+                      {t('doctors.auditSnippetText')}
                     </p>
                   </div>
 
@@ -397,13 +394,13 @@ const DoctorDetail: React.FC<DoctorDetailProps> = ({ isApproved: propIsApproved 
                         <p className="text-xs font-bold text-slate-900">{t('doctors.steps.adminReview')}</p>
                         <p className="text-[10px] text-slate-500">
                           {doctor?.status === 'pendingApproval' 
-                            ? 'pending approval'
+                            ? t('doctors.stepStatus.pendingApproval')
                             : doctor?.status === 'approved' 
-                            ? 'approved'
+                            ? t('doctors.stepStatus.approved')
                             : doctor?.status === 'rejected'
-                            ? 'rejected'
+                            ? t('doctors.stepStatus.rejected')
                             : doctor?.status === 'inactive'
-                            ? 'inactive'
+                            ? t('doctors.stepStatus.inactive')
                             : t('doctors.steps.adminReviewStatus')
                           }
                         </p>
@@ -426,12 +423,12 @@ const DoctorDetail: React.FC<DoctorDetailProps> = ({ isApproved: propIsApproved 
                         <p className="text-xs font-bold text-slate-900">{t('doctors.steps.emailVerified')}</p>
                         <p className="text-[10px] text-slate-500">
                           {doctor?.status === 'approved' 
-                            ? 'Verified'
+                            ? t('doctors.verificationStates.verified')
                             : doctor?.status === 'rejected'
-                            ? 'Not verified'
+                            ? t('doctors.verificationStates.notVerified')
                             : doctor?.status === 'inactive'
-                            ? 'Inactive'
-                            : 'Pending admin approval'
+                            ? t('doctors.verificationStates.inactive')
+                            : t('doctors.verificationStates.pendingAdminApproval')
                           }
                         </p>
                       </div>
@@ -494,7 +491,7 @@ const DoctorDetail: React.FC<DoctorDetailProps> = ({ isApproved: propIsApproved 
           <div className={`fixed inset-0 z-50 flex items-center justify-center p-4 ${modalState.isOpen ? '' : 'hidden'}`} style={{ backgroundColor: 'rgba(15, 23, 42, 0.5)', backdropFilter: 'blur(4px)' }}>
             <div className="bg-white w-full max-w-md rounded-2xl tradingview-shadow overflow-hidden" onClick={(e) => e.stopPropagation()}>
               <div className="p-6 border-b border-slate-100 flex justify-between items-center">
-                <h3 className="text-lg font-bold text-slate-900">Reject Application</h3>
+                <h3 className="text-lg font-bold text-slate-900">{t('doctors.rejectApplicationTitle')}</h3>
                 <button 
                   onClick={(e) => {
                     e.stopPropagation();
@@ -506,27 +503,27 @@ const DoctorDetail: React.FC<DoctorDetailProps> = ({ isApproved: propIsApproved 
                 </button>
               </div>
               <div className="p-6 space-y-4">
-                <p className="text-sm text-slate-600">Please select a reason for rejection. This will be shared with the doctor.</p>
+                <p className="text-sm text-slate-600">{t('doctors.rejectionDescription')}</p>
                 <select
                   value={rejectReason}
                   onChange={(e) => setRejectReason(e.target.value)}
                   className="w-full bg-slate-50 border border-slate-200 rounded-xl p-3 text-sm focus:ring-2 focus:ring-danger/10 outline-none"
                 >
-                  <option value="">Select a reason...</option>
-                  <option value="invalid_rpps">Invalid RPPS Number</option>
-                  <option value="missing_docs">Missing Required Documents</option>
-                  <option value="expired_insurance">Expired Liability Insurance</option>
-                  <option value="other">Other Reason</option>
+                  <option value="">{t('doctors.selectReason')}</option>
+                  <option value="invalid_rpps">{t('doctors.rejectionReasons.invalidRpps')}</option>
+                  <option value="missing_docs">{t('doctors.rejectionReasons.missingDocs')}</option>
+                  <option value="expired_insurance">{t('doctors.rejectionReasons.expiredInsurance')}</option>
+                  <option value="other">{t('doctors.rejectionReasons.other')}</option>
                 </select>
                 <textarea
                   value={rejectComment}
                   onChange={(e) => setRejectComment(e.target.value)}
                   rows={3}
-                  placeholder="Additional comments..."
+                  placeholder={t('doctors.additionalComments')}
                   className="w-full bg-slate-50 border border-slate-200 rounded-xl p-3 text-sm focus:ring-2 focus:ring-danger/10 outline-none"
                 />
                 {showRejectError && (
-                  <p className="text-xs text-danger">Please select a reason for rejection.</p>
+                  <p className="text-xs text-danger">{t('doctors.selectRejectionReason')}</p>
                 )}
               </div>
               <div className="p-6 bg-slate-50 border-t border-slate-100 flex justify-end gap-3">
