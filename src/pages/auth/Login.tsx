@@ -6,7 +6,7 @@ import { loginStart, loginSuccess, loginFailure } from '../../store/authSlice';
 import './Login.css';
 
 const Login: React.FC = () => {
-  const { t } = useTranslation();
+  const { t, i18n } = useTranslation();
   const [formData, setFormData] = useState({
     email: '',
     password: ''
@@ -80,11 +80,37 @@ const Login: React.FC = () => {
         >
           <section className="w-full max-w-[440px]">
             <div className="bg-surface rounded-2xl shadow-soft border border-border p-8 md:p-10">
-              <div className="mb-8">
-                <h1 className="text-2xl font-semibold mb-2">{t('auth.adminLogin')}</h1>
-                <p className="text-textMuted text-sm">
-                  {t('auth.loginDescription')}
-                </p>
+              <div className="mb-8 flex items-start justify-between gap-4">
+                <div>
+                  <h1 className="text-2xl font-semibold mb-2">{t('auth.adminLogin')}</h1>
+                  <p className="text-textMuted text-sm">
+                    {t('auth.loginDescription')}
+                  </p>
+                </div>
+                <div className="flex items-center gap-1 bg-slate-100 rounded-lg p-1 shrink-0">
+                  <button
+                    type="button"
+                    onClick={() => i18n.changeLanguage('en')}
+                    className={`px-2 py-1 text-xs font-medium rounded-md transition-all ${
+                      i18n.language.startsWith('en')
+                        ? 'bg-white text-primary shadow-sm'
+                        : 'text-textMuted hover:text-slate-700'
+                    }`}
+                  >
+                    EN
+                  </button>
+                  <button
+                    type="button"
+                    onClick={() => i18n.changeLanguage('fr')}
+                    className={`px-2 py-1 text-xs font-medium rounded-md transition-all ${
+                      i18n.language.startsWith('fr')
+                        ? 'bg-white text-primary shadow-sm'
+                        : 'text-textMuted hover:text-slate-700'
+                    }`}
+                  >
+                    FR
+                  </button>
+                </div>
               </div>
 
               <form onSubmit={handleSubmit} className="space-y-6">
@@ -197,8 +223,7 @@ const Login: React.FC = () => {
                   <i className="fa-solid fa-shield-halved"></i>
                 </div>
                 <p className="text-[11px] leading-relaxed text-textMuted uppercase tracking-tight">
-                  Secure administrative portal. All activities are logged and monitored for HIPAA compliance.
-                  Unauthorized access is strictly prohibited.
+                  {t('auth.securityNotice')}
                 </p>
               </div>
             </div>

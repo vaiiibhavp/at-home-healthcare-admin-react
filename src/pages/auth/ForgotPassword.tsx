@@ -4,7 +4,7 @@ import { useForgotPasswordMutation } from '../../services/api';
 import './ForgotPassword.css';
 
 const ForgotPassword: React.FC = () => {
-  const { t } = useTranslation();
+  const { t, i18n } = useTranslation();
   const [email, setEmail] = useState('');
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState('');
@@ -21,7 +21,7 @@ const ForgotPassword: React.FC = () => {
       setSuccess(true);
       setEmail('');
     } catch (err: any) {
-      const errorMessage = err.data?.message || 'Failed to send reset instructions. Please try again.';
+      const errorMessage = err.data?.message || t('auth.failedSendReset');
       setError(errorMessage);
     } finally {
       setIsLoading(false);
@@ -62,14 +62,40 @@ const ForgotPassword: React.FC = () => {
               </button>
             </div>
 
-            <div className="mb-8">
-              <div className="w-12 h-12 bg-primary/5 rounded-xl flex items-center justify-center text-primary mb-6">
-                <i className="fa-solid fa-key text-xl"></i>
+            <div className="mb-8 flex items-start justify-between gap-4">
+              <div>
+                <div className="w-12 h-12 bg-primary/5 rounded-xl flex items-center justify-center text-primary mb-6">
+                  <i className="fa-solid fa-key text-xl"></i>
+                </div>
+                <h1 className="text-2xl font-semibold mb-2">{t('auth.forgotPasswordTitle')}</h1>
+                <p className="text-textMuted text-sm leading-relaxed">
+                  {t('auth.forgotPasswordDescription')}
+                </p>
               </div>
-              <h1 className="text-2xl font-semibold mb-2">{t('auth.forgotPasswordTitle')}</h1>
-              <p className="text-textMuted text-sm leading-relaxed">
-                {t('auth.forgotPasswordDescription')}
-              </p>
+              <div className="flex items-center gap-1 bg-slate-100 rounded-lg p-1 shrink-0">
+                <button
+                  type="button"
+                  onClick={() => i18n.changeLanguage('en')}
+                  className={`px-2 py-1 text-xs font-medium rounded-md transition-all ${
+                    i18n.language.startsWith('en')
+                      ? 'bg-white text-primary shadow-sm'
+                      : 'text-textMuted hover:text-slate-700'
+                  }`}
+                >
+                  EN
+                </button>
+                <button
+                  type="button"
+                  onClick={() => i18n.changeLanguage('fr')}
+                  className={`px-2 py-1 text-xs font-medium rounded-md transition-all ${
+                    i18n.language.startsWith('fr')
+                      ? 'bg-white text-primary shadow-sm'
+                      : 'text-textMuted hover:text-slate-700'
+                  }`}
+                >
+                  FR
+                </button>
+              </div>
             </div>
 
             {success ? (
@@ -77,17 +103,17 @@ const ForgotPassword: React.FC = () => {
                 <div className="bg-success/10 border border-success/20 text-success p-4 rounded-xl">
                   <div className="flex items-center gap-3 mb-2">
                     <i className="fa-solid fa-check-circle text-lg"></i>
-                    <h3 className="font-semibold">Reset Instructions Sent</h3>
+                    <h3 className="font-semibold">{t('auth.resetInstructionsSent')}</h3>
                   </div>
                   <p className="text-sm">
-                    Password reset instructions have been sent to your email address. Please check your inbox and follow the instructions to reset your password.
+                    {t('auth.resetInstructionsDesc')}
                   </p>
                 </div>
                 <button
                   onClick={() => window.location.href = '/reset-password'}
                   className="w-full h-12 bg-primary hover:bg-primary/90 text-white font-semibold rounded-xl transition-all shadow-lg shadow-primary/10 flex items-center justify-center gap-2 active:scale-[0.98]"
                 >
-                  Reset Password
+                  {t('auth.resetPasswordButton')}
                   <i className="fa-solid fa-key text-[10px]"></i>
                 </button>
               </div>
@@ -107,7 +133,7 @@ const ForgotPassword: React.FC = () => {
                       id="email"
                       value={email}
                       onChange={(e) => setEmail(e.target.value)}
-                      placeholder="adminathomehealthcare@yopmail.com"
+                      placeholder={t('auth.emailPlaceholder')}
                       required
                       className="input-field w-full h-12 pl-11 pr-4 border border-border rounded-xl bg-white outline-none transition-all text-sm font-medium"
                     />
@@ -131,7 +157,7 @@ const ForgotPassword: React.FC = () => {
                     {isLoading ? (
                       <>
                         <i className="fa-solid fa-spinner fa-spin"></i>
-                        Sending...
+                        {t('auth.sending')}
                       </>
                     ) : (
                       <>
@@ -151,10 +177,7 @@ const ForgotPassword: React.FC = () => {
                   <i className="fa-solid fa-circle-info"></i>
                 </div>
                 <p className="text-[12px] leading-relaxed text-textMuted">
-                  <span className="font-semibold text-textMain">Security Notice:</span> If
-                  an account exists for this email, you will receive a reset link
-                  shortly. Please check your spam folder if it doesn't arrive
-                  within 5 minutes.
+                  {t('auth.forgotPasswordSecurityNotice')}
                 </p>
               </div>
               <div className="flex items-start gap-3 opacity-60">
@@ -162,8 +185,7 @@ const ForgotPassword: React.FC = () => {
                   <i className="fa-solid fa-shield-check"></i>
                 </div>
                 <p className="text-[11px] leading-relaxed text-textMuted uppercase tracking-tight">
-                  All password reset requests are logged and audited for HIPAA
-                  compliance.
+                  {t('auth.hipaaResetNotice')}
                 </p>
               </div>
             </div>
