@@ -29,96 +29,44 @@ export const RequestDetailModal: React.FC<RequestDetailModalProps> = ({
     setZoomLevel((prev) => (prev >= 1.5 ? 1 : prev + 0.25));
   };
 
-  // Move useMemo before early return to satisfy React Hook rules
+  // Build timeline from API statusHistory
   const timelineEvents = React.useMemo(() => {
-    if (!request) return [];
-    
-    const events = [];
-    const timestamps = request.statusTimestamps;
-    
-    // Only show statuses that have actual timestamps in API data
-    
-    // Draft/Request Created (always show if timestamp exists)
-    if (timestamps?.draft) {
-      events.push({
-        status: 'Request Created',
-        date: `${new Date(timestamps.draft).toLocaleDateString('en-US', { 
-            month: 'short', 
-            day: 'numeric', 
-            hour: '2-digit',
-            minute: '2-digit'
-          })} by ${request.createdBy?.fName && request.createdBy?.lName ? `${request.createdBy.fName} ${request.createdBy.lName}` : request.createdBy?.email || 'Unknown User'}`,
-        icon: 'fa-check',
-        isActive: true,
-        isCompleted: true
-      });
-    }
-    
-    // Submitted (only show if timestamp exists)
-    if (timestamps?.submitted) {
-      events.push({
-        status: 'Submitted',
-        date: new Date(timestamps.submitted).toLocaleDateString('en-US', { 
-          month: 'short', 
-          day: 'numeric', 
+    if (!request || !request.statusHistory || request.statusHistory.length === 0) return [];
+
+    const history = request.statusHistory;
+    const statusMap: Record<string, string> = {
+      submitted: 'Submitted',
+      inprogress: 'In Progress',
+      completed: 'Completed',
+      returned: 'Returned',
+      draft: 'Request Created',
+      pending: 'Pending'
+    };
+    const iconMap: Record<string, string> = {
+      submitted: 'fa-paper-plane',
+      inprogress: 'fa-spinner',
+      completed: 'fa-flag-checkered',
+      returned: 'fa-undo',
+      draft: 'fa-check',
+      pending: 'fa-clock'
+    };
+
+    return history.map((item: any, index: number) => {
+      const isLast = index === history.length - 1;
+      return {
+        status: statusMap[item.status] || item.status.charAt(0).toUpperCase() + item.status.slice(1),
+        date: new Date(item.changedAt).toLocaleDateString('en-US', {
+          month: 'short',
+          day: 'numeric',
           hour: '2-digit',
           minute: '2-digit'
         }),
-        icon: 'fa-paper-plane',
-        isActive: request.status === 'pending' || request.status === 'inprogress' || request.status === 'completed',
-        isCompleted: request.status === 'inprogress' || request.status === 'completed'
-      });
-    }
-    
-    // In Progress (only show if timestamp exists)
-    if (timestamps?.inProgress) {
-      events.push({
-        status: 'In Progress',
-        date: new Date(timestamps.inProgress).toLocaleDateString('en-US', { 
-          month: 'short', 
-          day: 'numeric', 
-          hour: '2-digit',
-          minute: '2-digit'
-        }),
-        icon: 'fa-spinner',
-        isActive: request.status === 'inprogress' || request.status === 'completed',
-        isCompleted: request.status === 'completed'
-      });
-    }
-    
-    // Completed (only show if timestamp exists)
-    if (timestamps?.completed) {
-      events.push({
-        status: 'Completed',
-        date: new Date(timestamps.completed).toLocaleDateString('en-US', { 
-          month: 'short', 
-          day: 'numeric', 
-          hour: '2-digit',
-          minute: '2-digit'
-        }),
-        icon: 'fa-flag-checkered',
-        isActive: request.status === 'completed',
-        isCompleted: request.status === 'completed'
-      });
-    }
-    
-    // Returned (only show if timestamp exists)
-    if (timestamps?.returned) {
-      events.push({
-        status: 'Returned',
-        date: new Date(timestamps.returned).toLocaleDateString('en-US', { 
-          month: 'short', 
-          day: 'numeric', 
-          hour: '2-digit',
-          minute: '2-digit'
-        }),
-        icon: 'fa-undo',
-        isActive: request.status === 'returned',
-        isCompleted: request.status === 'returned'
-      });
-    }
-    
-    return events;
+        notes: item.notes,
+        icon: iconMap[item.status] || 'fa-circle',
+        isActive: isLast,
+        isCompleted: !isLast
+      };
+    });
   }, [request]);
 
   if (!isOpen || !request) return null;
@@ -432,6 +380,7 @@ export const RequestDetailModal: React.FC<RequestDetailModalProps> = ({
                         <div className={`${!event.isActive ? 'opacity-40' : ''}`}>
                           <p className="text-sm font-bold text-slate-900">{event.status}</p>
                           <p className="text-xs text-slate-500">{event.date}</p>
+                          {event.notes && <p className="text-[10px] text-slate-400 mt-1 italic">{event.notes}</p>}
                         </div>
                       </div>
                     ))}
