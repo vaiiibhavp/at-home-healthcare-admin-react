@@ -84,6 +84,7 @@ const Requests: React.FC = () => {
       completed: 'emerald',
       inprogress: 'blue',
       returned: 'red',
+      cancelled: 'red',
       draft: 'gray'
     };
     return colorMap[status as keyof typeof colorMap] || 'gray';
@@ -312,6 +313,7 @@ const Requests: React.FC = () => {
       completed: 'status-chip status-completed',
       inprogress: 'status-chip status-inprogress',
       returned: 'status-chip status-returned',
+      cancelled: 'status-chip status-returned',
       draft: 'status-chip status-draft'
     };
     return statusClasses[status as keyof typeof statusClasses] || 'status-chip';
@@ -323,6 +325,7 @@ const Requests: React.FC = () => {
       completed: t('requests.completed'),
       inprogress: t('requests.inProgress'),
       returned: t('requests.returned'),
+      cancelled: t('requests.cancelled'),
       draft: t('requests.draft')
     };
     return statusTexts[status as keyof typeof statusTexts] || status;
@@ -399,7 +402,7 @@ const Requests: React.FC = () => {
       setRequestsData(prevData =>
         prevData.map(req =>
           req.id === request.id
-            ? { ...req, status: 'returned', serviceColor: 'red', formStatus: 'CANCELLED' }
+            ? { ...req, status: 'cancelled', serviceColor: 'red', formStatus: 'CANCELLED' }
             : req
         )
       );
@@ -554,6 +557,7 @@ const Requests: React.FC = () => {
                 <option value="inprogress">{t('requests.inProgress')}</option>
                 <option value="completed">{t('requests.completed')}</option>
                 <option value="returned">{t('requests.returned')}</option>
+                <option value="cancelled">{t('requests.cancelled')}</option>
                 <option value="draft">{t('requests.draft')}</option>
               </select>
             </div>
