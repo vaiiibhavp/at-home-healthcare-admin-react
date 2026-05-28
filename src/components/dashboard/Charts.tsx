@@ -50,11 +50,14 @@ const Charts: React.FC = () => {
     },
     xaxis: {
       gridcolor: '#F1F5F9',
-      zeroline: false
+      zeroline: false,
+      fixedrange: true,
+      automargin: true
     },
     yaxis: {
       gridcolor: '#F1F5F9',
-      zeroline: false
+      zeroline: false,
+      fixedrange: true
     },
     paper_bgcolor: 'rgba(0,0,0,0)',
     plot_bgcolor: 'rgba(0,0,0,0)',
