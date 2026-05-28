@@ -49,6 +49,7 @@ const Requests: React.FC = () => {
   // API state
   const [requestsData, setRequestsData] = useState<RequestData[]>([]);
   const [exporting, setExporting] = useState(false);
+  const [searchQuery, setSearchQuery] = useState('');
   const [totalItems, setTotalItems] = useState(0);
   const [totalPages, setTotalPages] = useState(0);
   const latestRequestId = useRef(0);
@@ -284,8 +285,16 @@ const Requests: React.FC = () => {
     fetchRequests(currentPage, itemsPerPage, statusFilter, startDate, endDate, serviceFilter);
   }, [currentPage, itemsPerPage, statusFilter, startDate, endDate, serviceFilter, fetchRequests]);
 
-  // Display requests from API (already paginated)
-  const displayedRequests = requestsData;
+  // Filter requests by search query across requestId, patient name, and doctor name
+  const normalizedQuery = searchQuery.trim().toLowerCase().replace(/^#/, '');
+  const displayedRequests = normalizedQuery
+    ? requestsData.filter((req) => {
+        const idMatch = (req.requestId || req.id || '').toLowerCase().replace(/^#/, '').includes(normalizedQuery);
+        const patientMatch = (req.patientName || req.patient || '').toLowerCase().includes(normalizedQuery);
+        const doctorMatch = (req.doctorName || req.doctor?.name || '').toLowerCase().includes(normalizedQuery);
+        return idMatch || patientMatch || doctorMatch;
+      })
+    : requestsData;
 
   // Pagination handlers
   const handlePageChange = (page: number) => {
@@ -502,6 +511,8 @@ const Requests: React.FC = () => {
                 type="text"
                 placeholder={t('requests.searchPlaceholder')}
                 className="bg-transparent border-none outline-none text-xs w-64 text-slate-700"
+                value={searchQuery}
+                onChange={(e) => setSearchQuery(e.target.value)}
               />
             </div>
             <NotificationDropdown
