@@ -97,8 +97,8 @@ const Sidebar: React.FC = () => {
           >
             <i className="fa-solid fa-key"></i>
           </button>
-          <button 
-            onClick={() => window.logout?.()} 
+          <button
+            onClick={() => window.logout?.()}
             className="text-slate-400 hover:text-danger p-1 auth-logout"
             title={t('auth.logout')}
           >

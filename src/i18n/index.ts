@@ -16,10 +16,8 @@ const resources = {
   }
 };
 
-// Clear any existing language settings and cache
-localStorage.removeItem('i18nextLng');
-localStorage.removeItem('i18nextResStore');
 // Force cache refresh - v3
+localStorage.removeItem('i18nextResStore');
 
 // Prevent multiple initializations
 if (!i18n.isInitialized) {
@@ -32,7 +30,6 @@ if (!i18n.isInitialized) {
     .init({
     resources,
     fallbackLng: 'en', // Default language
-    lng: 'en', // Force initial language to English
     debug: process.env.NODE_ENV === 'development',
     
     interpolation: {
@@ -41,7 +38,7 @@ if (!i18n.isInitialized) {
     
     detection: {
       order: ['localStorage', 'navigator', 'htmlTag'],
-      caches: [], // Disable caching to force fresh detection
+      caches: ['localStorage'],
     },
     
     ns: ['common'], // Default namespace

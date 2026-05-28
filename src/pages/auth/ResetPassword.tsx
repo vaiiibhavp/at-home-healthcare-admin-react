@@ -3,7 +3,7 @@ import { useTranslation } from 'react-i18next';
 import './ResetPassword.css';
 
 const ResetPassword: React.FC = () => {
-  const { t } = useTranslation();
+  const { t, i18n } = useTranslation();
   const [password, setPassword] = useState('');
   const [confirmPassword, setConfirmPassword] = useState('');
   const [showPassword, setShowPassword] = useState(false);
@@ -135,14 +135,40 @@ const ResetPassword: React.FC = () => {
                 </button>
               </div>
 
-              <div className="mb-8">
-                <div className="w-12 h-12 bg-primary/5 rounded-xl flex items-center justify-center text-primary mb-6">
-                  <i className="fa-solid fa-shield-keyhole text-xl"></i>
+              <div className="mb-8 flex items-start justify-between gap-4">
+                <div>
+                  <div className="w-12 h-12 bg-primary/5 rounded-xl flex items-center justify-center text-primary mb-6">
+                    <i className="fa-solid fa-shield-keyhole text-xl"></i>
+                  </div>
+                  <h1 className="text-2xl font-semibold mb-2">{t('auth.resetPasswordTitle')}</h1>
+                  <p className="text-textMuted text-sm leading-relaxed">
+                    {t('auth.resetPasswordDescription')}
+                  </p>
                 </div>
-                <h1 className="text-2xl font-semibold mb-2">{t('auth.resetPasswordTitle')}</h1>
-                <p className="text-textMuted text-sm leading-relaxed">
-                  {t('auth.resetPasswordDescription')}
-                </p>
+                <div className="flex items-center gap-1 bg-slate-100 rounded-lg p-1 shrink-0">
+                  <button
+                    type="button"
+                    onClick={() => i18n.changeLanguage('en')}
+                    className={`px-2 py-1 text-xs font-medium rounded-md transition-all ${
+                      i18n.language.startsWith('en')
+                        ? 'bg-white text-primary shadow-sm'
+                        : 'text-textMuted hover:text-slate-700'
+                    }`}
+                  >
+                    EN
+                  </button>
+                  <button
+                    type="button"
+                    onClick={() => i18n.changeLanguage('fr')}
+                    className={`px-2 py-1 text-xs font-medium rounded-md transition-all ${
+                      i18n.language.startsWith('fr')
+                        ? 'bg-white text-primary shadow-sm'
+                        : 'text-textMuted hover:text-slate-700'
+                    }`}
+                  >
+                    FR
+                  </button>
+                </div>
               </div>
 
               <form onSubmit={handleSubmit} className="space-y-6">
@@ -183,9 +209,9 @@ const ResetPassword: React.FC = () => {
                     </div>
                     <div className="flex justify-between items-center">
                       <span className="text-[10px] font-bold text-textMuted uppercase tracking-tighter">
-                        Strength: {getStrengthLabel(strength)}
+                        {t('auth.strengthLabel')}: {getStrengthLabel(strength)}
                       </span>
-                      <span className="text-[10px] text-textMuted">Min. 12 characters</span>
+                      <span className="text-[10px] text-textMuted">{t('auth.minCharacters')}</span>
                     </div>
                   </div>
                 </div>
