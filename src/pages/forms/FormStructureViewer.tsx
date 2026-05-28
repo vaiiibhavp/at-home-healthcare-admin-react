@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useRef, useEffect } from 'react';
 import { useTranslation } from 'react-i18next';
 import { Service } from './FormTypes';
 
@@ -1901,7 +1901,21 @@ export const FormStructureViewer: React.FC<FormStructureViewerProps> = ({
   onMapService
 }) => {
   const { t } = useTranslation();
-  
+  const formPreviewRef = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    if (formPreviewRef.current) {
+      const inputs = formPreviewRef.current.querySelectorAll('input, textarea, select');
+      inputs.forEach((el) => {
+        const field = el as HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement;
+        field.disabled = true;
+        if (field instanceof HTMLInputElement || field instanceof HTMLTextAreaElement) {
+          field.readOnly = true;
+        }
+      });
+    }
+  }, [selectedService]);
+
   if (!selectedService) {
     return (
       <section className="flex-1 bg-white rounded-2xl border border-slate-200 tradingview-shadow flex flex-col overflow-hidden">
@@ -1961,7 +1975,7 @@ export const FormStructureViewer: React.FC<FormStructureViewerProps> = ({
         </div> */}
       </div>
       
-      <div className="flex-1 overflow-y-auto p-8 bg-slate-50/30">
+      <div ref={formPreviewRef} className="flex-1 overflow-y-auto p-8 bg-slate-50/30">
         {selectedService.name === 'Generic' ? (
           <div>
             {/* Read-only banner */}
