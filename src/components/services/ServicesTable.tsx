@@ -135,9 +135,9 @@ export const ServicesTable: React.FC<ServicesTableProps> = ({
                   <p className="text-xs text-slate-500 max-w-xs truncate">{service.description}</p>
                 </td>
                 <td className="px-6 py-4">
-                  {service.assignedProviders && service.assignedProviders.length > 0 ? (
+                  {service.assignedProviders ? (
                     <span className="text-xs font-semibold text-slate-700">
-                      {service.assignedProviders.reduce((total, group) => total + group.providers.length, 0)}
+                      {service.assignedProviders.total}
                     </span>
                   ) : (
                     <span className="text-xs text-slate-400">0</span>

@@ -1,3 +1,5 @@
+import { ProviderGroup } from '../../services/formMappingsApi';
+
 export interface Service {
   id: string;
   name: string;
@@ -8,7 +10,7 @@ export interface Service {
   isActive?: boolean;
   category?: string | null;
   icon?: string | null;
-  assignedProviders?: any[];
+  assignedProviders?: ProviderGroup;
 }
 
 export interface FormData {
