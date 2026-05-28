@@ -14,10 +14,10 @@ const RecentActivity: React.FC = () => {
     const diffHours = Math.floor(diffMins / 60);
     const diffDays = Math.floor(diffHours / 24);
 
-    if (diffMins < 1) return 'Just now';
-    if (diffMins < 60) return `${diffMins} minutes ago`;
-    if (diffHours < 24) return `${diffHours} hours ago`;
-    return `${diffDays} days ago`;
+    if (diffMins < 1) return t('dashboard.timeAgo.justNow');
+    if (diffMins < 60) return t('dashboard.timeAgo.minutesAgo', { count: diffMins });
+    if (diffHours < 24) return t('dashboard.timeAgo.hoursAgo', { count: diffHours });
+    return t('dashboard.timeAgo.daysAgo', { count: diffDays });
   };
 
   const getActivityIcon = (type: string) => {
@@ -49,31 +49,48 @@ const RecentActivity: React.FC = () => {
     }
   };
 
+  const getActivityTitle = (type: string): string => {
+    return t(`dashboard.recentActivity.types.${type}`, {
+      defaultValue: t('dashboard.recentActivity.types.default')
+    });
+  };
+
+  const getActivityDescription = (activity: { type: string; user: string; referenceId: string }): string => {
+    return t(`dashboard.recentActivity.descriptions.${activity.type}`, {
+      defaultValue: t('dashboard.recentActivity.descriptions.default', {
+        user: activity.user,
+        referenceId: activity.referenceId
+      }),
+      user: activity.user,
+      referenceId: activity.referenceId
+    });
+  };
+
   if (isLoading) {
     return (
       <div className="bg-white p-6 rounded-2xl border border-slate-100 tradingview-shadow w-full">
         <div className="flex justify-between items-center mb-6 w-full">
-          <h4 className="font-bold text-slate-800">{t('dashboard.recentActivity.title') || 'Recent Activity'}</h4>
+          <h4 className="font-bold text-slate-800">{t('dashboard.recentActivity.title')}</h4>
         </div>
         <div className="flex justify-center items-center h-32">
-          <p className="text-slate-500 text-sm">Loading recent activity...</p>
+          <p className="text-slate-500 text-sm">{t('dashboard.loadingRecentActivity')}</p>
         </div>
       </div>
     );
   }
 
   if (error) {
-    const errorMessage = typeof error === 'object' && error !== null && 'status' in error ? 
-      (error as { data?: { message?: string } }).data?.message || 'Failed to load recent activity' :
-      (error as { message?: string })?.message || 'An error occurred';
-    
+    const errorMessage = typeof error === 'object' && error !== null && 'status' in error ?
+      (error as { data?: { message?: string } }).data?.message || t('dashboard.errorLoadingActivity') :
+      (error as { message?: string })?.message || t('common.error');
+
     return (
       <div className="bg-white p-6 rounded-2xl border border-slate-100 tradingview-shadow w-full">
         <div className="flex justify-between items-center mb-6 w-full">
-          <h4 className="font-bold text-slate-800">{t('dashboard.recentActivity.title') || 'Recent Activity'}</h4>
+          <h4 className="font-bold text-slate-800">{t('dashboard.recentActivity.title')}</h4>
         </div>
         <div className="flex justify-center items-center h-32">
-          <p className="text-error text-sm">Error: {errorMessage}</p>
+          <p className="text-error text-sm">{t('common.error')}: {errorMessage}</p>
         </div>
       </div>
     );
@@ -82,7 +99,7 @@ const RecentActivity: React.FC = () => {
   return (
     <div id="ijax57" className="bg-white p-6 rounded-2xl border border-slate-100 tradingview-shadow w-full">
       <div className="mb-6 w-full">
-        <h4 className="font-bold text-slate-800">{t('dashboard.recentActivity.title') || 'Recent Activity'}</h4>
+        <h4 className="font-bold text-slate-800">{t('dashboard.recentActivity.title')}</h4>
       </div>
       <div className="space-y-6 max-h-80 overflow-y-auto pr-2">
         {activitiesData?.data.map((activity) => {
@@ -93,8 +110,8 @@ const RecentActivity: React.FC = () => {
                 <i className={`fa-solid ${iconConfig.icon} ${iconConfig.color} text-sm`}></i>
               </div>
               <div className="flex-1 min-w-0">
-                <p className="text-sm font-semibold text-slate-800">{activity.title}</p>
-                <p className="text-xs text-slate-500">{activity.description}</p>
+                <p className="text-sm font-semibold text-slate-800">{getActivityTitle(activity.type)}</p>
+                <p className="text-xs text-slate-500">{getActivityDescription(activity)}</p>
                 <span className="text-[10px] text-slate-400 mt-1 block">{formatTimeAgo(activity.timestamp)}</span>
               </div>
             </div>

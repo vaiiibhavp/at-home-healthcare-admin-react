@@ -28,10 +28,26 @@ const Charts: React.FC = () => {
     }
   ] : [];
 
+  const translateStatusLabel = (label: string): string => {
+    const labelMap: Record<string, string> = {
+      'Completed': 'requests.completed',
+      'In Progress': 'requests.inProgress',
+      'Pending': 'requests.pending',
+      'Returned': 'requests.returned',
+      'Draft': 'requests.draft',
+      'Cancelled': 'requests.cancelled',
+      'Approved': 'requests.approved',
+      'Rejected': 'requests.rejected',
+      'Submitted': 'requests.submitted',
+    };
+    const key = labelMap[label];
+    return key ? t(key) : label;
+  };
+
   const pieData = statusData ? [
     {
       values: statusData.data.breakdown.map(item => item.count),
-      labels: statusData.data.breakdown.map(item => item.label),
+      labels: statusData.data.breakdown.map(item => translateStatusLabel(item.label)),
       type: 'pie' as const,
       hole: 0.7,
       marker: {
@@ -101,20 +117,20 @@ const Charts: React.FC = () => {
   if (isLoading) {
     return (
       <div className="flex justify-center items-center h-64">
-        <p className="text-slate-500 text-lg font-bold">Loading chart data...</p>
+        <p className="text-slate-500 text-lg font-bold">{t('dashboard.loadingChartData')}</p>
       </div>
     );
   }
 
   if (hasError) {
     const error = timeDataError || statusDataError;
-    const errorMessage = error && typeof error === 'object' && error !== null && 'status' in error ? 
-      (error as { data?: { message?: string } }).data?.message || 'Failed to load chart data' :
-      (error as { message?: string })?.message || 'An error occurred';
-    
+    const errorMessage = error && typeof error === 'object' && error !== null && 'status' in error ?
+      (error as { data?: { message?: string } }).data?.message || t('dashboard.errorLoadingCharts') :
+      (error as { message?: string })?.message || t('common.error');
+
     return (
       <div className="flex justify-center items-center h-64">
-        <p className="text-error text-lg font-bold">Error: {errorMessage}</p>
+        <p className="text-error text-lg font-bold">{t('common.error')}: {errorMessage}</p>
       </div>
     );
   }
@@ -159,11 +175,11 @@ const Charts: React.FC = () => {
           {statusData?.data.breakdown.map((item, index) => (
             <div key={index} className="flex justify-between items-center text-xs">
               <span className="flex items-center gap-2">
-                <i 
-                  className="fa-solid fa-circle text-[8px]" 
+                <i
+                  className="fa-solid fa-circle text-[8px]"
                   style={{ color: item.color }}
                 ></i>
-                {item.label}
+                {translateStatusLabel(item.label)}
               </span>
               <span className="font-bold">{item.count.toLocaleString()}</span>
             </div>

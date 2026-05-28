@@ -1,5 +1,5 @@
 {
-  "_cacheBust": "2025-04-15-15-05",
+  "_cacheBust": "2025-05-28-20-00",
   "navigation": {
     "dashboard": "Aperçu du tableau de bord",
     "doctors": "Médecins",
@@ -55,7 +55,9 @@
     "contact": "Contact",
     "showing": "Affichage {{start}}-{{end}} sur {{total}} {{type}}",
     "bulkDeactivate": "Désactiver en masse",
-    "deactivate": "Désactiver"
+    "deactivate": "Désactiver",
+    "clear": "Effacer",
+    "apply": "Appliquer"
   },
   "pagination": {
     "showingItems": "Affichage {{start}}-{{end}} sur {{total}} éléments",
@@ -66,6 +68,10 @@
     "first": "Premier",
     "last": "Dernier",
     "page": "Page"
+  },
+  "status": {
+    "pending": "En attente",
+    "active": "Actif"
   },
   "dashboard": {
     "title": "Aperçu du tableau de bord",
@@ -78,7 +84,8 @@
       "totalDoctors": "Total des médecins",
       "pendingApprovals": "Approbations en attente",
       "pending": "En attente",
-      "urgentReview": "8 nécessitant une révision urgente",
+      "urgentReview": "nécessitant une révision urgente",
+      "allClear": "tout est clair",
       "activeRequests": "Demandes actives",
       "providers": "Prestataires",
       "stable": "Stable",
@@ -106,18 +113,43 @@
       "last30Days": "Derniers 30 jours",
       "requestsByStatus": "Demandes par statut"
     },
+    "loading": "Chargement...",
+    "errorLoading": "Échec du chargement des données du tableau de bord",
+    "errorLoadingCharts": "Échec du chargement des données du graphique",
+    "errorLoadingActivity": "Échec du chargement de l'activité récente",
+    "loadingChartData": "Chargement des données du graphique...",
+    "loadingRecentActivity": "Chargement de l'activité récente...",
+    "exportFailed": "Échec de l'exportation du rapport. Veuillez réessayer.",
+    "userAvatar": "Utilisateur {{number}}",
+    "timeAgo": {
+      "justNow": "À l'instant",
+      "minutesAgo": "il y a {{count}} minutes",
+      "hoursAgo": "il y a {{count}} heures",
+      "daysAgo": "il y a {{count}} jours"
+    },
     "recentActivity": {
       "title": "Activité récente",
       "viewAll": "Voir tout",
-      "serviceCompleted": "Service terminé",
-      "serviceCompletedDesc": "La demande de visite à domicile #8942 a été marquée comme terminée.",
-      "twoMinutesAgo": "Il y a 2 minutes",
-      "formReturned": "Formulaire retourné",
-      "formReturnedDesc": "Le Dr. Sarah Jenkins a retourné le formulaire d'intake du patient pour correction.",
-      "fifteenMinutesAgo": "Il y a 15 minutes",
-      "newDoctorRegistration": "Nouvelle inscription de médecin",
-      "newDoctorRegistrationDesc": "Le Dr. Michael Chen a soumis une inscription pour approbation.",
-      "oneHourAgo": "Il y a 1 heure"
+      "types": {
+        "doctor_registration": "Nouvelle inscription de médecin",
+        "completed": "Service terminé",
+        "returned": "Formulaire retourné",
+        "pending": "Demande soumise",
+        "submitted": "Demande soumise",
+        "cancelled": "Demande annulée",
+        "approved": "Demande approuvée",
+        "rejected": "Demande rejetée",
+        "in_progress": "Demande en cours",
+        "default": "Nouvelle activité"
+      },
+      "descriptions": {
+        "doctor_registration": "Inscription soumise par {{user}} pour approbation.",
+        "completed": "La demande #{{referenceId}} a été marquée comme terminée.",
+        "returned": "{{user}} a retourné un formulaire pour correction.",
+        "pending": "Nouvelle demande #{{referenceId}} soumise.",
+        "submitted": "Nouvelle demande #{{referenceId}} soumise.",
+        "default": "{{user}} a effectué une action sur la demande #{{referenceId}}."
+      }
     }
   },
   "doctors": {
@@ -128,6 +160,7 @@
     "doctorName": "Nom du médecin",
     "specialization": "Spécialisation",
     "department": "Département",
+    "availability": "Disponibilité",
     "available": "Disponible",
     "unavailable": "Indisponible",
     "contact": "Contact",
@@ -337,6 +370,7 @@
     "allServices": "Tous les services",
     "inProgress": "En cours",
     "returned": "Retourné",
+    "cancelled": "Annulé",
     "draft": "Brouillon",
     "requestSubmitted": "Demande soumise",
     "request": "Demande",
@@ -351,6 +385,7 @@
     "reassignProvider": "Réassigner le prestataire",
     "viewDetail": "Voir les détails",
     "resetRequest": "Réinitialiser la demande",
+    "cancelRequest": "Annuler la demande",
     "showingResults": "Affichage {{start}}-{{end}} sur {{total}} résultats"
   },
   "auth": {
