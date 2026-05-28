@@ -64,7 +64,7 @@ const Providers: React.FC = () => {
     skip: !selectedProviderForView || !showViewModal
   });
 
-  const { data: servicesData } = useGetServicesQuery({});
+  const { data: servicesData } = useGetServicesQuery({ page: 1, size: 100 });
 
   // Create a map of service ID to service name
   const serviceIdToNameMap = servicesData?.data?.services?.reduce((map: Record<string, string>, service: any) => {
@@ -184,8 +184,33 @@ const Providers: React.FC = () => {
     try {
       const result = await exportProvidersCSV().unwrap();
       
+      // Parse the CSV blob to replace service IDs with names
+      const text = await result.text();
+      const lines = text.split('\n');
+      
+      // Find the index of the services column (assuming it's named something like "Services" or "assignedServices")
+      const header = lines[0].split(',');
+      const servicesIndex = header.findIndex(h => h.toLowerCase().includes('service'));
+      
+      let processedLines = lines;
+      if (servicesIndex !== -1) {
+        processedLines = lines.map((line, index) => {
+          if (index === 0) return line; // Skip header
+          const columns = line.split(',');
+          if (columns[servicesIndex]) {
+            const serviceIds = columns[servicesIndex].split(';').map(id => id.trim());
+            const serviceNames = serviceIds.map(id => serviceIdToNameMap[id] || id).join('; ');
+            columns[servicesIndex] = serviceNames;
+          }
+          return columns.join(',');
+        });
+      }
+      
+      const processedText = processedLines.join('\n');
+      const processedBlob = new Blob([processedText], { type: 'text/csv' });
+      
       // Create a blob URL and trigger download
-      const url = window.URL.createObjectURL(result);
+      const url = window.URL.createObjectURL(processedBlob);
       const link = document.createElement('a');
       link.href = url;
       link.setAttribute('download', `providers_${new Date().toISOString().split('T')[0]}.csv`);
@@ -365,7 +390,7 @@ const Providers: React.FC = () => {
               <i className="fa-solid fa-magnifying-glass absolute left-3 top-1/2 -translate-y-1/2 text-slate-400 text-sm"></i>
               <input
                 type="text"
-                placeholder="Search providers by name, email or service..."
+                placeholder="Search providers by name and email..."
                 value={searchTerm}
                 onChange={(e) => setSearchTerm(e.target.value)}
                 className="w-full pl-10 pr-4 py-2 bg-slate-50 border border-slate-200 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-primary/10 transition-all"
@@ -881,18 +906,12 @@ const Providers: React.FC = () => {
 
                 {/* Modal Footer */}
                 <div className="bg-slate-50 p-6 border-t border-slate-100 flex gap-3">
-                  <button
-                    onClick={() => setShowViewModal(false)}
-                    className="flex-1 px-4 py-2.5 text-sm font-bold text-slate-600 bg-white border border-slate-200 hover:bg-slate-50 rounded-xl transition-all"
-                  >
-                    Close
-                  </button>
                   <Link 
                     to={`/providers/edit/${selectedProviderForView}`}
-                    className="inline-block"
+                    className="inline-block flex-1"
                     onClick={() => setShowViewModal(false)}
                   >
-                    <button className="flex-1 px-4 py-2.5 text-sm font-bold text-white bg-primary hover:bg-slate-800 rounded-xl transition-all">
+                    <button className="w-full px-4 py-2.5 text-sm font-bold text-white bg-primary hover:bg-slate-800 rounded-xl transition-all">
                       Edit Provider
                     </button>
                   </Link>
