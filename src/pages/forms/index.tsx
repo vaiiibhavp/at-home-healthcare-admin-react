@@ -127,7 +127,7 @@ const Forms: React.FC = () => {
   };
 
   return (
-    <div className="flex h-[1024px] overflow-hidden">
+    <div className="flex h-screen overflow-hidden">
       <Sidebar />
 
       {/* Main Content */}
