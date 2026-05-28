@@ -384,10 +384,6 @@ const Requests: React.FC = () => {
         <header className="h-16 bg-white border-b border-slate-200 flex items-center justify-between px-8 flex-shrink-0 z-20 pt-10 pb-10">
           <div className="flex items-center gap-4">
             <h1 className="text-lg font-bold text-slate-900">{t('requests.title')}</h1>
-            <div className="flex items-center gap-2 bg-slate-100 px-3 py-1 rounded-full">
-              <span className="w-2 h-2 bg-emerald-500 rounded-full animate-pulse"></span>
-              <span className="text-[11px] font-bold text-slate-600">{t('requests.newToday')}</span>
-            </div>
           </div>
           <div className="flex items-center gap-4">
             <div className="flex items-center bg-slate-100 rounded-xl px-3 py-2 border border-slate-200">
