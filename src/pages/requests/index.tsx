@@ -48,9 +48,10 @@ const Requests: React.FC = () => {
   
   // API state
   const [requestsData, setRequestsData] = useState<RequestData[]>([]);
-  const [loading, setLoading] = useState(false);
+  const [loading, setLoading] = useState(true);
   const [totalItems, setTotalItems] = useState(0);
   const [totalPages, setTotalPages] = useState(0);
+  const latestRequestId = useRef(0);
   
   const handleNotificationAction = (notificationId: string, action: string) => {
     console.log('Notification action:', notificationId, action);
@@ -102,6 +103,7 @@ const Requests: React.FC = () => {
 
   // API function to fetch requests
   const fetchRequests = useCallback(async (page: number = 1, size: number = 10, status?: string, startDate?: string, endDate?: string) => {
+    const requestId = ++latestRequestId.current;
     setLoading(true);
     try {
       const params = new URLSearchParams({
@@ -129,6 +131,8 @@ const Requests: React.FC = () => {
       const data: ApiResponse = await response.json();
       
       if (data.status === 200) {
+        if (latestRequestId.current !== requestId) return;
+
         // Transform API response to match component structure
         const transformedRequests = data.data.requests.map((apiRequest: any) => ({
           ...apiRequest,
@@ -166,18 +170,24 @@ const Requests: React.FC = () => {
       } else {
         console.error('API Error:', data.message);
         // Set empty data on error
-        setRequestsData([]);
-        setTotalItems(0);
-        setTotalPages(0);
+        if (latestRequestId.current === requestId) {
+          setRequestsData([]);
+          setTotalItems(0);
+          setTotalPages(0);
+        }
       }
     } catch (error) {
       console.error('Fetch Error:', error);
       // Set empty data on error
-      setRequestsData([]);
-      setTotalItems(0);
-      setTotalPages(0);
+      if (latestRequestId.current === requestId) {
+        setRequestsData([]);
+        setTotalItems(0);
+        setTotalPages(0);
+      }
     } finally {
-      setLoading(false);
+      if (latestRequestId.current === requestId) {
+        setLoading(false);
+      }
     }
   }, []); // Empty dependency array since this function doesn't depend on any props/state
 
@@ -256,13 +266,11 @@ const Requests: React.FC = () => {
   // Pagination handlers
   const handlePageChange = (page: number) => {
     setCurrentPage(page);
-    fetchRequests(page, itemsPerPage, statusFilter, startDate, endDate);
   };
 
   const handleItemsPerPageChange = (newItemsPerPage: number) => {
     setItemsPerPage(newItemsPerPage);
-    setCurrentPage(1); // Reset to first page when changing items per page
-    fetchRequests(1, newItemsPerPage, statusFilter, startDate, endDate);
+    setCurrentPage(1);
   };
 
   const getStatusChipClass = (status: string): string => {
@@ -422,7 +430,6 @@ const Requests: React.FC = () => {
                 onChange={(e) => {
                   setStatusFilter(e.target.value);
                   setCurrentPage(1);
-                  fetchRequests(1, itemsPerPage, e.target.value, startDate, endDate);
                 }}
               >
                 <option value="">{t('requests.allRequests')}</option>
@@ -472,7 +479,6 @@ const Requests: React.FC = () => {
                           setStartDate('');
                           setEndDate('');
                           setShowDatePicker(false);
-                          fetchRequests(currentPage, itemsPerPage, statusFilter);
                         }}
                         className="flex-1 px-3 py-2 border border-slate-200 rounded-lg text-xs font-medium text-slate-600 hover:bg-slate-50 transition-all"
                       >
@@ -481,7 +487,6 @@ const Requests: React.FC = () => {
                       <button
                         onClick={() => {
                           setShowDatePicker(false);
-                          fetchRequests(currentPage, itemsPerPage, statusFilter, startDate, endDate);
                         }}
                         className="flex-1 px-3 py-2 bg-primary text-white rounded-lg text-xs font-medium hover:bg-slate-800 transition-all"
                       >
@@ -497,7 +502,6 @@ const Requests: React.FC = () => {
                 onChange={(e) => {
                   setServiceFilter(e.target.value);
                   setCurrentPage(1);
-                  fetchRequests(1, itemsPerPage, statusFilter, startDate, endDate);
                 }}
               >
                 <option value="">{t('requests.allServices')}</option>
@@ -539,16 +543,7 @@ const Requests: React.FC = () => {
                   </tr>
                 </thead>
                 <tbody className="divide-y divide-slate-50">
-                  {loading ? (
-                    <tr>
-                      <td colSpan={9} className="px-6 py-8 text-center">
-                        <div className="flex items-center justify-center">
-                          <i className="fa-solid fa-spinner fa-spin text-primary text-xl mr-3"></i>
-                          <span className="text-sm text-slate-600">Loading requests...</span>
-                        </div>
-                      </td>
-                    </tr>
-                  ) : displayedRequests.length === 0 ? (
+                  {displayedRequests.length === 0 ? (
                     <tr>
                       <td colSpan={9} className="px-6 py-8 text-center">
                         <div className="flex flex-col items-center">
@@ -640,14 +635,16 @@ const Requests: React.FC = () => {
             </div>
 
             {/* Pagination */}
-            <PaginationComponent
-              currentPage={currentPage}
-              totalPages={totalPages}
-              totalItems={totalItems}
-              itemsPerPage={itemsPerPage}
-              onPageChange={handlePageChange}
-              onItemsPerPageChange={handleItemsPerPageChange}
-            />
+            {totalItems > 0 && (
+              <PaginationComponent
+                currentPage={currentPage}
+                totalPages={totalPages}
+                totalItems={totalItems}
+                itemsPerPage={itemsPerPage}
+                onPageChange={handlePageChange}
+                onItemsPerPageChange={handleItemsPerPageChange}
+              />
+            )}
           </section>
         </div>
       </main>
