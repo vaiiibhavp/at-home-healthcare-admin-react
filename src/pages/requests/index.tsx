@@ -48,9 +48,11 @@ const Requests: React.FC = () => {
   
   // API state
   const [requestsData, setRequestsData] = useState<RequestData[]>([]);
-  const [loading, setLoading] = useState(false);
+  const [exporting, setExporting] = useState(false);
   const [totalItems, setTotalItems] = useState(0);
   const [totalPages, setTotalPages] = useState(0);
+  const latestRequestId = useRef(0);
+  const [servicesList, setServicesList] = useState<Array<{ id: string; serviceName: string }>>([]);
   
   const handleNotificationAction = (notificationId: string, action: string) => {
     console.log('Notification action:', notificationId, action);
@@ -86,30 +88,51 @@ const Requests: React.FC = () => {
     return colorMap[status as keyof typeof colorMap] || 'gray';
   };
 
-  // Helper function to get form status based on request data
-  const getFormStatus = (request: any): string => {
-    if (request.digitalSignature?.signedAt) {
-      return 'SIGNED';
-    }
-    if (request.formData) {
-      return 'SUBMITTED';
-    }
-    if (request.status === 'draft') {
-      return 'DRAFT';
-    }
-    return 'PENDING';
+  // Helper function to format form status from API response
+  const formatFormStatus = (status?: string): string => {
+    if (!status) return 'PENDING';
+    const statusMap: Record<string, string> = {
+      draft: 'DRAFT',
+      signed: 'SIGNED',
+      submitted: 'SUBMITTED',
+      awaitingSignature: 'AWAITING SIGNATURE',
+      cancelled: 'CANCELLED',
+    };
+    return statusMap[status] || status.toUpperCase();
   };
 
+  // API function to fetch services for filter dropdown
+  const fetchServices = useCallback(async () => {
+    try {
+      const token = localStorage.getItem('authToken');
+      const headers: HeadersInit = { 'Content-Type': 'application/json' };
+      if (token) headers['Authorization'] = `Bearer ${token}`;
+
+      const response = await fetch(`${process.env.REACT_APP_API_BASE_URL || ''}/services`, {
+        method: 'GET',
+        headers
+      });
+      const data = await response.json();
+
+      if (data.status === 200 && data.data?.services) {
+        setServicesList(data.data.services);
+      }
+    } catch (error) {
+      console.error('Fetch Services Error:', error);
+    }
+  }, []);
+
   // API function to fetch requests
-  const fetchRequests = useCallback(async (page: number = 1, size: number = 10, status?: string, startDate?: string, endDate?: string) => {
-    setLoading(true);
+  const fetchRequests = useCallback(async (page: number = 1, size: number = 10, status?: string, startDate?: string, endDate?: string, service?: string) => {
+    const requestId = ++latestRequestId.current;
     try {
       const params = new URLSearchParams({
         page: page.toString(),
         size: size.toString(),
         ...(status && { status }),
         ...(startDate && { startDate }),
-        ...(endDate && { endDate })
+        ...(endDate && { endDate }),
+        ...(service && { service })
       });
       
       // Get auth token from localStorage
@@ -129,6 +152,8 @@ const Requests: React.FC = () => {
       const data: ApiResponse = await response.json();
       
       if (data.status === 200) {
+        if (latestRequestId.current !== requestId) return;
+
         // Transform API response to match component structure
         const transformedRequests = data.data.requests.map((apiRequest: any) => ({
           ...apiRequest,
@@ -155,7 +180,7 @@ const Requests: React.FC = () => {
             minute: '2-digit'
           }) : 'Unknown Date',
           serviceColor: getServiceColor(apiRequest.status),
-          formStatus: getFormStatus(apiRequest)
+          formStatus: formatFormStatus(apiRequest.formStatus)
         }));
         
         setRequestsData(transformedRequests);
@@ -166,18 +191,22 @@ const Requests: React.FC = () => {
       } else {
         console.error('API Error:', data.message);
         // Set empty data on error
-        setRequestsData([]);
-        setTotalItems(0);
-        setTotalPages(0);
+        if (latestRequestId.current === requestId) {
+          setRequestsData([]);
+          setTotalItems(0);
+          setTotalPages(0);
+        }
       }
     } catch (error) {
       console.error('Fetch Error:', error);
       // Set empty data on error
-      setRequestsData([]);
-      setTotalItems(0);
-      setTotalPages(0);
+      if (latestRequestId.current === requestId) {
+        setRequestsData([]);
+        setTotalItems(0);
+        setTotalPages(0);
+      }
     } finally {
-      setLoading(false);
+      // no-op
     }
   }, []); // Empty dependency array since this function doesn't depend on any props/state
 
@@ -245,10 +274,15 @@ const Requests: React.FC = () => {
     }
   }, []);
 
-  // Fetch data on component mount and when pagination changes
+  // Fetch services on component mount
   useEffect(() => {
-    fetchRequests(currentPage, itemsPerPage, statusFilter, startDate, endDate);
-  }, [currentPage, itemsPerPage, statusFilter, startDate, endDate, fetchRequests]);
+    fetchServices();
+  }, [fetchServices]);
+
+  // Fetch data on component mount and when pagination/filters change
+  useEffect(() => {
+    fetchRequests(currentPage, itemsPerPage, statusFilter, startDate, endDate, serviceFilter);
+  }, [currentPage, itemsPerPage, statusFilter, startDate, endDate, serviceFilter, fetchRequests]);
 
   // Display requests from API (already paginated)
   const displayedRequests = requestsData;
@@ -256,13 +290,11 @@ const Requests: React.FC = () => {
   // Pagination handlers
   const handlePageChange = (page: number) => {
     setCurrentPage(page);
-    fetchRequests(page, itemsPerPage, statusFilter, startDate, endDate);
   };
 
   const handleItemsPerPageChange = (newItemsPerPage: number) => {
     setItemsPerPage(newItemsPerPage);
-    setCurrentPage(1); // Reset to first page when changing items per page
-    fetchRequests(1, newItemsPerPage, statusFilter, startDate, endDate);
+    setCurrentPage(1);
   };
 
   const getStatusChipClass = (status: string): string => {
@@ -296,6 +328,7 @@ const Requests: React.FC = () => {
       const completeRequestData: RequestData = {
         ...request, // Keep basic fields
         ...detailedData, // Add all detailed API fields
+        requestId: request.requestId, // Always preserve human-readable request ID from list data
         // Keep backward compatibility for existing UI
         doctor: {
           name: detailedData.doctorId?.fName + ' ' + detailedData.doctorId?.lName || request.doctorName || 'Unknown Doctor',
@@ -319,7 +352,7 @@ const Requests: React.FC = () => {
           minute: '2-digit'
         }) : request.lastUpdated,
         serviceColor: getServiceColor(detailedData.status),
-        formStatus: getFormStatus(detailedData)
+        formStatus: formatFormStatus(detailedData.formStatus)
       };
       
       setSelectedRequest(completeRequestData);
@@ -341,37 +374,114 @@ const Requests: React.FC = () => {
     setShowResetModal(true);
   };
 
-  const handleCancelRequest = (request: RequestData) => {
-    // Update the request status to cancelled (using returned status for now)
-    setRequestsData(prevData => 
-      prevData.map(req => 
-        req.id === request.id 
-          ? { ...req, status: 'returned', serviceColor: 'red', formStatus: 'CANCELLED' }
-          : req
-      )
-    );
-    setToastMessage('Request cancelled successfully');
-    setShowToast(true);
-    setTimeout(() => setShowToast(false), 3000);
+  const handleCancelRequest = async (request: RequestData) => {
+    try {
+      const token = localStorage.getItem('authToken');
+      const response = await fetch(
+        `${process.env.REACT_APP_API_BASE_URL || ''}/admin/requests/${request.id}`,
+        {
+          method: 'DELETE',
+          headers: token ? { Authorization: `Bearer ${token}` } : {}
+        }
+      );
+
+      if (!response.ok) throw new Error('Failed to cancel request');
+
+      setRequestsData(prevData =>
+        prevData.map(req =>
+          req.id === request.id
+            ? { ...req, status: 'returned', serviceColor: 'red', formStatus: 'CANCELLED' }
+            : req
+        )
+      );
+      setIsModalOpen(false);
+      setSelectedRequest(null);
+      setToastMessage('Request cancelled successfully');
+      setShowToast(true);
+      setTimeout(() => setShowToast(false), 3000);
+    } catch (error) {
+      console.error('Cancel Request Error:', error);
+      setToastMessage('Failed to cancel request');
+      setShowToast(true);
+      setTimeout(() => setShowToast(false), 3000);
+    }
   };
 
   const handleResetStatus = () => {
     // Update the request status from inprogress to submitted
     if (selectedRequestForReset) {
-      setRequestsData(prevData => 
-        prevData.map(req => 
-          req.id === selectedRequestForReset.id 
+      setRequestsData(prevData =>
+        prevData.map(req =>
+          req.id === selectedRequestForReset.id
             ? { ...req, status: 'pending', serviceColor: 'amber' } // 'pending' corresponds to 'submitted' status
             : req
         )
       );
     }
-    
+
     setToastMessage('Request status reset successfully');
     setShowToast(true);
     setShowResetModal(false);
     setSelectedRequestForReset(null);
     setTimeout(() => setShowToast(false), 3000);
+  };
+
+  const handleExport = async () => {
+    setExporting(true);
+    try {
+      const token = localStorage.getItem('authToken');
+      const statusMap: Record<string, string> = {
+        pending: 'PENDING',
+        inprogress: 'IN_PROGRESS',
+        completed: 'COMPLETED',
+        returned: 'RETURNED',
+        draft: 'DRAFT'
+      };
+      const filters: Record<string, string> = {};
+      if (statusFilter) filters.status = statusMap[statusFilter] || statusFilter.toUpperCase();
+      if (startDate) filters.startDate = startDate;
+      if (endDate) filters.endDate = endDate;
+      if (serviceFilter) filters.serviceName = serviceFilter;
+
+      const fields = 'requestId,status,patientName,doctorName,serviceName,formStatus,createdAt,updatedAt';
+      const params = new URLSearchParams({
+        entityType: 'serviceRequests',
+        format: 'csv',
+        filters: JSON.stringify(filters),
+        fields
+      });
+
+      const response = await fetch(
+        `${process.env.REACT_APP_API_BASE_URL || ''}/export?${params}`,
+        {
+          method: 'GET',
+          headers: token ? { Authorization: `Bearer ${token}` } : {}
+        }
+      );
+
+      if (!response.ok) throw new Error('Export failed');
+
+      const blob = await response.blob();
+      const url = window.URL.createObjectURL(blob);
+      const link = document.createElement('a');
+      link.href = url;
+      link.download = `service_requests_${new Date().toISOString().split('T')[0]}.csv`;
+      document.body.appendChild(link);
+      link.click();
+      document.body.removeChild(link);
+      window.URL.revokeObjectURL(url);
+
+      setToastMessage('Export downloaded successfully');
+      setShowToast(true);
+      setTimeout(() => setShowToast(false), 3000);
+    } catch (error) {
+      console.error('Export Error:', error);
+      setToastMessage('Export failed');
+      setShowToast(true);
+      setTimeout(() => setShowToast(false), 3000);
+    } finally {
+      setExporting(false);
+    }
   };
 
   return (
@@ -384,10 +494,6 @@ const Requests: React.FC = () => {
         <header className="h-16 bg-white border-b border-slate-200 flex items-center justify-between px-8 flex-shrink-0 z-20 pt-10 pb-10">
           <div className="flex items-center gap-4">
             <h1 className="text-lg font-bold text-slate-900">{t('requests.title')}</h1>
-            <div className="flex items-center gap-2 bg-slate-100 px-3 py-1 rounded-full">
-              <span className="w-2 h-2 bg-emerald-500 rounded-full animate-pulse"></span>
-              <span className="text-[11px] font-bold text-slate-600">{t('requests.newToday')}</span>
-            </div>
           </div>
           <div className="flex items-center gap-4">
             <div className="flex items-center bg-slate-100 rounded-xl px-3 py-2 border border-slate-200">
@@ -406,8 +512,12 @@ const Requests: React.FC = () => {
               <i className="fa-solid fa-filter text-sm"></i>
               <span className="absolute -top-1 -right-1 w-4 h-4 bg-primary text-white text-[9px] flex items-center justify-center rounded-full font-bold">2</span>
             </button> */}
-            <button className="px-4 py-2 bg-primary text-white rounded-xl text-sm font-bold flex items-center gap-2 hover:bg-slate-800 transition-all">
-              <i className="fa-solid fa-download"></i> {t('common.export')}
+            <button
+              onClick={handleExport}
+              disabled={exporting}
+              className="px-4 py-2 bg-primary text-white rounded-xl text-sm font-bold flex items-center gap-2 hover:bg-slate-800 transition-all disabled:opacity-70 disabled:cursor-not-allowed"
+            >
+              {exporting ? 'Exporting...' : t('common.export')}
             </button>
             <div className="ml-2">
               <LanguageSwitcher />
@@ -426,7 +536,6 @@ const Requests: React.FC = () => {
                 onChange={(e) => {
                   setStatusFilter(e.target.value);
                   setCurrentPage(1);
-                  fetchRequests(1, itemsPerPage, e.target.value, startDate, endDate);
                 }}
               >
                 <option value="">{t('requests.allRequests')}</option>
@@ -476,7 +585,6 @@ const Requests: React.FC = () => {
                           setStartDate('');
                           setEndDate('');
                           setShowDatePicker(false);
-                          fetchRequests(currentPage, itemsPerPage, statusFilter);
                         }}
                         className="flex-1 px-3 py-2 border border-slate-200 rounded-lg text-xs font-medium text-slate-600 hover:bg-slate-50 transition-all"
                       >
@@ -485,7 +593,6 @@ const Requests: React.FC = () => {
                       <button
                         onClick={() => {
                           setShowDatePicker(false);
-                          fetchRequests(currentPage, itemsPerPage, statusFilter, startDate, endDate);
                         }}
                         className="flex-1 px-3 py-2 bg-primary text-white rounded-lg text-xs font-medium hover:bg-slate-800 transition-all"
                       >
@@ -501,22 +608,12 @@ const Requests: React.FC = () => {
                 onChange={(e) => {
                   setServiceFilter(e.target.value);
                   setCurrentPage(1);
-                  fetchRequests(1, itemsPerPage, statusFilter, startDate, endDate);
                 }}
               >
                 <option value="">{t('requests.allServices')}</option>
-                <option>Generic</option>
-                <option>Wound Care</option>
-                <option>IV Therapy</option>
-                <option>Medical Oxygen</option>
-                <option>Artificial Nutrition</option>
-                <option>Personal Hygiene care</option>
-                <option>PCA(Pain management)</option>
-                <option>Pregnancy related care</option>
-                <option>Parenteral nutrition (central line)</option>
-                <option>CNO</option>
-                <option>Hydration Infusion</option>
-                <option>Antibiothérapy infusion</option>
+                {servicesList.map((svc) => (
+                  <option key={svc.id} value={svc.serviceName}>{svc.serviceName}</option>
+                ))}
               </select>
             </div>
           </section>
@@ -543,16 +640,7 @@ const Requests: React.FC = () => {
                   </tr>
                 </thead>
                 <tbody className="divide-y divide-slate-50">
-                  {loading ? (
-                    <tr>
-                      <td colSpan={9} className="px-6 py-8 text-center">
-                        <div className="flex items-center justify-center">
-                          <i className="fa-solid fa-spinner fa-spin text-primary text-xl mr-3"></i>
-                          <span className="text-sm text-slate-600">Loading requests...</span>
-                        </div>
-                      </td>
-                    </tr>
-                  ) : displayedRequests.length === 0 ? (
+                  {displayedRequests.length === 0 ? (
                     <tr>
                       <td colSpan={9} className="px-6 py-8 text-center">
                         <div className="flex flex-col items-center">
@@ -569,7 +657,7 @@ const Requests: React.FC = () => {
                       className="hover:bg-slate-50/80 transition-colors group cursor-pointer"
                     >
                       <td className="px-6 py-4">
-                        <span className="text-xs font-mono font-bold text-slate-500">#{request.id}</span>
+                        <span className="text-xs font-mono font-bold text-slate-500">#{request.requestId || request.id}</span>
                       </td>
                       <td className="px-6 py-4">
                         <div className="flex items-center gap-3">
@@ -644,14 +732,16 @@ const Requests: React.FC = () => {
             </div>
 
             {/* Pagination */}
-            <PaginationComponent
-              currentPage={currentPage}
-              totalPages={totalPages}
-              totalItems={totalItems}
-              itemsPerPage={itemsPerPage}
-              onPageChange={handlePageChange}
-              onItemsPerPageChange={handleItemsPerPageChange}
-            />
+            {totalItems > 0 && (
+              <PaginationComponent
+                currentPage={currentPage}
+                totalPages={totalPages}
+                totalItems={totalItems}
+                itemsPerPage={itemsPerPage}
+                onPageChange={handlePageChange}
+                onItemsPerPageChange={handleItemsPerPageChange}
+              />
+            )}
           </section>
         </div>
       </main>
@@ -662,6 +752,7 @@ const Requests: React.FC = () => {
             onClose={closeModal}
             request={selectedRequest}
             fetchAuditLogs={fetchAuditLogs}
+            onCancelRequest={handleCancelRequest}
           />
 
       {/* Reset Status Modal */}

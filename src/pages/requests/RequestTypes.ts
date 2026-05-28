@@ -35,6 +35,7 @@ export interface RequestData {
   doctorId?: {
     _id: string;
     email: string;
+    phoneNumber: string;
     rppsNumber: string;
     finessNumber: string;
     specialty: string;
