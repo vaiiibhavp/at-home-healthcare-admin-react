@@ -6,13 +6,15 @@ interface RequestDetailModalProps {
   onClose: () => void;
   request: RequestData | null;
   fetchAuditLogs?: (requestId: string) => Promise<any>;
+  onCancelRequest?: (request: RequestData) => void;
 }
 
 export const RequestDetailModal: React.FC<RequestDetailModalProps> = ({
   isOpen,
   onClose,
   request,
-  fetchAuditLogs
+  fetchAuditLogs,
+  onCancelRequest
 }) => {
   // const { t } = useTranslation(); // Commented out as it's not currently used
   const [showResetModal, setShowResetModal] = useState(false);
@@ -21,6 +23,46 @@ export const RequestDetailModal: React.FC<RequestDetailModalProps> = ({
   const [toastMessage, setToastMessage] = useState('');
   const [auditLogs, setAuditLogs] = useState<any[]>([]);
   const [loadingAuditLogs, setLoadingAuditLogs] = useState(false);
+  const [pdfBlobUrl, setPdfBlobUrl] = useState<string | null>(null);
+  const [loadingPdf, setLoadingPdf] = useState(false);
+
+  // Fetch signed PDF with auth headers and create blob URL
+  React.useEffect(() => {
+    const fetchPdf = async () => {
+      if (!request || request.formStatus?.toLowerCase() !== 'signed' || !request.signedPdfUrl) {
+        setPdfBlobUrl(null);
+        return;
+      }
+
+      setLoadingPdf(true);
+      try {
+        const token = localStorage.getItem('authToken');
+        const response = await fetch(
+          `${process.env.REACT_APP_API_BASE_URL}/${request.signedPdfUrl}`,
+          {
+            headers: token ? { Authorization: `Bearer ${token}` } : undefined
+          }
+        );
+        if (!response.ok) throw new Error('Failed to fetch PDF');
+        const blob = await response.blob();
+        const url = URL.createObjectURL(blob);
+        setPdfBlobUrl(url);
+      } catch (error) {
+        console.error('Error fetching signed PDF:', error);
+        setPdfBlobUrl(null);
+      } finally {
+        setLoadingPdf(false);
+      }
+    };
+
+    fetchPdf();
+
+    return () => {
+      if (pdfBlobUrl) {
+        URL.revokeObjectURL(pdfBlobUrl);
+      }
+    };
+  }, [request?.id, request?.signedPdfUrl, request?.formStatus]);
 
   // Move useMemo before early return to satisfy React Hook rules
   const timelineEvents = React.useMemo(() => {
@@ -143,6 +185,31 @@ export const RequestDetailModal: React.FC<RequestDetailModalProps> = ({
     setTimeout(() => setShowToast(false), 3000);
   };
 
+  const handleExportPdf = async () => {
+    if (!request?.signedPdfUrl) return;
+    try {
+      const token = localStorage.getItem('authToken');
+      const response = await fetch(
+        `${process.env.REACT_APP_API_BASE_URL}/${request.signedPdfUrl}`,
+        {
+          headers: token ? { Authorization: `Bearer ${token}` } : undefined
+        }
+      );
+      if (!response.ok) throw new Error('Failed to fetch PDF');
+      const blob = await response.blob();
+      const url = URL.createObjectURL(blob);
+      const link = document.createElement('a');
+      link.href = url;
+      link.download = `${request.requestId || 'request'}.pdf`;
+      document.body.appendChild(link);
+      link.click();
+      document.body.removeChild(link);
+      URL.revokeObjectURL(url);
+    } catch (error) {
+      console.error('Error exporting PDF:', error);
+    }
+  };
+
   // Function to fetch audit logs when audit modal is opened
   const handleOpenAuditModal = async () => {
     if (!request || !fetchAuditLogs) return;
@@ -182,7 +249,7 @@ export const RequestDetailModal: React.FC<RequestDetailModalProps> = ({
                 </button>
                 <div>
                   <div className="flex items-center gap-3">
-                    <h1 className="text-xl font-bold text-slate-900">Request #{request.id}</h1>
+                    <h1 className="text-xl font-bold text-slate-900">Request #{request.requestId || request.id}</h1>
                     <span className={getStatusChipClass(request.status)}>
                       {getStatusText(request.status)}
                     </span>
@@ -194,7 +261,10 @@ export const RequestDetailModal: React.FC<RequestDetailModalProps> = ({
                 </div>
               </div>
               <div className="flex items-center gap-3">
-                <button className="px-4 py-2 bg-white border border-slate-200 rounded-xl text-sm font-bold text-slate-600 hover:bg-slate-50 flex items-center gap-2">
+                <button
+                  onClick={handleExportPdf}
+                  className="px-4 py-2 bg-white border border-slate-200 rounded-xl text-sm font-bold text-slate-600 hover:bg-slate-50 flex items-center gap-2"
+                >
                   <i className="fa-solid fa-file-pdf text-danger"></i> Export PDF
                 </button>
                 <button 
@@ -206,6 +276,14 @@ export const RequestDetailModal: React.FC<RequestDetailModalProps> = ({
               </div>
             </div>
           </div>
+
+          {/* Cancelled Banner */}
+          {request.status === 'returned' && (
+            <div className="bg-red-50 border-b border-red-200 px-8 py-3 flex items-center gap-3">
+              <i className="fa-solid fa-circle-exclamation text-red-500"></i>
+              <p className="text-sm font-bold text-red-700">Request cancelled by admin</p>
+            </div>
+          )}
 
           {/* Main Content */}
           <div className="flex-1 overflow-y-auto p-8 space-y-6 bg-slate-50">
@@ -293,68 +371,87 @@ export const RequestDetailModal: React.FC<RequestDetailModalProps> = ({
 
             {/* Prescription Section */}
             <section className="bg-white p-8 rounded-2xl border border-slate-200 tradingview-shadow">
-              <div className="max-w-2xl mx-auto bg-white border border-slate-200 p-10 shadow-sm space-y-8">
-                <div className="flex justify-between items-start border-b pb-6">
-                  <div>
-                    <h2 className="text-xl font-bold text-slate-900">MEDICAL PRESCRIPTION</h2>
-                    <p className="text-xs text-slate-500">ID: {request.requestId || 'N/A'}</p>
+              {request.formStatus?.toLowerCase() === 'signed' && request.signedPdfUrl ? (
+                loadingPdf ? (
+                  <div className="flex items-center justify-center h-full min-h-[500px]">
+                    <i className="fa-solid fa-spinner fa-spin text-primary text-xl mr-3"></i>
+                    <span className="text-sm text-slate-600">Loading PDF...</span>
                   </div>
-                  <div className="text-right">
-                    <p className="text-xs font-bold text-slate-800">At-Home Healthcare</p>
-                    <p className="text-[10px] text-slate-500">Digital Health Network</p>
+                ) : pdfBlobUrl ? (
+                  <iframe
+                    src={`${pdfBlobUrl}#toolbar=0&zoom=page-fit`}
+                    title="Signed Form PDF"
+                    className="w-full h-full min-h-[600px] border border-slate-200 rounded-lg bg-white"
+                  />
+                ) : (
+                  <div className="flex items-center justify-center h-full min-h-[500px]">
+                    <span className="text-sm text-slate-500">Failed to load PDF</span>
                   </div>
-                </div>
-                <div className="grid grid-cols-2 gap-8 text-xs">
-                  <div>
-                    <p className="font-bold text-slate-400 uppercase mb-2">Patient</p>
-                    <p className="text-slate-900 font-medium">{request.patientName || request.patient || 'Unknown Patient'}</p>
-                    <p className="text-slate-500 mt-1">DOB: {request.patientId?.dateOfBirth ? new Date(request.patientId.dateOfBirth).toLocaleDateString('en-US', { 
-                      month: '2-digit', 
-                      day: '2-digit', 
-                      year: 'numeric'
-                    }) : 'Not Available'}</p>
+                )
+              ) : (
+                <div className="max-w-2xl mx-auto bg-white border border-slate-200 p-10 shadow-sm space-y-8">
+                  <div className="flex justify-between items-start border-b pb-6">
+                    <div>
+                      <h2 className="text-xl font-bold text-slate-900">MEDICAL PRESCRIPTION</h2>
+                      <p className="text-xs text-slate-500">ID: {request.requestId || 'N/A'}</p>
+                    </div>
+                    <div className="text-right">
+                      <p className="text-xs font-bold text-slate-800">At-Home Healthcare</p>
+                      <p className="text-[10px] text-slate-500">Digital Health Network</p>
+                    </div>
                   </div>
-                  <div>
-                    <p className="font-bold text-slate-400 uppercase mb-2">Prescriber</p>
-                    <p className="text-slate-900 font-medium">{request.doctorName || request.doctor?.name || 'Unknown Doctor'}</p>
-                    <p className="text-slate-500 mt-1">License: #{request.doctorId?.rppsNumber || 'N/A'}</p>
+                  <div className="grid grid-cols-2 gap-8 text-xs">
+                    <div>
+                      <p className="font-bold text-slate-400 uppercase mb-2">Patient</p>
+                      <p className="text-slate-900 font-medium">{request.patientName || request.patient || 'Unknown Patient'}</p>
+                      <p className="text-slate-500 mt-1">DOB: {request.patientId?.dateOfBirth ? new Date(request.patientId.dateOfBirth).toLocaleDateString('en-US', { 
+                        month: '2-digit', 
+                        day: '2-digit', 
+                        year: 'numeric'
+                      }) : 'Not Available'}</p>
+                    </div>
+                    <div>
+                      <p className="font-bold text-slate-400 uppercase mb-2">Prescriber</p>
+                      <p className="text-slate-900 font-medium">{request.doctorName || request.doctor?.name || 'Unknown Doctor'}</p>
+                      <p className="text-slate-500 mt-1">License: #{request.doctorId?.rppsNumber || 'N/A'}</p>
+                    </div>
                   </div>
-                </div>
-                <div className="space-y-4">
-                  <p className="text-xs font-bold text-slate-400 uppercase">Analysis Requested</p>
-                  <div className="p-4 bg-slate-50 rounded-lg">
-                    <div className="flex items-start gap-3">
-                      <div className="w-4 h-4 rounded border-2 border-primary flex items-center justify-center mt-0.5">
-                        <i className="fa-solid fa-file-medical text-[10px] text-primary"></i>
-                      </div>
-                      <div className="flex-1">
-                        <p className="text-xs text-slate-800 font-medium leading-relaxed">
-                          {request.patientId?.medicalDescription || 'No medical description available'}
-                        </p>
+                  <div className="space-y-4">
+                    <p className="text-xs font-bold text-slate-400 uppercase">Analysis Requested</p>
+                    <div className="p-4 bg-slate-50 rounded-lg">
+                      <div className="flex items-start gap-3">
+                        <div className="w-4 h-4 rounded border-2 border-primary flex items-center justify-center mt-0.5">
+                          <i className="fa-solid fa-file-medical text-[10px] text-primary"></i>
+                        </div>
+                        <div className="flex-1">
+                          <p className="text-xs text-slate-800 font-medium leading-relaxed">
+                            {request.patientId?.medicalDescription || 'No medical description available'}
+                          </p>
+                        </div>
                       </div>
                     </div>
                   </div>
-                </div>
-                <div className="pt-8 flex justify-end">
-                  <div className="text-center">
-                    <div className="w-48 h-12 border-b-2 border-slate-200 flex items-center justify-center italic text-primary font-serif">
-                      {request.doctorName || request.doctor?.name || 'Unknown Doctor'}
+                  <div className="pt-8 flex justify-end">
+                    <div className="text-center">
+                      <div className="w-48 h-12 border-b-2 border-slate-200 flex items-center justify-center italic text-primary font-serif">
+                        {request.doctorName || request.doctor?.name || 'Unknown Doctor'}
+                      </div>
+                      <p className="text-[10px] text-slate-400 mt-2">
+                        {request.digitalSignature?.signedAt 
+                          ? `Digitally Signed on ${new Date(request.digitalSignature.signedAt).toLocaleDateString('en-US', { 
+                              month: '2-digit', 
+                              day: '2-digit', 
+                              year: 'numeric'
+                            })}` 
+                          : request.status === 'completed' 
+                            ? 'Digitally Signed'
+                            : 'Awaiting Signature'
+                        }
+                      </p>
                     </div>
-                    <p className="text-[10px] text-slate-400 mt-2">
-                      {request.digitalSignature?.signedAt 
-                        ? `Digitally Signed on ${new Date(request.digitalSignature.signedAt).toLocaleDateString('en-US', { 
-                            month: '2-digit', 
-                            day: '2-digit', 
-                            year: 'numeric'
-                          })}` 
-                        : request.status === 'completed' 
-                          ? 'Digitally Signed'
-                          : 'Awaiting Signature'
-                      }
-                    </p>
                   </div>
                 </div>
-              </div>
+              )}
             </section>
 
             {/* Timeline & Actions */}
@@ -399,7 +496,10 @@ export const RequestDetailModal: React.FC<RequestDetailModalProps> = ({
                     <i className="fa-solid fa-undo"></i> Reset Status
                   </button>
                   <div className="h-px bg-slate-100 my-2"></div>
-                  <button className="w-full px-4 py-3 bg-danger/5 text-danger rounded-xl text-sm font-bold flex items-center justify-center gap-2 hover:bg-danger/10 transition-all">
+                  <button
+                    onClick={() => request && onCancelRequest?.(request)}
+                    className="w-full px-4 py-3 bg-danger/5 text-danger rounded-xl text-sm font-bold flex items-center justify-center gap-2 hover:bg-danger/10 transition-all"
+                  >
                     <i className="fa-solid fa-ban"></i> Cancel Request
                   </button>
                 </div>
@@ -499,7 +599,7 @@ export const RequestDetailModal: React.FC<RequestDetailModalProps> = ({
         <div className="fixed inset-0 z-[60] flex items-center justify-center p-4 modal-overlay">
           <div className="bg-white w-full max-w-3xl rounded-2xl overflow-hidden tradingview-shadow max-h-[80vh] flex flex-col">
             <div className="p-6 border-b border-slate-100 flex items-center justify-between flex-shrink-0">
-              <h3 className="text-lg font-bold text-slate-900">Audit Log - Request #{request?.id}</h3>
+              <h3 className="text-lg font-bold text-slate-900">Audit Log - Request #{request?.requestId || request?.id}</h3>
               <button onClick={() => setShowAuditModal(false)} className="text-slate-400 hover:text-slate-600">
                 <i className="fa-solid fa-xmark"></i>
               </button>
