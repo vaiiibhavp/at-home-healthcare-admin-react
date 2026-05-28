@@ -90,10 +90,10 @@ const Sidebar: React.FC = () => {
             <p className="text-xs font-bold text-slate-900 truncate">Alexander Wright</p>
             <p className="text-[10px] text-slate-500 truncate">Senior Admin</p>
           </div> */}
-          <button 
+          <button
             onClick={() => setIsChangePasswordModalOpen(true)}
             className="text-slate-400 hover:text-primary p-1"
-            title="Change Password"
+            title={t('auth.changePasswordTitle')}
           >
             <i className="fa-solid fa-key"></i>
           </button>
