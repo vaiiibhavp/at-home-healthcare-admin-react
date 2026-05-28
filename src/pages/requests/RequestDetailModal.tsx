@@ -18,10 +18,16 @@ export const RequestDetailModal: React.FC<RequestDetailModalProps> = ({
   const [showResetModal, setShowResetModal] = useState(false);
   const [showAuditModal, setShowAuditModal] = useState(false);
   const [showPhysicianModal, setShowPhysicianModal] = useState(false);
+  const [showExpandModal, setShowExpandModal] = useState(false);
+  const [zoomLevel, setZoomLevel] = useState(1);
   const [showToast, setShowToast] = useState(false);
   const [toastMessage, setToastMessage] = useState('');
   const [auditLogs, setAuditLogs] = useState<any[]>([]);
   const [loadingAuditLogs, setLoadingAuditLogs] = useState(false);
+
+  const handleZoom = () => {
+    setZoomLevel((prev) => (prev >= 1.5 ? 1 : prev + 0.25));
+  };
 
   // Move useMemo before early return to satisfy React Hook rules
   const timelineEvents = React.useMemo(() => {
@@ -306,10 +312,10 @@ export const RequestDetailModal: React.FC<RequestDetailModalProps> = ({
                       <h3 className="text-sm font-bold text-slate-800">Form: Laboratory Prescription V2.1</h3>
                     </div>
                     <div className="flex gap-2">
-                      <button className="p-2 hover:bg-slate-200 rounded-lg text-slate-400 transition-all">
+                      <button onClick={handleZoom} className="p-2 hover:bg-slate-200 rounded-lg text-slate-400 transition-all" title="Zoom">
                         <i className="fa-solid fa-magnifying-glass-plus"></i>
                       </button>
-                      <button className="p-2 hover:bg-slate-200 rounded-lg text-slate-400 transition-all">
+                      <button onClick={() => setShowExpandModal(true)} className="p-2 hover:bg-slate-200 rounded-lg text-slate-400 transition-all" title="Expand">
                         <i className="fa-solid fa-expand"></i>
                       </button>
                     </div>
@@ -343,8 +349,8 @@ export const RequestDetailModal: React.FC<RequestDetailModalProps> = ({
                     </div>
                   </div>
                 </div>
-                <div className="p-8 bg-slate-100/30 flex-1 min-h-[500px]">
-                  <div className="max-w-2xl mx-auto bg-white border border-slate-200 p-10 shadow-sm space-y-8">
+                <div className="p-8 bg-slate-100/30 flex-1 min-h-[500px] overflow-auto">
+                  <div className="max-w-2xl mx-auto bg-white border border-slate-200 p-10 shadow-sm space-y-8 transition-transform origin-top" style={{ transform: `scale(${zoomLevel})` }}>
                     <div className="flex justify-between items-start border-b pb-6">
                       <div>
                         <h2 className="text-xl font-bold text-slate-900">MEDICAL PRESCRIPTION</h2>
@@ -685,6 +691,75 @@ export const RequestDetailModal: React.FC<RequestDetailModalProps> = ({
                   <div>
                     <p className="text-xs text-slate-500">Practice Type</p>
                     <p className="text-sm font-medium text-slate-900 capitalize">{request.doctorId?.practiceType || 'N/A'}</p>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* Expand Modal */}
+      {showExpandModal && (
+        <div className="fixed inset-0 z-[60] flex items-center justify-center p-8 bg-black/50 backdrop-blur-sm">
+          <div className="bg-white w-full max-w-4xl max-h-[90vh] rounded-2xl overflow-hidden tradingview-shadow flex flex-col">
+            <div className="p-4 border-b border-slate-100 flex items-center justify-between flex-shrink-0">
+              <h3 className="text-lg font-bold text-slate-900">Form Preview</h3>
+              <button onClick={() => setShowExpandModal(false)} className="text-slate-400 hover:text-slate-600">
+                <i className="fa-solid fa-xmark"></i>
+              </button>
+            </div>
+            <div className="flex-1 overflow-y-auto p-8 bg-slate-100/30">
+              <div className="max-w-2xl mx-auto bg-white border border-slate-200 p-10 shadow-sm space-y-8">
+                <div className="flex justify-between items-start border-b pb-6">
+                  <div>
+                    <h2 className="text-xl font-bold text-slate-900">MEDICAL PRESCRIPTION</h2>
+                    <p className="text-xs text-slate-500">ID: {request.requestId || 'N/A'}</p>
+                  </div>
+                  <div className="text-right">
+                    <p className="text-xs font-bold text-slate-800">At-Home Healthcare</p>
+                    <p className="text-[10px] text-slate-500">Digital Health Network</p>
+                  </div>
+                </div>
+                <div className="grid grid-cols-2 gap-8 text-xs">
+                  <div>
+                    <p className="font-bold text-slate-400 uppercase mb-2">Patient</p>
+                    <p className="text-slate-900 font-medium">{request.patientName || request.patient || 'Unknown Patient'}</p>
+                    <p className="text-slate-500 mt-1">DOB: {request.patientId?.dateOfBirth ? new Date(request.patientId.dateOfBirth).toLocaleDateString('en-US', { month: '2-digit', day: '2-digit', year: 'numeric' }) : 'Not Available'}</p>
+                  </div>
+                  <div>
+                    <p className="font-bold text-slate-400 uppercase mb-2">Prescriber</p>
+                    <p className="text-slate-900 font-medium">{request.doctorName || request.doctor?.name || 'Unknown Doctor'}</p>
+                    <p className="text-slate-500 mt-1">License: #{request.doctorId?.rppsNumber || 'N/A'}</p>
+                  </div>
+                </div>
+                <div className="space-y-4">
+                  <p className="text-xs font-bold text-slate-400 uppercase">Analysis Requested</p>
+                  <div className="p-4 bg-slate-50 rounded-lg">
+                    <div className="flex items-start gap-3">
+                      <div className="w-4 h-4 rounded border-2 border-primary flex items-center justify-center mt-0.5">
+                        <i className="fa-solid fa-file-medical text-[10px] text-primary"></i>
+                      </div>
+                      <div className="flex-1">
+                        <p className="text-xs text-slate-800 font-medium leading-relaxed">
+                          {request.patientId?.medicalDescription || 'No medical description available'}
+                        </p>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+                <div className="pt-8 flex justify-end">
+                  <div className="text-center">
+                    <div className="w-48 h-12 border-b-2 border-slate-200 flex items-center justify-center italic text-primary font-serif">
+                      {request.doctorName || request.doctor?.name || 'Unknown Doctor'}
+                    </div>
+                    <p className="text-[10px] text-slate-400 mt-2">
+                      {request.digitalSignature?.signedAt
+                        ? `Digitally Signed on ${new Date(request.digitalSignature.signedAt).toLocaleDateString('en-US', { month: '2-digit', day: '2-digit', year: 'numeric' })}`
+                        : request.status === 'completed'
+                          ? 'Digitally Signed'
+                          : 'Awaiting Signature'}
+                    </p>
                   </div>
                 </div>
               </div>
