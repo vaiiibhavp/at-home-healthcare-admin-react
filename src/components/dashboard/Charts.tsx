@@ -63,6 +63,8 @@ const Charts: React.FC = () => {
     plot_bgcolor: 'rgba(0,0,0,0)',
     showlegend: false,
     hovermode: 'closest' as const,
+    dragmode: false as const,
+    autosize: true,
     height: 300
   };
 
@@ -76,12 +78,15 @@ const Charts: React.FC = () => {
     showlegend: false,
     paper_bgcolor: 'rgba(0,0,0,0)',
     plot_bgcolor: 'rgba(0,0,0,0)',
+    autosize: true,
     height: 240
   };
 
   const config = {
-    responsive: true,
-    displayModeBar: false
+    displayModeBar: false,
+    scrollZoom: false,
+    doubleClick: false as false,
+    showTips: false
   };
 
   const handleDaysChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
