@@ -68,7 +68,7 @@ const CreateProvider: React.FC = () => {
         phoneNumber: provider.phoneNumber || '',
         countryCode: provider.countryCode || '+33',
         registrationId: provider.registrationId || '',
-        emailNotificationsEnabled: provider.emailNotificationsEnabled || true,
+        emailNotificationsEnabled: provider.emailNotificationsEnabled ?? true,
         assignedServices: provider.assignedServices || []
       });
     }
