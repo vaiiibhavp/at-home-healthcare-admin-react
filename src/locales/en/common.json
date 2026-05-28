@@ -71,7 +71,9 @@
   },
   "status": {
     "pending": "Pending",
-    "active": "Active"
+    "active": "Active",
+    "rejected": "Rejected",
+    "inactive": "Inactive"
   },
   "dashboard": {
     "title": "Dashboard Overview",
@@ -210,6 +212,43 @@
     "approved": "Approved",
     "cancel": "Cancel",
     "confirmReject": "Confirm Reject",
+    "pendingApprovals": "Pending Approvals",
+    "approvedDoctors": "Approved Doctors",
+    "emailAddress": "Email Address",
+    "specialty": "Specialty",
+    "viewDetails": "View Details",
+    "view": "View",
+    "activate": "Activate",
+    "disable": "Disable",
+    "inactive": "Inactive",
+    "statusChangeSuccess": "{{doctorName}} {{status}} successfully",
+    "activated": "Activated",
+    "disabled": "Disabled",
+    "notesRequired": "Please enter some notes before saving",
+    "notesSaved": "Internal notes saved successfully",
+    "notesSaveError": "Error saving internal notes. Please try again.",
+    "selectReason": "Select a reason...",
+    "additionalComments": "Additional comments...",
+    "selectRejectionReason": "Please select a reason for rejection.",
+    "rejectApplicationTitle": "Reject Application",
+    "rejectionDescription": "Please select a reason for rejection. This will be shared with the doctor.",
+    "rejectionReasons": {
+      "invalidRpps": "Invalid RPPS Number",
+      "missingDocs": "Missing Required Documents",
+      "expiredInsurance": "Expired Liability Insurance",
+      "other": "Other Reason"
+    },
+    "stepStatus": {
+      "pendingApproval": "pending approval",
+      "approved": "approved",
+      "rejected": "rejected",
+      "inactive": "inactive"
+    },
+    "verificationStates": {
+      "verified": "Verified",
+      "notVerified": "Not verified",
+      "pendingAdminApproval": "Pending admin approval"
+    },
     "documents": {
       "identity": "Identity Document.pdf",
       "medicalDiploma": "Medical Diploma.pdf",
