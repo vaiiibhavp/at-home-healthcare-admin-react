@@ -388,9 +388,12 @@ const Requests: React.FC = () => {
       if (!response.ok) throw new Error('Failed to cancel request');
 
       setRequestsData(prevData =>
-        prevData.filter(req => req.id !== request.id)
+        prevData.map(req =>
+          req.id === request.id
+            ? { ...req, status: 'returned', serviceColor: 'red', formStatus: 'CANCELLED' }
+            : req
+        )
       );
-      setTotalItems(prev => Math.max(0, prev - 1));
       setIsModalOpen(false);
       setSelectedRequest(null);
       setToastMessage('Request cancelled successfully');
@@ -401,8 +404,6 @@ const Requests: React.FC = () => {
       setToastMessage('Failed to cancel request');
       setShowToast(true);
       setTimeout(() => setShowToast(false), 3000);
-    } finally {
-      // no-op
     }
   };
 

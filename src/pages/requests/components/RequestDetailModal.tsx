@@ -6,13 +6,15 @@ interface RequestDetailModalProps {
   onClose: () => void;
   request: RequestData | null;
   fetchAuditLogs?: (requestId: string) => Promise<any>;
+  onCancelRequest?: (request: RequestData) => void;
 }
 
 export const RequestDetailModal: React.FC<RequestDetailModalProps> = ({
   isOpen,
   onClose,
   request,
-  fetchAuditLogs
+  fetchAuditLogs,
+  onCancelRequest
 }) => {
   // const { t } = useTranslation(); // Commented out as it's not currently used
   const [showResetModal, setShowResetModal] = useState(false);
@@ -275,6 +277,14 @@ export const RequestDetailModal: React.FC<RequestDetailModalProps> = ({
             </div>
           </div>
 
+          {/* Cancelled Banner */}
+          {request.status === 'returned' && (
+            <div className="bg-red-50 border-b border-red-200 px-8 py-3 flex items-center gap-3">
+              <i className="fa-solid fa-circle-exclamation text-red-500"></i>
+              <p className="text-sm font-bold text-red-700">Request cancelled by admin</p>
+            </div>
+          )}
+
           {/* Main Content */}
           <div className="flex-1 overflow-y-auto p-8 space-y-6 bg-slate-50">
             {/* Entity Info Cards */}
@@ -486,7 +496,10 @@ export const RequestDetailModal: React.FC<RequestDetailModalProps> = ({
                     <i className="fa-solid fa-undo"></i> Reset Status
                   </button>
                   <div className="h-px bg-slate-100 my-2"></div>
-                  <button className="w-full px-4 py-3 bg-danger/5 text-danger rounded-xl text-sm font-bold flex items-center justify-center gap-2 hover:bg-danger/10 transition-all">
+                  <button
+                    onClick={() => request && onCancelRequest?.(request)}
+                    className="w-full px-4 py-3 bg-danger/5 text-danger rounded-xl text-sm font-bold flex items-center justify-center gap-2 hover:bg-danger/10 transition-all"
+                  >
                     <i className="fa-solid fa-ban"></i> Cancel Request
                   </button>
                 </div>

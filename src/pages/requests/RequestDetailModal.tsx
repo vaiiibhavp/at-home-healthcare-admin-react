@@ -27,7 +27,6 @@ export const RequestDetailModal: React.FC<RequestDetailModalProps> = ({
   const [newResetStatus, setNewResetStatus] = useState('');
   const [resetReason, setResetReason] = useState('');
   const [resetting, setResetting] = useState(false);
-  const [cancelling, setCancelling] = useState(false);
   const [auditLogs, setAuditLogs] = useState<any[]>([]);
   const [loadingAuditLogs, setLoadingAuditLogs] = useState(false);
   const [pdfBlobUrl, setPdfBlobUrl] = useState<string | null>(null);
@@ -265,6 +264,14 @@ export const RequestDetailModal: React.FC<RequestDetailModalProps> = ({
               </div>
             </div>
           </div>
+
+          {/* Cancelled Banner */}
+          {request.status === 'returned' && (
+            <div className="bg-red-50 border-b border-red-200 px-8 py-3 flex items-center gap-3">
+              <i className="fa-solid fa-circle-exclamation text-red-500"></i>
+              <p className="text-sm font-bold text-red-700">Request cancelled by admin</p>
+            </div>
+          )}
 
           {/* Main Content */}
           <div className="flex-1 overflow-y-auto p-8 space-y-6 bg-slate-50">
@@ -512,7 +519,7 @@ export const RequestDetailModal: React.FC<RequestDetailModalProps> = ({
                 </div>
 
                 {/* Admin Controls */}
-                {request.status !== 'completed' && (
+                {request.status !== 'completed' && request.status !== 'returned' && (
                   <div className="bg-white p-6 rounded-2xl border border-slate-200 tradingview-shadow">
                     <h3 className="text-[10px] font-bold text-slate-400 uppercase tracking-widest mb-4">
                       Admin Controls
@@ -527,22 +534,10 @@ export const RequestDetailModal: React.FC<RequestDetailModalProps> = ({
                         </button>
                       )}
                       <button
-                        onClick={() => {
-                          if (!request || !onCancelRequest) return;
-                          setCancelling(true);
-                          onCancelRequest(request);
-                          setTimeout(() => setCancelling(false), 1000);
-                        }}
-                        disabled={cancelling}
-                        className="w-full px-4 py-3 bg-danger/5 text-danger rounded-xl text-sm font-bold flex items-center justify-center gap-2 hover:bg-danger/10 transition-all disabled:opacity-50 disabled:cursor-not-allowed"
+                        onClick={() => request && onCancelRequest?.(request)}
+                        className="w-full px-4 py-3 bg-danger/5 text-danger rounded-xl text-sm font-bold flex items-center justify-center gap-2 hover:bg-danger/10 transition-all"
                       >
-                        {cancelling ? (
-                          'Cancelling...'
-                        ) : (
-                          <>
-                            <i className="fa-solid fa-ban"></i> Cancel Request
-                          </>
-                        )}
+                        <i className="fa-solid fa-ban"></i> Cancel Request
                       </button>
                     </div>
                   </div>
