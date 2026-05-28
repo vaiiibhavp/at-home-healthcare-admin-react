@@ -475,25 +475,25 @@ export const RequestDetailModal: React.FC<RequestDetailModalProps> = ({
                           </div>
                         </div>
                       </div>
-                      <div className="pt-8 flex justify-end">
-                        <div className="text-center">
-                          <div className="w-48 h-12 border-b-2 border-slate-200 flex items-center justify-center italic text-primary font-serif capitalize">
-                            {request.doctorName || request.doctor?.name || 'Unknown Doctor'}
+                      {(request.digitalSignature?.signedAt || request.status === 'completed') && (
+                        <div className="pt-8 flex justify-end">
+                          <div className="text-center">
+                            <div className="w-48 h-12 border-b-2 border-slate-200 flex items-center justify-center italic text-primary font-serif capitalize">
+                              {request.doctorName || request.doctor?.name || 'Unknown Doctor'}
+                            </div>
+                            <p className="text-[10px] text-slate-400 mt-2">
+                              {request.digitalSignature?.signedAt
+                                ? `Digitally Signed on ${new Date(request.digitalSignature.signedAt).toLocaleDateString('en-US', {
+                                    month: '2-digit',
+                                    day: '2-digit',
+                                    year: 'numeric'
+                                  })}`
+                                : 'Digitally Signed'
+                              }
+                            </p>
                           </div>
-                          <p className="text-[10px] text-slate-400 mt-2">
-                            {request.digitalSignature?.signedAt 
-                              ? `Digitally Signed on ${new Date(request.digitalSignature.signedAt).toLocaleDateString('en-US', { 
-                                  month: '2-digit', 
-                                  day: '2-digit', 
-                                  year: 'numeric'
-                                })}` 
-                              : request.status === 'completed' 
-                                ? 'Digitally Signed'
-                                : 'Awaiting Signature'
-                            }
-                          </p>
                         </div>
-                      </div>
+                      )}
                     </div>
                   )}
                 </div>
@@ -873,20 +873,21 @@ export const RequestDetailModal: React.FC<RequestDetailModalProps> = ({
                       </div>
                     </div>
                   </div>
-                  <div className="pt-8 flex justify-end">
-                    <div className="text-center">
-                      <div className="w-48 h-12 border-b-2 border-slate-200 flex items-center justify-center italic text-primary font-serif capitalize">
-                        {request.doctorName || request.doctor?.name || 'Unknown Doctor'}
+                  {(request.digitalSignature?.signedAt || request.status === 'completed') && (
+                    <div className="pt-8 flex justify-end">
+                      <div className="text-center">
+                        <div className="w-48 h-12 border-b-2 border-slate-200 flex items-center justify-center italic text-primary font-serif capitalize">
+                          {request.doctorName || request.doctor?.name || 'Unknown Doctor'}
+                        </div>
+                        <p className="text-[10px] text-slate-400 mt-2">
+                          {request.digitalSignature?.signedAt
+                            ? `Digitally Signed on ${new Date(request.digitalSignature.signedAt).toLocaleDateString('en-US', { month: '2-digit', day: '2-digit', year: 'numeric' })}`
+                            : 'Digitally Signed'
+                          }
+                        </p>
                       </div>
-                      <p className="text-[10px] text-slate-400 mt-2">
-                        {request.digitalSignature?.signedAt
-                          ? `Digitally Signed on ${new Date(request.digitalSignature.signedAt).toLocaleDateString('en-US', { month: '2-digit', day: '2-digit', year: 'numeric' })}`
-                          : request.status === 'completed'
-                            ? 'Digitally Signed'
-                            : 'Awaiting Signature'}
-                      </p>
                     </div>
-                  </div>
+                  )}
                 </div>
               )}
             </div>
