@@ -21,7 +21,7 @@ const CreateProvider: React.FC = () => {
   const { data: providerData, isLoading: isLoadingProvider, error: providerError } = useGetProviderByIdQuery(id!, { 
   skip: !isEditMode,
 });
-  const { data: servicesData, isLoading: isLoadingServices } = useGetServicesQuery({});
+  const { data: servicesData, isLoading: isLoadingServices } = useGetServicesQuery({ page: 1, size: 100 });
 
   const [formData, setFormData] = useState({
     providerName: '',

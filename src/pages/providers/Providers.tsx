@@ -64,7 +64,7 @@ const Providers: React.FC = () => {
     skip: !selectedProviderForView || !showViewModal
   });
 
-  const { data: servicesData } = useGetServicesQuery({});
+  const { data: servicesData } = useGetServicesQuery({ page: 1, size: 100 });
 
   // Create a map of service ID to service name
   const serviceIdToNameMap = servicesData?.data?.services?.reduce((map: Record<string, string>, service: any) => {
