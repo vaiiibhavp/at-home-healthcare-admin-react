@@ -50,6 +50,7 @@ const Requests: React.FC = () => {
   const [requestsData, setRequestsData] = useState<RequestData[]>([]);
   const [loading, setLoading] = useState(true);
   const [exporting, setExporting] = useState(false);
+  const [cancellingId, setCancellingId] = useState<string | null>(null);
   const [totalItems, setTotalItems] = useState(0);
   const [totalPages, setTotalPages] = useState(0);
   const latestRequestId = useRef(0);
@@ -378,18 +379,37 @@ const Requests: React.FC = () => {
     setShowResetModal(true);
   };
 
-  const handleCancelRequest = (request: RequestData) => {
-    // Update the request status to cancelled (using returned status for now)
-    setRequestsData(prevData => 
-      prevData.map(req => 
-        req.id === request.id 
-          ? { ...req, status: 'returned', serviceColor: 'red', formStatus: 'CANCELLED' }
-          : req
-      )
-    );
-    setToastMessage('Request cancelled successfully');
-    setShowToast(true);
-    setTimeout(() => setShowToast(false), 3000);
+  const handleCancelRequest = async (request: RequestData) => {
+    setCancellingId(request.id);
+    try {
+      const token = localStorage.getItem('authToken');
+      const response = await fetch(
+        `${process.env.REACT_APP_API_BASE_URL || ''}/admin/requests/${request.id}`,
+        {
+          method: 'DELETE',
+          headers: token ? { Authorization: `Bearer ${token}` } : {}
+        }
+      );
+
+      if (!response.ok) throw new Error('Failed to cancel request');
+
+      setRequestsData(prevData =>
+        prevData.filter(req => req.id !== request.id)
+      );
+      setTotalItems(prev => Math.max(0, prev - 1));
+      setIsModalOpen(false);
+      setSelectedRequest(null);
+      setToastMessage('Request cancelled successfully');
+      setShowToast(true);
+      setTimeout(() => setShowToast(false), 3000);
+    } catch (error) {
+      console.error('Cancel Request Error:', error);
+      setToastMessage('Failed to cancel request');
+      setShowToast(true);
+      setTimeout(() => setShowToast(false), 3000);
+    } finally {
+      setCancellingId(null);
+    }
   };
 
   const handleResetStatus = () => {
@@ -737,6 +757,7 @@ const Requests: React.FC = () => {
             onClose={closeModal}
             request={selectedRequest}
             fetchAuditLogs={fetchAuditLogs}
+            onCancelRequest={handleCancelRequest}
           />
 
       {/* Reset Status Modal */}

@@ -6,13 +6,15 @@ interface RequestDetailModalProps {
   onClose: () => void;
   request: RequestData | null;
   fetchAuditLogs?: (requestId: string) => Promise<any>;
+  onCancelRequest?: (request: RequestData) => void;
 }
 
 export const RequestDetailModal: React.FC<RequestDetailModalProps> = ({
   isOpen,
   onClose,
   request,
-  fetchAuditLogs
+  fetchAuditLogs,
+  onCancelRequest
 }) => {
   // const { t } = useTranslation(); // Commented out as it's not currently used
   const [showResetModal, setShowResetModal] = useState(false);
@@ -25,6 +27,7 @@ export const RequestDetailModal: React.FC<RequestDetailModalProps> = ({
   const [newResetStatus, setNewResetStatus] = useState('');
   const [resetReason, setResetReason] = useState('');
   const [resetting, setResetting] = useState(false);
+  const [cancelling, setCancelling] = useState(false);
   const [auditLogs, setAuditLogs] = useState<any[]>([]);
   const [loadingAuditLogs, setLoadingAuditLogs] = useState(false);
   const [pdfBlobUrl, setPdfBlobUrl] = useState<string | null>(null);
@@ -523,8 +526,23 @@ export const RequestDetailModal: React.FC<RequestDetailModalProps> = ({
                           <i className="fa-solid fa-rotate-left"></i> Reset Status
                         </button>
                       )}
-                      <button className="w-full px-4 py-3 bg-danger/5 text-danger rounded-xl text-sm font-bold flex items-center justify-center gap-2 hover:bg-danger/10 transition-all">
-                        <i className="fa-solid fa-ban"></i> Cancel Request
+                      <button
+                        onClick={() => {
+                          if (!request || !onCancelRequest) return;
+                          setCancelling(true);
+                          onCancelRequest(request);
+                          setTimeout(() => setCancelling(false), 1000);
+                        }}
+                        disabled={cancelling}
+                        className="w-full px-4 py-3 bg-danger/5 text-danger rounded-xl text-sm font-bold flex items-center justify-center gap-2 hover:bg-danger/10 transition-all disabled:opacity-50 disabled:cursor-not-allowed"
+                      >
+                        {cancelling ? (
+                          'Cancelling...'
+                        ) : (
+                          <>
+                            <i className="fa-solid fa-ban"></i> Cancel Request
+                          </>
+                        )}
                       </button>
                     </div>
                   </div>
