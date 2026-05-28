@@ -68,7 +68,8 @@ export const RequestDetailModal: React.FC<RequestDetailModalProps> = ({
         URL.revokeObjectURL(pdfBlobUrl);
       }
     };
-  }, [request, request?.id, request?.signedPdfUrl, request?.formStatus, pdfBlobUrl]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [request?.id, request?.signedPdfUrl, request?.formStatus]);
 
   const handleExportPdf = async () => {
     if (!request?.signedPdfUrl) return;
