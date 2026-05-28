@@ -26,7 +26,7 @@ export interface Service {
   formTemplateId: string | null;
   category: string | null;
   isActive: boolean;
-  assignedProviders: ProviderGroup[];
+  assignedProviders: ProviderGroup;
   formMapping: FormMapping;
   createdBy?: {
     id: string;
