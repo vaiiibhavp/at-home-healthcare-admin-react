@@ -148,10 +148,12 @@ export const RequestDetailModal: React.FC<RequestDetailModalProps> = ({
                 </div>
               </div>
               <div className="flex items-center gap-3">
-                <button className="px-4 py-2 bg-white border border-slate-200 rounded-xl text-sm font-bold text-slate-600 hover:bg-slate-50 flex items-center gap-2">
-                  <i className="fa-solid fa-file-pdf text-danger"></i> Export PDF
-                </button>
-                <button 
+                {request.status === 'completed' && (
+                  <button className="px-4 py-2 bg-white border border-slate-200 rounded-xl text-sm font-bold text-slate-600 hover:bg-slate-50 flex items-center gap-2">
+                    <i className="fa-solid fa-file-pdf text-danger"></i> Export PDF
+                  </button>
+                )}
+                <button
                   onClick={handleOpenAuditModal}
                   className="px-4 py-2 bg-white border border-slate-200 rounded-xl text-sm font-bold text-slate-600 hover:bg-slate-50 flex items-center gap-2"
                 >
