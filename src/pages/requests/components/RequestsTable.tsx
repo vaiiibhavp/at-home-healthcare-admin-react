@@ -1,4 +1,5 @@
 import React from 'react';
+import { useTranslation } from 'react-i18next';
 import { RequestData } from '../RequestTypes';
 
 interface RequestsTableProps {
@@ -16,6 +17,13 @@ export const RequestsTable: React.FC<RequestsTableProps> = ({
   onResetRequest,
   onCancelRequest
 }) => {
+  const { t } = useTranslation();
+
+  const getTranslatedServiceName = (name: string): string => {
+    const key = name.toLowerCase().replace(/[\s-]+/g, '_').replace(/[^a-z0-9_]/g, '');
+    return t(`serviceNames.${key}`, { defaultValue: name });
+  };
+
   const getStatusChipClass = (status: string): string => {
     const statusClasses = {
       pending: 'status-chip status-pending',
@@ -107,7 +115,7 @@ export const RequestsTable: React.FC<RequestsTableProps> = ({
                 <td className="px-6 py-4">
                   <div className="flex items-center gap-2">
                     <span className={`w-2 h-2 rounded-full bg-${request.serviceColor}-400`}></span>
-                    <span className="text-xs text-slate-600">{request.serviceType}</span>
+                    <span className="text-xs text-slate-600">{getTranslatedServiceName(request.serviceType)}</span>
                   </div>
                 </td>
                 <td className="px-6 py-4">
