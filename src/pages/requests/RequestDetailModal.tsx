@@ -318,18 +318,16 @@ export const RequestDetailModal: React.FC<RequestDetailModalProps> = ({
                     <div className="flex items-center gap-2">
                       <span className="text-[10px] font-bold text-slate-400 uppercase">Form Status:</span>
                       <span className={`px-2 py-1 text-[10px] font-bold rounded-lg ${
-                        request.status === 'completed' ? 'bg-emerald-50 text-emerald-600 border border-emerald-200' :
-                        request.status === 'inprogress' ? 'bg-blue-50 text-blue-600 border border-blue-200' :
-                        request.status === 'pending' ? 'bg-amber-50 text-amber-600 border border-amber-200' :
-                        request.status === 'returned' ? 'bg-amber-50 text-amber-600 border border-amber-200' :
-                        request.status === 'draft' ? 'bg-gray-50 text-gray-600 border border-gray-200' :
+                        request.formStatus === 'signed' ? 'bg-emerald-50 text-emerald-600 border border-emerald-200' :
+                        request.formStatus === 'awaitingSignature' ? 'bg-blue-50 text-blue-600 border border-blue-200' :
+                        request.formStatus === 'submitted' ? 'bg-amber-50 text-amber-600 border border-amber-200' :
+                        request.formStatus === 'draft' ? 'bg-gray-50 text-gray-600 border border-gray-200' :
                         'bg-slate-50 text-slate-600 border border-slate-200'
                       }`}>
-                        {request.status === 'completed' ? 'SIGNED' :
-                         request.status === 'inprogress' ? 'AWAITING SIGNATURE' :
-                         request.status === 'pending' ? 'SUBMITTED' :
-                         request.status === 'returned' ? 'RETURNED' :
-                         request.status === 'draft' ? 'NOT STARTED' : 'Unknown'}
+                        {request.formStatus === 'signed' ? 'SIGNED' :
+                         request.formStatus === 'awaitingSignature' ? 'AWAITING SIGNATURE' :
+                         request.formStatus === 'submitted' ? 'SUBMITTED' :
+                         request.formStatus === 'draft' ? 'DRAFT' : (request.formStatus || 'Unknown')}
                       </span>
                     </div>
                     <div className="flex items-center gap-3 text-[10px] text-slate-500">
