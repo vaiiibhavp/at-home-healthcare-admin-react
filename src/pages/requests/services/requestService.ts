@@ -32,7 +32,7 @@ export const fetchRequests = async (page: number = 1, size: number = 10, status?
         ...apiRequest,
         // Add backward compatibility properties
         doctor: {
-          name: apiRequest.doctorName || 'Unknown Doctor',
+          name: `${apiRequest.doctorFirstName || ''} ${apiRequest.doctorLastName || ''}`.trim() || apiRequest.doctorName || 'Unknown Doctor',
           specialty: apiRequest.doctorSpeciality || 'Unknown Specialty',
           avatar: apiRequest.doctorProfileImage || 'https://storage.googleapis.com/uxpilot-auth.appspot.com/avatars/avatar-default.jpg'
         },
