@@ -496,7 +496,7 @@ export const RequestDetailModal: React.FC<RequestDetailModalProps> = ({
                 <h3 className="text-[10px] font-bold text-slate-400 uppercase tracking-widest mb-6">
                   Request Lifecycle
                 </h3>
-                <div className="relative space-y-8 pl-4">
+                <div className="relative space-y-8 pl-4 max-h-[400px] overflow-y-auto pr-2">
                   <div className="timeline-line"></div>
                   {timelineEvents.map((event, index) => (
                     <div key={index} className="flex gap-4 items-start relative">
