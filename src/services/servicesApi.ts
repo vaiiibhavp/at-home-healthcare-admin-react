@@ -81,10 +81,10 @@ export const servicesApi = createApi({
   baseQuery: baseQueryWithAuth,
   tagTypes: ['Services'],
   endpoints: (builder) => ({
-    getServices: builder.query<ServicesListResponse, { page?: number; size?: number }>({
-      query: ({ page = 1, size = 10 }) => ({
+    getServices: builder.query<ServicesListResponse, { page?: number; size?: number; search?: string; status?: string }>({
+      query: ({ page = 1, size = 10, search, status }) => ({
         url: '/services/admin/form-mappings',
-        params: { page, size },
+        params: { page, size, ...(search && { search }), ...(status && { status }) },
       }),
       providesTags: ['Services'],
     }),

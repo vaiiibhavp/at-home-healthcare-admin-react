@@ -176,7 +176,7 @@ const Requests: React.FC = () => {
           ...apiRequest,
           // Add backward compatibility properties
           doctor: {
-            name: apiRequest.doctorName || t('requests.unknownDoctor'),
+            name: `${apiRequest.doctorFirstName || ''} ${apiRequest.doctorLastName || ''}`.trim() || apiRequest.doctorName || t('requests.unknownDoctor'),
             specialty: apiRequest.doctorSpeciality || t('requests.unknownSpecialty'),
             avatar: resolveImageUrl(apiRequest.doctorProfileImage)
           },
@@ -307,7 +307,7 @@ const Requests: React.FC = () => {
     ? requestsData.filter((req) => {
         const idMatch = (req.requestId || req.id || '').toLowerCase().replace(/^#/, '').includes(normalizedQuery);
         const patientMatch = (req.patientName || req.patient || '').toLowerCase().includes(normalizedQuery);
-        const doctorMatch = (req.doctorName || req.doctor?.name || '').toLowerCase().includes(normalizedQuery);
+        const doctorMatch = (`${req.doctorFirstName || ''} ${req.doctorLastName || ''}`.trim() || req.doctorName || req.doctor?.name || '').toLowerCase().includes(normalizedQuery);
         return idMatch || patientMatch || doctorMatch;
       })
     : requestsData;
@@ -358,7 +358,7 @@ const Requests: React.FC = () => {
         requestId: request.requestId, // Always preserve human-readable request ID from list data
         // Keep backward compatibility for existing UI
         doctor: {
-          name: detailedData.doctorId?.fName + ' ' + detailedData.doctorId?.lName || request.doctorName || t('requests.unknownDoctor'),
+          name: `${detailedData.doctorFirstName || detailedData.doctorId?.fName || ''} ${detailedData.doctorLastName || detailedData.doctorId?.lName || ''}`.trim() || request.doctorName || t('requests.unknownDoctor'),
           specialty: detailedData.doctorId?.specialty || request.doctorSpeciality || t('requests.unknownSpecialty'),
           avatar: resolveImageUrl(request.doctorProfileImage)
         },

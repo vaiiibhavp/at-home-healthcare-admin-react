@@ -8,6 +8,8 @@ export interface RequestData {
   id: string;
   requestId: string;
   doctorName: string;
+  doctorFirstName: string;
+  doctorLastName: string;
   doctorSpeciality: string;
   doctorProfileImage: string | null;
   patientName: string;
