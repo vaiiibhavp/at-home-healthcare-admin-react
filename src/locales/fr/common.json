@@ -401,6 +401,7 @@
     "formMappingInfo": "Après avoir enregistré, vous pouvez mapper un formulaire d'intake spécifique à ce service dans la section Configuration des formulaires.",
     "loadingServices": "Chargement des services...",
     "errorLoadingServices": "Erreur lors du chargement des services. Veuillez réessayer.",
+    "noServicesFound": "Aucun service trouvé",
     "refresh": "Actualiser",
     "download": "Télécharger",
     "viewForm": "Voir le formulaire",
