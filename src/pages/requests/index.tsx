@@ -98,7 +98,7 @@ const Requests: React.FC = () => {
   };
 
   // Helper function to format form status from API response
-  const formatFormStatus = (status?: string): string => {
+  const formatFormStatus = useCallback((status?: string): string => {
     if (!status) return t('requests.pending').toUpperCase();
     const statusMap: Record<string, string> = {
       draft: t('requests.draft').toUpperCase(),
@@ -108,7 +108,7 @@ const Requests: React.FC = () => {
       cancelled: t('requests.cancelled').toUpperCase(),
     };
     return statusMap[status] || status.toUpperCase();
-  };
+  }, [t]);
 
   // API function to fetch services for filter dropdown
   const fetchServices = useCallback(async () => {

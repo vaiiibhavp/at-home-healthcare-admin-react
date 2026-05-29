@@ -148,7 +148,7 @@ export const RequestDetailModal: React.FC<RequestDetailModalProps> = ({
         isCompleted: !isLast
       };
     });
-  }, [request]);
+  }, [request, t, dateLocale]);
 
   if (!isOpen || !request) return null;
 
