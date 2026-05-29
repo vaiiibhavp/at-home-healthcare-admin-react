@@ -6,6 +6,7 @@ import LanguageSwitcher from '../../components/LanguageSwitcher';
 import Sidebar from '../../components/dashboard/Sidebar';
 import NotificationDropdown from '../../components/common/NotificationDropdown';
 import PaginationComponent from '../../components/ui/PaginationComponent';
+import { resolveImageUrl } from '../../utils/resolveImageUrl';
 
 interface ApiResponse {
   status: number;
@@ -170,7 +171,7 @@ const Requests: React.FC = () => {
           doctor: {
             name: apiRequest.doctorName || t('requests.unknownDoctor'),
             specialty: apiRequest.doctorSpeciality || t('requests.unknownSpecialty'),
-            avatar: apiRequest.doctorProfileImage || 'https://storage.googleapis.com/uxpilot-auth.appspot.com/avatars/avatar-default.jpg'
+            avatar: resolveImageUrl(apiRequest.doctorProfileImage)
           },
           patient: apiRequest.patientName || t('requests.unknownPatient'),
           serviceType: apiRequest.serviceName || t('requests.unknownService'),
@@ -352,7 +353,7 @@ const Requests: React.FC = () => {
         doctor: {
           name: detailedData.doctorId?.fName + ' ' + detailedData.doctorId?.lName || request.doctorName || t('requests.unknownDoctor'),
           specialty: detailedData.doctorId?.specialty || request.doctorSpeciality || t('requests.unknownSpecialty'),
-          avatar: request.doctorProfileImage || 'https://storage.googleapis.com/uxpilot-auth.appspot.com/avatars/avatar-default.jpg'
+          avatar: resolveImageUrl(request.doctorProfileImage)
         },
         patient: detailedData.patientId?.fullName || request.patientName || t('requests.unknownPatient'),
         serviceType: detailedData.serviceId?.serviceName || request.serviceName || t('requests.unknownService'),
@@ -684,10 +685,10 @@ const Requests: React.FC = () => {
                       <td className="px-6 py-4">
                         <div className="flex items-center gap-3">
                           {/* eslint-disable-next-line jsx-a11y/alt-text */}
-                          <img 
-                            src={request.doctor?.avatar || 'https://storage.googleapis.com/uxpilot-auth.appspot.com/avatars/avatar-default.jpg'} 
-                            alt={`${request.doctor?.name || t('requests.unknownDoctor')} - Doctor Avatar`} 
-                            className="w-8 h-8 rounded-lg object-cover" 
+                          <img
+                            src={request.doctor?.avatar || 'https://storage.googleapis.com/uxpilot-auth.appspot.com/avatars/avatar-default.jpg'}
+                            alt={`${request.doctor?.name || t('requests.unknownDoctor')} - Doctor Avatar`}
+                            className="w-10 h-10 rounded-lg object-cover"
                           />
                           <div>
                             <p className="text-xs font-bold text-slate-800">{request.doctor?.name || t('requests.unknownDoctor')}</p>

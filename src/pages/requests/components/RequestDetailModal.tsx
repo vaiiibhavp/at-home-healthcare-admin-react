@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { RequestData } from '../RequestTypes';
+import { resolveImageUrl } from '../../../utils/resolveImageUrl';
 
 interface RequestDetailModalProps {
   isOpen: boolean;
@@ -321,7 +322,7 @@ export const RequestDetailModal: React.FC<RequestDetailModalProps> = ({
                 </h3>
                 <div className="flex items-center gap-4">
                   <img
-                    src={request.doctorProfileImage || "https://storage.googleapis.com/uxpilot-auth.appspot.com/avatars/avatar-3.jpg"}
+                    src={resolveImageUrl(request.doctorProfileImage, 'https://storage.googleapis.com/uxpilot-auth.appspot.com/avatars/avatar-3.jpg')}
                     alt={`${request.doctorName || 'Unknown Doctor'} - Doctor Avatar`}
                     className="w-14 h-14 rounded-xl object-cover"
                   />
