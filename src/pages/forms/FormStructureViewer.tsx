@@ -1915,7 +1915,7 @@ export const FormStructureViewer: React.FC<FormStructureViewerProps> = ({
               <i className="fa-solid fa-file-signature text-lg"></i>
             </div>
             <div>
-              <h2 className="text-base font-bold text-slate-800">{t('forms.antibiotherapyInfusionFormTitle')}</h2>
+              <h2 className="text-base font-bold text-slate-800">{t('forms.antibiotherapyInfusionTitle')}</h2>
               <p className="text-[11px] text-slate-500">{t('forms.structuredFieldPreview')}</p>
             </div>
           </div>
