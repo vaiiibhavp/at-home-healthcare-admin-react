@@ -118,7 +118,7 @@ const Requests: React.FC = () => {
       const headers: HeadersInit = { 'Content-Type': 'application/json' };
       if (token) headers['Authorization'] = `Bearer ${token}`;
 
-      const response = await fetch(`${process.env.REACT_APP_API_BASE_URL || ''}/services`, {
+      const response = await fetch(`${process.env.REACT_APP_API_BASE_URL || ''}/services?page=1&size=100`, {
         method: 'GET',
         headers
       });
