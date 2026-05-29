@@ -400,6 +400,7 @@
     "formMappingInfo": "After saving, you can map a specific intake form to this service in the Forms Configuration section.",
     "loadingServices": "Loading services...",
     "errorLoadingServices": "Error loading services. Please try again.",
+    "noServicesFound": "No services found",
     "refresh": "Refresh",
     "download": "Download",
     "viewForm": "View Form",

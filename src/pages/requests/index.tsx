@@ -133,7 +133,7 @@ const Requests: React.FC = () => {
   }, []);
 
   // API function to fetch requests
-  const fetchRequests = useCallback(async (page: number = 1, size: number = 10, status?: string, startDate?: string, endDate?: string, service?: string) => {
+  const fetchRequests = useCallback(async (page: number = 1, size: number = 10, status?: string, startDate?: string, endDate?: string, service?: string, search?: string) => {
     const requestId = ++latestRequestId.current;
     try {
       // Map frontend status values to API-expected values
@@ -149,7 +149,8 @@ const Requests: React.FC = () => {
         ...(apiStatus && { status: apiStatus }),
         ...(startDate && { startDate }),
         ...(endDate && { endDate }),
-        ...(service && { service })
+        ...(service && { service }),
+        ...(search && { search })
       });
       
       // Get auth token from localStorage
@@ -312,19 +313,8 @@ const Requests: React.FC = () => {
 
   // Fetch data on component mount and when pagination/filters change
   useEffect(() => {
-    fetchRequests(currentPage, itemsPerPage, statusFilter, startDate, endDate, serviceFilter);
-  }, [currentPage, itemsPerPage, statusFilter, startDate, endDate, serviceFilter, fetchRequests]);
-
-  // Filter requests by search query across requestId, patient name, and doctor name
-  const normalizedQuery = searchQuery.trim().toLowerCase().replace(/^#/, '');
-  const displayedRequests = normalizedQuery
-    ? requestsData.filter((req) => {
-        const idMatch = (req.requestId || req.id || '').toLowerCase().replace(/^#/, '').includes(normalizedQuery);
-        const patientMatch = (req.patientName || req.patient || '').toLowerCase().includes(normalizedQuery);
-        const doctorMatch = (`${req.doctorFirstName || ''} ${req.doctorLastName || ''}`.trim() || req.doctorName || req.doctor?.name || '').toLowerCase().includes(normalizedQuery);
-        return idMatch || patientMatch || doctorMatch;
-      })
-    : requestsData;
+    fetchRequests(currentPage, itemsPerPage, statusFilter, startDate, endDate, serviceFilter, searchQuery);
+  }, [currentPage, itemsPerPage, statusFilter, startDate, endDate, serviceFilter, searchQuery, fetchRequests]);
 
   // Pagination handlers
   const handlePageChange = (page: number) => {
@@ -684,7 +674,7 @@ const Requests: React.FC = () => {
                   </tr>
                 </thead>
                 <tbody className="divide-y divide-slate-50">
-                  {displayedRequests.length === 0 ? (
+                  {requestsData.length === 0 ? (
                     <tr>
                       <td colSpan={9} className="px-6 py-8 text-center">
                         <div className="flex flex-col items-center">
@@ -694,7 +684,7 @@ const Requests: React.FC = () => {
                       </td>
                     </tr>
                   ) : (
-                    displayedRequests.map((request) => (
+                    requestsData.map((request) => (
                     <tr
                       key={request.id}
                       onClick={() => handleRowClick(request)}
