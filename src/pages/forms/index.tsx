@@ -40,18 +40,26 @@ const Forms: React.FC = () => {
   // Combine all pages data
   const formMappingsData = React.useMemo(() => {
     if (!firstPageData) return null;
-    
+
     const combinedServices = [...firstPageData.data.services];
-    
+
     if (secondPageData?.data?.services) {
       combinedServices.push(...secondPageData.data.services);
     }
-    
+
+    // Deduplicate by service id
+    const seen = new Set<string>();
+    const uniqueServices = combinedServices.filter((service) => {
+      if (seen.has(service.id)) return false;
+      seen.add(service.id);
+      return true;
+    });
+
     return {
       ...firstPageData,
       data: {
         ...firstPageData.data,
-        services: combinedServices
+        services: uniqueServices
       }
     };
   }, [firstPageData, secondPageData]);
