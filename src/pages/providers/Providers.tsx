@@ -45,6 +45,15 @@ const Providers: React.FC = () => {
   const [currentPage, setCurrentPage] = useState(1);
   const [itemsPerPage, setItemsPerPage] = useState(10);
 
+  const toTitleCase = (str: string): string => {
+    if (!str) return '';
+    return str
+      .toLowerCase()
+      .split(' ')
+      .map(word => word.charAt(0).toUpperCase() + word.slice(1))
+      .join(' ');
+  };
+
   const handleNotificationAction = (notificationId: string, action: string) => {
     console.log('Notification action:', notificationId, action);
     // Handle navigation or other actions based on notification type
@@ -96,7 +105,7 @@ const Providers: React.FC = () => {
     
     return {
       id: apiProvider.id,
-      name: apiProvider.providerName,
+      name: toTitleCase(apiProvider.providerName),
       email: apiProvider.email,
       phone: apiProvider.phoneNumber,
       services: [], // Will be populated from serviceDetails if available
@@ -115,7 +124,7 @@ const Providers: React.FC = () => {
     
     return {
       id: apiProvider.id,
-      name: apiProvider.providerName,
+      name: toTitleCase(apiProvider.providerName),
       email: apiProvider.email,
       phone: apiProvider.phoneNumber,
       services: apiProvider.serviceDetails.map(service => service.serviceName),
@@ -911,18 +920,6 @@ const Providers: React.FC = () => {
                   </div>
                 </div>
 
-                {/* Modal Footer */}
-                <div className="bg-slate-50 p-6 border-t border-slate-100 flex gap-3">
-                  <Link 
-                    to={`/providers/edit/${selectedProviderForView}`}
-                    className="inline-block flex-1"
-                    onClick={() => setShowViewModal(false)}
-                  >
-                    <button className="w-full px-4 py-2.5 text-sm font-bold text-white bg-primary hover:bg-slate-800 rounded-xl transition-all">
-                      {t('providers.editProviderButton')}
-                    </button>
-                  </Link>
-                </div>
               </>
             )}
           </div>

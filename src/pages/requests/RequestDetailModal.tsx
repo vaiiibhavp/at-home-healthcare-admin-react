@@ -317,11 +317,8 @@ export const RequestDetailModal: React.FC<RequestDetailModalProps> = ({
                     <p className="text-[11px] font-mono text-primary mt-1">{t('requests.rppsLabel')}: {request.doctorId?.rppsNumber || t('requests.notAvailable')}</p>
                   </div>
                 </div>
-                <div className="mt-4 pt-4 border-t border-slate-50 flex justify-between items-center">
+                <div className="mt-4 pt-4 border-t border-slate-50 flex justify-start items-center">
                   <button onClick={() => setShowPhysicianModal(true)} className="text-xs font-bold text-primary hover:underline">{t('requests.viewFullProfile')}</button>
-                  <button className="text-slate-400 hover:text-primary">
-                    <i className="fa-solid fa-envelope"></i>
-                  </button>
                 </div>
               </div>
 
@@ -365,13 +362,9 @@ export const RequestDetailModal: React.FC<RequestDetailModalProps> = ({
                     <span className="text-xs text-slate-500">{t('requests.serviceType')}</span>
                     <span className="text-xs font-bold text-slate-900">{getTranslatedServiceName(request.serviceName || request.serviceType || t('requests.unknownService'))}</span>
                   </div>
-                  <div className="flex justify-between">
-                    <span className="text-xs text-slate-500">{t('services.description')}</span>
-                    <span className="text-xs font-bold text-slate-900">{request.serviceId?.description || t('requests.noDescription')}</span>
-                  </div>
-                  <div className="flex justify-between">
-                    <span className="text-xs text-slate-500">{t('requests.priority')}</span>
-                    <span className="text-xs font-bold text-slate-900 capitalize">{request.priorityLevel || t('requests.normal')}</span>
+                  <div className="flex justify-between gap-4">
+                    <span className="text-xs text-slate-500 flex-shrink-0">{t('services.description')}</span>
+                    <span className="text-xs font-bold text-slate-900 text-right max-w-[60%]">{request.serviceId?.description || t('requests.noDescription')}</span>
                   </div>
                   <div className="flex justify-between">
                     <span className="text-xs text-slate-500">{t('requests.provider')}</span>

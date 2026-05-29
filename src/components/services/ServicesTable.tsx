@@ -129,7 +129,17 @@ export const ServicesTable: React.FC<ServicesTableProps> = ({
             </tr>
           </thead>
           <tbody className="divide-y divide-slate-50">
-            {services.map((service) => (
+            {services.length === 0 ? (
+              <tr>
+                <td colSpan={4} className="px-6 py-12 text-center">
+                  <div className="flex flex-col items-center">
+                    <i className="fa-solid fa-inbox text-slate-300 text-3xl mb-3"></i>
+                    <span className="text-sm text-slate-500">{t('services.noServicesFound')}</span>
+                  </div>
+                </td>
+              </tr>
+            ) : (
+              services.map((service) => (
               <tr key={service.id} className="hover:bg-slate-50/80 transition-colors group">
                 <td className="px-6 py-4">
                   <div className="flex items-center gap-3">
@@ -181,7 +191,7 @@ export const ServicesTable: React.FC<ServicesTableProps> = ({
                   </div>
                 </td>
               </tr>
-            ))}
+            )))}
           </tbody>
         </table>
       </div>
