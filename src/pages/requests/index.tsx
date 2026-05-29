@@ -172,33 +172,47 @@ const Requests: React.FC = () => {
         if (latestRequestId.current !== requestId) return;
 
         // Transform API response to match component structure
-        const transformedRequests = data.data.requests.map((apiRequest: any) => ({
-          ...apiRequest,
-          // Add backward compatibility properties
-          doctor: {
-            name: `${apiRequest.doctorFirstName || ''} ${apiRequest.doctorLastName || ''}`.trim() || apiRequest.doctorName || t('requests.unknownDoctor'),
-            specialty: apiRequest.doctorSpeciality || t('requests.unknownSpecialty'),
-            avatar: resolveImageUrl(apiRequest.doctorProfileImage)
-          },
-          patient: apiRequest.patientName || t('requests.unknownPatient'),
-          serviceType: apiRequest.serviceName || t('requests.unknownService'),
-          dateCreated: apiRequest.createdAt ? new Date(apiRequest.createdAt).toLocaleDateString(dateLocale, { 
-            month: 'short', 
-            day: 'numeric', 
-            year: 'numeric',
-            hour: '2-digit',
-            minute: '2-digit'
-          }) : t('requests.unknownDate'),
-          lastUpdated: apiRequest.updatedAt ? new Date(apiRequest.updatedAt).toLocaleDateString(dateLocale, { 
-            month: 'short', 
-            day: 'numeric', 
-            year: 'numeric',
-            hour: '2-digit',
-            minute: '2-digit'
-          }) : t('requests.unknownDate'),
-          serviceColor: getServiceColor(apiRequest.status),
-          formStatus: formatFormStatus(apiRequest.formStatus)
-        }));
+        const transformedRequests = data.data.requests.map((apiRequest: any) => {
+          // Normalize API status values to frontend status keys
+          const apiToFrontendStatus: Record<string, string> = {
+            submitted: 'pending',
+            inProgress: 'inprogress',
+            completed: 'completed',
+            returned: 'returned',
+            cancelled: 'cancelled',
+            draft: 'draft'
+          };
+          const normalizedStatus = apiToFrontendStatus[apiRequest.status] || apiRequest.status;
+
+          return {
+            ...apiRequest,
+            status: normalizedStatus,
+            // Add backward compatibility properties
+            doctor: {
+              name: `${apiRequest.doctorFirstName || ''} ${apiRequest.doctorLastName || ''}`.trim() || apiRequest.doctorName || t('requests.unknownDoctor'),
+              specialty: apiRequest.doctorSpeciality || t('requests.unknownSpecialty'),
+              avatar: resolveImageUrl(apiRequest.doctorProfileImage)
+            },
+            patient: apiRequest.patientName || t('requests.unknownPatient'),
+            serviceType: apiRequest.serviceName || t('requests.unknownService'),
+            dateCreated: apiRequest.createdAt ? new Date(apiRequest.createdAt).toLocaleDateString(dateLocale, {
+              month: 'short',
+              day: 'numeric',
+              year: 'numeric',
+              hour: '2-digit',
+              minute: '2-digit'
+            }) : t('requests.unknownDate'),
+            lastUpdated: apiRequest.updatedAt ? new Date(apiRequest.updatedAt).toLocaleDateString(dateLocale, {
+              month: 'short',
+              day: 'numeric',
+              year: 'numeric',
+              hour: '2-digit',
+              minute: '2-digit'
+            }) : t('requests.unknownDate'),
+            serviceColor: getServiceColor(normalizedStatus),
+            formStatus: formatFormStatus(apiRequest.formStatus)
+          };
+        });
         
         setRequestsData(transformedRequests);
         setTotalItems(data.data.pagination.total);

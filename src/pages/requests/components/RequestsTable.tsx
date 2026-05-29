@@ -37,15 +37,15 @@ export const RequestsTable: React.FC<RequestsTableProps> = ({
   };
 
   const getStatusText = (status: string): string => {
-    const statusTexts = {
-      pending: 'SUBMITTED',
-      completed: 'SIGNED',
-      inprogress: 'IN PROGRESS',
-      returned: 'RETURNED',
-      cancelled: 'CANCELLED',
-      draft: 'DRAFT'
+    const statusTexts: Record<string, string> = {
+      pending: t('requests.submitted'),
+      completed: t('requests.completed'),
+      inprogress: t('requests.inProgress'),
+      returned: t('requests.returned'),
+      cancelled: t('requests.cancelled'),
+      draft: t('requests.draft')
     };
-    return statusTexts[status as keyof typeof statusTexts] || status;
+    return statusTexts[status] || status;
   };
 
   return (
