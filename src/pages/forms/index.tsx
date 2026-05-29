@@ -157,14 +157,14 @@ const Forms: React.FC = () => {
             <div className="flex-1 flex items-center justify-center">
               <div className="text-center">
                 <i className="fa-solid fa-spinner fa-spin text-3xl text-primary mb-4"></i>
-                <p className="text-sm text-slate-600">Loading services...</p>
+                <p className="text-sm text-slate-600">{t('forms.loadingServices')}</p>
               </div>
             </div>
           ) : error ? (
             <div className="flex-1 flex items-center justify-center">
               <div className="text-center">
                 <i className="fa-solid fa-exclamation-triangle text-3xl text-red-500 mb-4"></i>
-                <p className="text-sm text-slate-600">Error loading services. Please try again.</p>
+                <p className="text-sm text-slate-600">{t('forms.errorLoadingServices')}</p>
               </div>
             </div>
           ) : (

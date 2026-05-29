@@ -27,13 +27,13 @@ export const ServiceListPanel: React.FC<ServiceListPanelProps> = ({
     if (status === 'mapped') {
       return (
         <span className="px-2 py-0.5 bg-emerald-50 text-emerald-600 text-[9px] font-bold rounded uppercase border border-emerald-100">
-          Mapped
+          {t('forms.mapped')}
         </span>
       );
     } else {
       return (
         <span className="px-2 py-0.5 bg-amber-50 text-amber-600 text-[9px] font-bold rounded uppercase border border-amber-100">
-          Unmapped
+          {t('forms.unmapped')}
         </span>
       );
     }
@@ -43,9 +43,9 @@ export const ServiceListPanel: React.FC<ServiceListPanelProps> = ({
     <section className="w-[380px] bg-white rounded-2xl border border-slate-200 tradingview-shadow flex flex-col overflow-hidden flex-shrink-0">
       <div className="p-5 border-b border-slate-100 space-y-4">
         <div className="flex items-center justify-between">
-          <h3 className="text-sm font-bold text-slate-800">Services</h3>
+          <h3 className="text-sm font-bold text-slate-800">{t('forms.services')}</h3>
           <span className="text-[10px] font-bold text-slate-400 bg-slate-100 px-2 py-1 rounded">
-            {(services || []).length} Total
+            {(services || []).length} {t('forms.total')}
           </span>
         </div>
         <div className="flex gap-2">
@@ -57,7 +57,7 @@ export const ServiceListPanel: React.FC<ServiceListPanelProps> = ({
                 : 'bg-slate-100 text-slate-600 hover:bg-slate-200'
             }`}
           >
-            All Mapped
+            {t('forms.allMapped')}
           </button>
           {/* <button
             onClick={() => setFilter('mapped')}
@@ -67,7 +67,7 @@ export const ServiceListPanel: React.FC<ServiceListPanelProps> = ({
                 : 'bg-slate-100 text-slate-600 hover:bg-slate-200'
             }`}
           >
-            Mapped
+            {t('forms.mapped')}
           </button>
           <button
             onClick={() => setFilter('unmapped')}
@@ -77,14 +77,14 @@ export const ServiceListPanel: React.FC<ServiceListPanelProps> = ({
                 : 'bg-slate-100 text-slate-600 hover:bg-slate-200'
             }`}
           >
-            Unmapped
+            {t('forms.unmapped')}
           </button> */}
         </div>
         <div className="relative">
           <i className="fa-solid fa-magnifying-glass absolute left-3 top-1/2 -translate-y-1/2 text-slate-400 text-xs"></i>
           <input
             type="text"
-            placeholder="Search services..."
+            placeholder={t('forms.searchServices')}
             value={searchTerm}
             onChange={(e) => setSearchTerm(e.target.value)}
             className="w-full pl-9 pr-4 py-2 bg-slate-50 border border-slate-200 rounded-xl text-xs focus:outline-none transition-all"
@@ -104,7 +104,7 @@ export const ServiceListPanel: React.FC<ServiceListPanelProps> = ({
                 }`}
               >
                 <div className="flex justify-between items-start mb-1">
-                  <p className="text-sm font-bold text-slate-800">{service.name}</p>
+                  <p className="text-sm font-bold text-slate-800">{t(`forms.serviceNames.${service.name}`, { defaultValue: service.name })}</p>
                   {getStatusBadge(service.status)}
                 </div>
                 {service.description && (
