@@ -21,6 +21,16 @@ export const RequestDetailModal: React.FC<RequestDetailModalProps> = ({
   const { t, i18n } = useTranslation();
   const dateLocale = i18n.language === 'fr' ? 'fr-FR' : 'en-US';
 
+  const getDoctorInitials = (firstName?: string, lastName?: string, fallbackName?: string): string => {
+    const primary = `${firstName || ''} ${lastName || ''}`.trim();
+    const fullName = primary.includes(' ') ? primary : (fallbackName || primary);
+    const names = fullName.split(' ').filter(Boolean);
+    if (names.length > 1) {
+      return (names[0][0] + names[names.length - 1][0]).toUpperCase();
+    }
+    return names[0]?.slice(0, 2).toUpperCase() || 'DR';
+  };
+
   const toTitleCase = (str: string): string => {
     if (!str) return '';
     return str
@@ -306,11 +316,17 @@ export const RequestDetailModal: React.FC<RequestDetailModalProps> = ({
                   {t('requests.requestingPhysician')}
                 </h3>
                 <div className="flex items-center gap-4">
-                  <img
-                    src={resolveImageUrl(request.doctorProfileImage, 'https://storage.googleapis.com/uxpilot-auth.appspot.com/avatars/avatar-3.jpg')}
-                    alt={`${`${request.doctorFirstName || ''} ${request.doctorLastName || ''}`.trim() || request.doctorName || t('requests.unknownDoctor')} - Doctor Avatar`}
-                    className="w-14 h-14 rounded-xl object-cover"
-                  />
+                  {request.doctorProfileImage ? (
+                    <img
+                      src={resolveImageUrl(request.doctorProfileImage)}
+                      alt={`${`${request.doctorFirstName || ''} ${request.doctorLastName || ''}`.trim() || request.doctorName || t('requests.unknownDoctor')} - Doctor Avatar`}
+                      className="w-14 h-14 rounded-xl object-cover"
+                    />
+                  ) : (
+                    <div className="w-14 h-14 rounded-xl bg-primary/5 text-primary flex items-center justify-center text-sm font-bold">
+                      {getDoctorInitials(request.doctorFirstName, request.doctorLastName, request.doctorName)}
+                    </div>
+                  )}
                   <div>
                     <p className="text-sm font-bold text-slate-900 capitalize">{`${request.doctorFirstName || ''} ${request.doctorLastName || ''}`.trim() || request.doctorName || t('requests.unknownDoctor')}</p>
                     <p className="text-xs text-slate-500 capitalize">{request.doctorSpeciality || t('requests.unknownSpecialty')} • {request.doctorId?.businessAddress || t('requests.privatePractice')}</p>
