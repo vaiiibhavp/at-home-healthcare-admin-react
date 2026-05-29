@@ -734,8 +734,8 @@ const Requests: React.FC = () => {
                               <i className="fa-solid fa-undo text-sm"></i>
                             </button>
                           )}
-                          {request.status !== 'completed' && (
-                            <button 
+                          {request.status !== 'completed' && request.status !== 'cancelled' && (
+                            <button
                               onClick={(e) => {
                                 e.stopPropagation();
                                 handleCancelRequest(request);
