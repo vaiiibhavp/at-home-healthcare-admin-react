@@ -88,10 +88,6 @@ const CreateProvider: React.FC = () => {
     }));
   };
 
-  const handleStatusToggle = () => {
-    // Status is handled by the backend, no need to toggle here
-  };
-
   const handleAddService = (serviceId: string) => {
     if (formData.assignedServices.indexOf(serviceId) === -1) {
       setFormData(prev => ({
