@@ -88,10 +88,6 @@ const CreateProvider: React.FC = () => {
     }));
   };
 
-  const handleStatusToggle = () => {
-    // Status is handled by the backend, no need to toggle here
-  };
-
   const handleAddService = (serviceId: string) => {
     if (formData.assignedServices.indexOf(serviceId) === -1) {
       setFormData(prev => ({
@@ -285,11 +281,6 @@ const CreateProvider: React.FC = () => {
             </div>
           </div>
           <div className="flex items-center gap-3">
-            {isEditMode && (
-              <span className="px-2.5 py-1 bg-amber-50 text-amber-700 rounded-full text-[10px] font-bold border border-amber-100 uppercase tracking-wider">
-                {t('providers.editingMode')}
-              </span>
-            )}
             <div className="h-8 w-[1px] bg-slate-200 mx-2"></div>
             <button 
               onClick={handleCancel}
@@ -325,21 +316,16 @@ const CreateProvider: React.FC = () => {
                 <h2 className="text-sm font-semibold text-slate-800">{t('providers.providerDetailsSection')}</h2>
               </div>
               {isEditMode && (
-                <div className="flex items-center gap-3">
-                  <span className="text-xs font-bold text-slate-500">{t('providers.providerStatus')}:</span>
-                  <label className="relative inline-flex items-center cursor-pointer">
-                    <input
-                      type="checkbox"
-                      checked={true} // Always active for new providers
-                      onChange={handleStatusToggle}
-                      className="sr-only peer"
-                    />
-                    <div className="w-11 h-6 bg-slate-200 peer-focus:outline-none rounded-full transition-all after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-emerald-500 peer-checked:after:translate-x-full"></div>
-                  </label>
-                  <span className={`text-xs font-bold text-emerald-600`}>
-                    {t('common.active')}
-                  </span>
-                </div>
+                <span className={`inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-[10px] font-bold border ${
+                  providerData?.data?.status === 'approved'
+                    ? 'bg-emerald-50 text-emerald-700 border-emerald-100'
+                    : 'bg-slate-100 text-slate-500 border-slate-200'
+                }`}>
+                  <span className={`w-1.5 h-1.5 rounded-full ${
+                    providerData?.data?.status === 'approved' ? 'bg-emerald-500' : 'bg-slate-400'
+                  }`}></span>
+                  {providerData?.data?.status === 'approved' ? t('common.active') : t('common.inactive')}
+                </span>
               )}
             </div>
             <div className="p-6 grid grid-cols-1 md:grid-cols-2 gap-6">
@@ -423,7 +409,8 @@ const CreateProvider: React.FC = () => {
                     value={formData.registrationId}
                     onChange={handleInputChange}
                     placeholder="PRV-XXXX"
-                    className="w-full pl-11 pr-4 py-3 bg-slate-50 border border-slate-200 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-primary/20 transition-all placeholder:text-slate-300"
+                    readOnly={isEditMode}
+                    className={`w-full pl-11 pr-4 py-3 bg-slate-50 border border-slate-200 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-primary/20 transition-all placeholder:text-slate-300 ${isEditMode ? 'cursor-default text-slate-500' : ''}`}
                   />
                 </div>
               </div>
@@ -454,79 +441,73 @@ const CreateProvider: React.FC = () => {
           </section>
 
           {/* Section 2: Service Assignment */}
-          <section className="bg-white rounded-2xl border border-slate-200 shadow-sm overflow-hidden">
-            <div className="p-6 border-b border-slate-50 bg-slate-50/30 flex items-center justify-between">
-              <div className="flex items-center gap-3">
-                <div className="w-8 h-8 bg-primary/10 rounded-lg flex items-center justify-center text-primary text-sm">
-                  <i className="fa-solid fa-briefcase-medical"></i>
+          {!isEditMode && (
+            <section className="bg-white rounded-2xl border border-slate-200 shadow-sm overflow-hidden">
+              <div className="p-6 border-b border-slate-50 bg-slate-50/30 flex items-center justify-between">
+                <div className="flex items-center gap-3">
+                  <div className="w-8 h-8 bg-primary/10 rounded-lg flex items-center justify-center text-primary text-sm">
+                    <i className="fa-solid fa-briefcase-medical"></i>
+                  </div>
+                  <h2 className="text-sm font-semibold text-slate-800">{t('providers.serviceEligibility')}</h2>
                 </div>
-                <h2 className="text-sm font-semibold text-slate-800">{t('providers.serviceEligibility')}</h2>
+                <span className="text-[10px] font-bold text-slate-400 bg-slate-100 px-2 py-1 rounded">{t('providers.multiSelect')}</span>
               </div>
-              <span className="text-[10px] font-bold text-slate-400 bg-slate-100 px-2 py-1 rounded">{t('providers.multiSelect')}</span>
-            </div>
-            <div className="p-6 space-y-6">
-              <div className="relative">
-                <div className="absolute left-4 top-3.5 text-slate-400">
-                  <i className="fa-solid fa-magnifying-glass text-sm"></i>
-                </div>
-                <div className="flex gap-2">
-                  <input
-                    type="text"
-                    placeholder={t('providers.searchAndAddServices')}
-                    className="flex-1 pl-11 pr-4 py-2.5 bg-slate-50 border border-slate-200 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-primary/20 transition-all"
-                  />
-                  <button 
-                    onClick={() => setShowAllServices(!showAllServices)}
-                    className="flex items-center justify-center px-4 py-2.5 border border-dashed border-slate-200 rounded-xl hover:bg-slate-50 transition-all group"
-                  >
-                    <span className="text-[10px] font-bold text-slate-400 group-hover:text-primary tracking-widest">
-                      {showAllServices ? t('providers.hideServices') : t('providers.viewAllServices')}
-                    </span>
-                  </button>
-                </div>
-                
-                {/* Selected Services Chips */}
-                <div className="flex flex-wrap gap-2 mt-4">
-                  {formData.assignedServices.map((serviceId, index) => {
-                    const service = availableServices.find(s => s.id === serviceId);
-                    return (
-                      <div
-                        key={index}
-                        className="flex items-center gap-2 bg-primary/10 text-primary border border-primary/20 px-3 py-1.5 rounded-lg text-xs font-bold"
-                      >
-                        {service?.name || t('providers.unknownService')}
-                        <button 
-                          onClick={() => handleRemoveService(serviceId)}
-                          className="hover:text-danger"
-                        >
-                          <i className="fa-solid fa-xmark"></i>
-                        </button>
-                      </div>
-                    );
-                  })}
-                </div>
-              </div>
-
-              {/* Service Suggestions */}
-              <div className="grid grid-cols-2 md:grid-cols-3 gap-3">
-                {availableServices
-                  .filter(service => !formData.assignedServices.includes(service.id))
-                  .slice(0, showAllServices ? availableServices.length : 5)
-                  .map((service) => (
+              <div className="p-6 space-y-6">
+                <div>
+                  <div className="flex justify-end">
                     <button
-                      key={service.id}
-                      onClick={() => handleAddService(service.id)}
-                      className="flex items-center justify-between p-3 border border-slate-100 hover:border-primary/30 hover:bg-slate-50 rounded-xl transition-all text-left"
+                      onClick={() => setShowAllServices(!showAllServices)}
+                      className="flex items-center justify-center px-4 py-2.5 border border-dashed border-slate-200 rounded-xl hover:bg-slate-50 transition-all group"
                     >
-                      <span className="text-xs font-medium text-slate-600">
-                        {service.name}
+                      <span className="text-[10px] font-bold text-slate-400 group-hover:text-primary tracking-widest">
+                        {showAllServices ? t('providers.hideServices') : t('providers.viewAllServices')}
                       </span>
-                      <i className="fa-solid fa-plus text-[10px] text-slate-300"></i>
                     </button>
-                  ))}
+                  </div>
+
+                  {/* Selected Services Chips */}
+                  <div className="flex flex-wrap gap-2 mt-4">
+                    {formData.assignedServices.map((serviceId, index) => {
+                      const service = availableServices.find(s => s.id === serviceId);
+                      return (
+                        <div
+                          key={index}
+                          className="flex items-center gap-2 bg-primary/10 text-primary border border-primary/20 px-3 py-1.5 rounded-lg text-xs font-bold"
+                        >
+                          {service?.name || t('providers.unknownService')}
+                          <button
+                            onClick={() => handleRemoveService(serviceId)}
+                            className="hover:text-danger"
+                          >
+                            <i className="fa-solid fa-xmark"></i>
+                          </button>
+                        </div>
+                      );
+                    })}
+                  </div>
+                </div>
+
+                {/* Service Suggestions */}
+                <div className="grid grid-cols-2 md:grid-cols-3 gap-3">
+                  {availableServices
+                    .filter(service => !formData.assignedServices.includes(service.id))
+                    .slice(0, showAllServices ? availableServices.length : 5)
+                    .map((service) => (
+                      <button
+                        key={service.id}
+                        onClick={() => handleAddService(service.id)}
+                        className="flex items-center justify-between p-3 border border-slate-100 hover:border-primary/30 hover:bg-slate-50 rounded-xl transition-all text-left"
+                      >
+                        <span className="text-xs font-medium text-slate-600">
+                          {service.name}
+                        </span>
+                        <i className="fa-solid fa-plus text-[10px] text-slate-300"></i>
+                      </button>
+                    ))}
+                </div>
               </div>
-            </div>
-          </section>
+            </section>
+          )}
 
           {/* Section 3: Notification Preferences
           <section className="bg-white rounded-2xl border border-slate-200 shadow-sm overflow-hidden">
