@@ -136,10 +136,17 @@ const Requests: React.FC = () => {
   const fetchRequests = useCallback(async (page: number = 1, size: number = 10, status?: string, startDate?: string, endDate?: string, service?: string) => {
     const requestId = ++latestRequestId.current;
     try {
+      // Map frontend status values to API-expected values
+      const statusMap: Record<string, string> = {
+        pending: 'submitted',
+        inprogress: 'inProgress'
+      };
+      const apiStatus = status ? (statusMap[status] || status) : undefined;
+
       const params = new URLSearchParams({
         page: page.toString(),
         size: size.toString(),
-        ...(status && { status }),
+        ...(apiStatus && { status: apiStatus }),
         ...(startDate && { startDate }),
         ...(endDate && { endDate }),
         ...(service && { service })
