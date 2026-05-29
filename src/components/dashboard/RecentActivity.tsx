@@ -29,6 +29,7 @@ const RecentActivity: React.FC = () => {
           color: 'text-blue-600'
         };
       case 'completed':
+      case 'service_completed':
         return {
           icon: 'fa-check',
           bg: 'bg-emerald-50',
@@ -49,21 +50,12 @@ const RecentActivity: React.FC = () => {
     }
   };
 
-  const getActivityTitle = (activity: { type: string; title: string }): string => {
-    return t(`dashboard.recentActivity.types.${activity.type}`, {
-      defaultValue: activity.title
-    });
+  const getActivityTitle = (activity: { title: string }): string => {
+    return activity.title;
   };
 
-  const getActivityDescription = (activity: { type: string; user: string; referenceId: string }): string => {
-    return t(`dashboard.recentActivity.descriptions.${activity.type}`, {
-      defaultValue: t('dashboard.recentActivity.descriptions.default', {
-        user: activity.user,
-        referenceId: activity.referenceId
-      }),
-      user: activity.user,
-      referenceId: activity.referenceId
-    });
+  const getActivityDescription = (activity: { description: string }): string => {
+    return activity.description;
   };
 
   if (isLoading) {
