@@ -417,7 +417,7 @@ const Requests: React.FC = () => {
       setRequestsData(prevData =>
         prevData.map(req =>
           req.id === request.id
-            ? { ...req, status: 'cancelled', serviceColor: 'red', formStatus: formatFormStatus('cancelled') }
+            ? { ...req, status: 'cancelled', serviceColor: 'red' }
             : req
         )
       );
