@@ -24,7 +24,7 @@ const KPICards: React.FC = () => {
     {
       title: t('dashboard.kpi.totalDoctors'),
       value: dashboardData.data.totalDoctors.toLocaleString(),
-      change: `${Math.abs(dashboardData.data.trends.doctors.percentage)}%`,
+      change: `${Math.min(Math.abs(dashboardData.data.trends.doctors.percentage), 100)}%`,
       changeType: dashboardData.data.trends.doctors.isPositive ? 'positive' : 'negative',
       icon: 'fa-user-doctor',
       iconBg: 'bg-blue-50',
@@ -43,7 +43,7 @@ const KPICards: React.FC = () => {
     {
       title: t('dashboard.kpi.activeRequests'),
       value: dashboardData.data.activeRequests.toLocaleString(),
-      change: `${Math.abs(dashboardData.data.trends.requests.percentage)}%`,
+      change: `${Math.min(Math.abs(dashboardData.data.trends.requests.percentage), 100)}%`,
       changeType: dashboardData.data.trends.requests.isPositive ? 'positive' : 'negative',
       icon: 'fa-heart-pulse',
       iconBg: 'bg-emerald-50',
