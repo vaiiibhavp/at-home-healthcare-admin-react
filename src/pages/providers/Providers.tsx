@@ -911,18 +911,6 @@ const Providers: React.FC = () => {
                   </div>
                 </div>
 
-                {/* Modal Footer */}
-                <div className="bg-slate-50 p-6 border-t border-slate-100 flex gap-3">
-                  <Link 
-                    to={`/providers/edit/${selectedProviderForView}`}
-                    className="inline-block flex-1"
-                    onClick={() => setShowViewModal(false)}
-                  >
-                    <button className="w-full px-4 py-2.5 text-sm font-bold text-white bg-primary hover:bg-slate-800 rounded-xl transition-all">
-                      {t('providers.editProviderButton')}
-                    </button>
-                  </Link>
-                </div>
               </>
             )}
           </div>
