@@ -286,10 +286,6 @@ const DoctorDetail: React.FC<DoctorDetailProps> = ({ isApproved: propIsApproved 
                         <i className="fa-solid fa-envelope opacity-60"></i>
                         {doctor.email}
                       </div>
-                      <div className="flex items-center gap-2 text-slate-500 text-sm">
-                        <i className="fa-solid fa-location-dot opacity-60"></i>
-                        {doctor.businessAddress}
-                      </div>
                     </div>
                   </div>
                 </div>
