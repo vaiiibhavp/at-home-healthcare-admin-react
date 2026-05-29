@@ -362,13 +362,9 @@ export const RequestDetailModal: React.FC<RequestDetailModalProps> = ({
                     <span className="text-xs text-slate-500">{t('requests.serviceType')}</span>
                     <span className="text-xs font-bold text-slate-900">{getTranslatedServiceName(request.serviceName || request.serviceType || t('requests.unknownService'))}</span>
                   </div>
-                  <div className="flex justify-between">
-                    <span className="text-xs text-slate-500">{t('services.description')}</span>
-                    <span className="text-xs font-bold text-slate-900">{request.serviceId?.description || t('requests.noDescription')}</span>
-                  </div>
-                  <div className="flex justify-between">
-                    <span className="text-xs text-slate-500">{t('requests.priority')}</span>
-                    <span className="text-xs font-bold text-slate-900 capitalize">{request.priorityLevel || t('requests.normal')}</span>
+                  <div className="flex justify-between gap-4">
+                    <span className="text-xs text-slate-500 flex-shrink-0">{t('services.description')}</span>
+                    <span className="text-xs font-bold text-slate-900 text-right max-w-[60%]">{request.serviceId?.description || t('requests.noDescription')}</span>
                   </div>
                   <div className="flex justify-between">
                     <span className="text-xs text-slate-500">{t('requests.provider')}</span>
