@@ -494,7 +494,7 @@
     "parenteral_nutrition_central_line": "Parenteral nutrition (central line)",
     "cno": "CNO",
     "hydration_infusion": "Hydration Infusion",
-    "antibiotherapy_infusion": "Antibiothérapy infusion"
+    "antibiotherapy_infusion": "Antibiotherapy Infusion"
   },
   "serviceDescriptions": {
     "generic": "General healthcare service for various medical needs.",
