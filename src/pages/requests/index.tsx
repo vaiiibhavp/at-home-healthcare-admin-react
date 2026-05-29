@@ -316,9 +316,6 @@ const Requests: React.FC = () => {
     fetchRequests(currentPage, itemsPerPage, statusFilter, startDate, endDate, serviceFilter, searchQuery);
   }, [currentPage, itemsPerPage, statusFilter, startDate, endDate, serviceFilter, searchQuery, fetchRequests]);
 
-  // Backend handles search filtering via the API
-  const displayedRequests = requestsData;
-
   // Pagination handlers
   const handlePageChange = (page: number) => {
     setCurrentPage(page);
