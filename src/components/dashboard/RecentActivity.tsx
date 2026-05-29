@@ -49,9 +49,9 @@ const RecentActivity: React.FC = () => {
     }
   };
 
-  const getActivityTitle = (type: string): string => {
-    return t(`dashboard.recentActivity.types.${type}`, {
-      defaultValue: t('dashboard.recentActivity.types.default')
+  const getActivityTitle = (activity: { type: string; title: string }): string => {
+    return t(`dashboard.recentActivity.types.${activity.type}`, {
+      defaultValue: activity.title
     });
   };
 
@@ -110,7 +110,7 @@ const RecentActivity: React.FC = () => {
                 <i className={`fa-solid ${iconConfig.icon} ${iconConfig.color} text-sm`}></i>
               </div>
               <div className="flex-1 min-w-0">
-                <p className="text-sm font-semibold text-slate-800">{getActivityTitle(activity.type)}</p>
+                <p className="text-sm font-semibold text-slate-800">{getActivityTitle(activity)}</p>
                 <p className="text-xs text-slate-500">{getActivityDescription(activity)}</p>
                 <span className="text-[10px] text-slate-400 mt-1 block">{formatTimeAgo(activity.timestamp)}</span>
               </div>
