@@ -332,11 +332,11 @@ export const RequestDetailModal: React.FC<RequestDetailModalProps> = ({
                 <div className="flex items-center gap-4">
                   <img
                     src={resolveImageUrl(request.doctorProfileImage, 'https://storage.googleapis.com/uxpilot-auth.appspot.com/avatars/avatar-3.jpg')}
-                    alt={`${request.doctorName || 'Unknown Doctor'} - Doctor Avatar`}
+                    alt={`${`${request.doctorFirstName || ''} ${request.doctorLastName || ''}`.trim() || request.doctorName || 'Unknown Doctor'} - Doctor Avatar`}
                     className="w-14 h-14 rounded-xl object-cover"
                   />
                   <div>
-                    <p className="text-sm font-bold text-slate-900">{request.doctorName || 'Unknown Doctor'}</p>
+                    <p className="text-sm font-bold text-slate-900">{`${request.doctorFirstName || ''} ${request.doctorLastName || ''}`.trim() || request.doctorName || 'Unknown Doctor'}</p>
                     <p className="text-xs text-slate-500">{request.doctorSpeciality || 'Unknown Specialty'} • {request.doctorId?.businessAddress || 'Private Practice'}</p>
                     <p className="text-[11px] font-mono text-primary mt-1">RPPS: {request.doctorId?.rppsNumber || 'N/A'}</p>
                   </div>
@@ -447,7 +447,7 @@ export const RequestDetailModal: React.FC<RequestDetailModalProps> = ({
                     </div>
                     <div>
                       <p className="font-bold text-slate-400 uppercase mb-2">Prescriber</p>
-                      <p className="text-slate-900 font-medium">{request.doctorName || request.doctor?.name || 'Unknown Doctor'}</p>
+                      <p className="text-slate-900 font-medium">{`${request.doctorFirstName || ''} ${request.doctorLastName || ''}`.trim() || request.doctorName || request.doctor?.name || 'Unknown Doctor'}</p>
                       <p className="text-slate-500 mt-1">License: #{request.doctorId?.rppsNumber || 'N/A'}</p>
                     </div>
                   </div>
@@ -470,7 +470,7 @@ export const RequestDetailModal: React.FC<RequestDetailModalProps> = ({
                     <div className="pt-8 flex justify-end">
                       <div className="text-center">
                         <div className="w-48 h-12 border-b-2 border-slate-200 flex items-center justify-center italic text-primary font-serif">
-                          {request.doctorName || request.doctor?.name || 'Unknown Doctor'}
+                          {`${request.doctorFirstName || ''} ${request.doctorLastName || ''}`.trim() || request.doctorName || request.doctor?.name || 'Unknown Doctor'}
                         </div>
                         <p className="text-[10px] text-slate-400 mt-2">
                           {request.digitalSignature?.signedAt

@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React from 'react';
 import { useTranslation } from 'react-i18next';
 import { Service } from './FormTypes';
 
@@ -6,22 +6,22 @@ interface ServiceListPanelProps {
   services: Service[];
   selectedService: Service | null;
   onServiceSelect: (service: Service) => void;
+  searchTerm: string;
+  onSearchChange: (value: string) => void;
+  filter: 'all' | 'mapped' | 'unmapped';
+  onFilterChange: (value: 'all' | 'mapped' | 'unmapped') => void;
 }
 
 export const ServiceListPanel: React.FC<ServiceListPanelProps> = ({
   services,
   selectedService,
-  onServiceSelect
+  onServiceSelect,
+  searchTerm,
+  onSearchChange,
+  filter,
+  onFilterChange
 }) => {
   const { t } = useTranslation();
-  const [searchTerm, setSearchTerm] = useState('');
-  const [filter, setFilter] = useState<'all' | 'mapped' | 'unmapped'>('all');
-
-  const filteredServices = (services || []).filter(service => {
-    const matchesSearch = service.name.toLowerCase().includes(searchTerm.toLowerCase());
-    const matchesFilter = filter === 'all' || service.status === filter;
-    return matchesSearch && matchesFilter;
-  });
 
   const getStatusBadge = (status: string) => {
     if (status === 'mapped') {
@@ -50,7 +50,7 @@ export const ServiceListPanel: React.FC<ServiceListPanelProps> = ({
         </div>
         <div className="flex gap-2">
           <button
-            onClick={() => setFilter('all')}
+            onClick={() => onFilterChange('all')}
             className={`px-3 py-1 text-xs font-medium rounded-lg transition-all ${
               filter === 'all'
                 ? 'bg-primary text-white'
@@ -60,7 +60,7 @@ export const ServiceListPanel: React.FC<ServiceListPanelProps> = ({
             {t('forms.allMapped')}
           </button>
           {/* <button
-            onClick={() => setFilter('mapped')}
+            onClick={() => onFilterChange('mapped')}
             className={`px-3 py-1 text-xs font-medium rounded-lg transition-all ${
               filter === 'mapped'
                 ? 'bg-primary text-white'
@@ -70,7 +70,7 @@ export const ServiceListPanel: React.FC<ServiceListPanelProps> = ({
             {t('forms.mapped')}
           </button>
           <button
-            onClick={() => setFilter('unmapped')}
+            onClick={() => onFilterChange('unmapped')}
             className={`px-3 py-1 text-xs font-medium rounded-lg transition-all ${
               filter === 'unmapped'
                 ? 'bg-primary text-white'
@@ -86,14 +86,14 @@ export const ServiceListPanel: React.FC<ServiceListPanelProps> = ({
             type="text"
             placeholder={t('forms.searchServices')}
             value={searchTerm}
-            onChange={(e) => setSearchTerm(e.target.value)}
+            onChange={(e) => onSearchChange(e.target.value)}
             className="w-full pl-9 pr-4 py-2 bg-slate-50 border border-slate-200 rounded-xl text-xs focus:outline-none transition-all"
           />
         </div>
       </div>
       <div className="flex-1 overflow-y-auto">
         <div className="divide-y divide-slate-50">
-            {filteredServices.map((service) => (
+            {(services || []).map((service) => (
               <div
                 key={service.id}
                 onClick={() => onServiceSelect(service)}

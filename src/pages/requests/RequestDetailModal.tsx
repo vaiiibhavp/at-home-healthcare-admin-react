@@ -308,11 +308,11 @@ export const RequestDetailModal: React.FC<RequestDetailModalProps> = ({
                 <div className="flex items-center gap-4">
                   <img
                     src={resolveImageUrl(request.doctorProfileImage, 'https://storage.googleapis.com/uxpilot-auth.appspot.com/avatars/avatar-3.jpg')}
-                    alt={`${request.doctorName || t('requests.unknownDoctor')} - Doctor Avatar`}
+                    alt={`${`${request.doctorFirstName || ''} ${request.doctorLastName || ''}`.trim() || request.doctorName || t('requests.unknownDoctor')} - Doctor Avatar`}
                     className="w-14 h-14 rounded-xl object-cover"
                   />
                   <div>
-                    <p className="text-sm font-bold text-slate-900 capitalize">{request.doctorName || t('requests.unknownDoctor')}</p>
+                    <p className="text-sm font-bold text-slate-900 capitalize">{`${request.doctorFirstName || ''} ${request.doctorLastName || ''}`.trim() || request.doctorName || t('requests.unknownDoctor')}</p>
                     <p className="text-xs text-slate-500 capitalize">{request.doctorSpeciality || t('requests.unknownSpecialty')} • {request.doctorId?.businessAddress || t('requests.privatePractice')}</p>
                     <p className="text-[11px] font-mono text-primary mt-1">{t('requests.rppsLabel')}: {request.doctorId?.rppsNumber || t('requests.notAvailable')}</p>
                   </div>
@@ -474,7 +474,7 @@ export const RequestDetailModal: React.FC<RequestDetailModalProps> = ({
                         </div>
                         <div>
                           <p className="font-bold text-slate-400 uppercase mb-2">{t('requests.prescriber')}</p>
-                          <p className="text-slate-900 font-medium capitalize">{request.doctorName || request.doctor?.name || t('requests.unknownDoctor')}</p>
+                          <p className="text-slate-900 font-medium capitalize">{`${request.doctorFirstName || ''} ${request.doctorLastName || ''}`.trim() || request.doctorName || request.doctor?.name || t('requests.unknownDoctor')}</p>
                           <p className="text-slate-500 mt-1">{t('requests.license')}: #{request.doctorId?.rppsNumber || t('requests.notAvailable')}</p>
                         </div>
                       </div>
@@ -497,7 +497,7 @@ export const RequestDetailModal: React.FC<RequestDetailModalProps> = ({
                         <div className="pt-8 flex justify-end">
                           <div className="text-center">
                             <div className="w-48 h-12 border-b-2 border-slate-200 flex items-center justify-center italic text-primary font-serif capitalize">
-                              {request.doctorName || request.doctor?.name || t('requests.unknownDoctor')}
+                              {`${request.doctorFirstName || ''} ${request.doctorLastName || ''}`.trim() || request.doctorName || request.doctor?.name || t('requests.unknownDoctor')}
                             </div>
                             <p className="text-[10px] text-slate-400 mt-2">
                               {request.digitalSignature?.signedAt
@@ -746,11 +746,11 @@ export const RequestDetailModal: React.FC<RequestDetailModalProps> = ({
               <div className="flex items-center gap-4">
                 <img
                   src={request.doctorProfileImage || "https://storage.googleapis.com/uxpilot-auth.appspot.com/avatars/avatar-3.jpg"}
-                  alt={`${request.doctorName || t('requests.unknownDoctor')} - Doctor Avatar`}
+                  alt={`${`${request.doctorFirstName || ''} ${request.doctorLastName || ''}`.trim() || request.doctorName || t('requests.unknownDoctor')} - Doctor Avatar`}
                   className="w-16 h-16 rounded-xl object-cover"
                 />
                 <div>
-                  <p className="text-sm font-bold text-slate-900 capitalize">{request.doctorName || t('requests.unknownDoctor')}</p>
+                  <p className="text-sm font-bold text-slate-900 capitalize">{`${request.doctorFirstName || ''} ${request.doctorLastName || ''}`.trim() || request.doctorName || t('requests.unknownDoctor')}</p>
                   <p className="text-xs text-slate-500 capitalize">{request.doctorSpeciality || t('requests.unknownSpecialty')}</p>
                 </div>
               </div>
@@ -872,7 +872,7 @@ export const RequestDetailModal: React.FC<RequestDetailModalProps> = ({
                     </div>
                     <div>
                       <p className="font-bold text-slate-400 uppercase mb-2">{t('requests.prescriber')}</p>
-                      <p className="text-slate-900 font-medium capitalize">{request.doctorName || request.doctor?.name || t('requests.unknownDoctor')}</p>
+                      <p className="text-slate-900 font-medium capitalize">{`${request.doctorFirstName || ''} ${request.doctorLastName || ''}`.trim() || request.doctorName || request.doctor?.name || t('requests.unknownDoctor')}</p>
                       <p className="text-slate-500 mt-1">{t('requests.license')}: #{request.doctorId?.rppsNumber || t('requests.notAvailable')}</p>
                     </div>
                   </div>
@@ -895,7 +895,7 @@ export const RequestDetailModal: React.FC<RequestDetailModalProps> = ({
                     <div className="pt-8 flex justify-end">
                       <div className="text-center">
                         <div className="w-48 h-12 border-b-2 border-slate-200 flex items-center justify-center italic text-primary font-serif capitalize">
-                          {request.doctorName || request.doctor?.name || t('requests.unknownDoctor')}
+                          {`${request.doctorFirstName || ''} ${request.doctorLastName || ''}`.trim() || request.doctorName || request.doctor?.name || t('requests.unknownDoctor')}
                         </div>
                         <p className="text-[10px] text-slate-400 mt-2">
                           {request.digitalSignature?.signedAt
