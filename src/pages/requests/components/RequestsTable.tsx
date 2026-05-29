@@ -1,6 +1,7 @@
 import React from 'react';
 import { useTranslation } from 'react-i18next';
 import { RequestData } from '../RequestTypes';
+import { resolveImageUrl } from '../../../utils/resolveImageUrl';
 
 interface RequestsTableProps {
   requests: RequestData[];
@@ -34,6 +35,16 @@ export const RequestsTable: React.FC<RequestsTableProps> = ({
       draft: 'status-chip status-draft'
     };
     return statusClasses[status as keyof typeof statusClasses] || 'status-chip';
+  };
+
+  const getDoctorInitials = (firstName?: string, lastName?: string, fallbackName?: string): string => {
+    const primary = `${firstName || ''} ${lastName || ''}`.trim();
+    const fullName = primary.includes(' ') ? primary : (fallbackName || primary);
+    const names = fullName.split(' ').filter(Boolean);
+    if (names.length > 1) {
+      return (names[0][0] + names[names.length - 1][0]).toUpperCase();
+    }
+    return names[0]?.slice(0, 2).toUpperCase() || 'DR';
   };
 
   const getStatusText = (status: string): string => {
@@ -99,12 +110,22 @@ export const RequestsTable: React.FC<RequestsTableProps> = ({
                 </td>
                 <td className="px-6 py-4">
                   <div className="flex items-center gap-3">
-                    {/* eslint-disable-next-line jsx-a11y/alt-text */}
-                    <img 
-                      src={request.doctor?.avatar || 'https://storage.googleapis.com/uxpilot-auth.appspot.com/avatars/avatar-default.jpg'} 
-                      alt={`${`${request.doctorFirstName || ''} ${request.doctorLastName || ''}`.trim() || request.doctor?.name || 'Unknown Doctor'} - Doctor Avatar`} 
-                      className="w-8 h-8 rounded-lg object-cover" 
-                    />
+                    <div className="w-8 h-8 rounded-lg relative">
+                      {request.doctorProfileImage && (
+                        <img
+                          src={resolveImageUrl(request.doctorProfileImage)}
+                          alt={`${`${request.doctorFirstName || ''} ${request.doctorLastName || ''}`.trim() || request.doctor?.name || 'Unknown Doctor'} - Doctor Avatar`}
+                          className="w-8 h-8 rounded-lg object-cover absolute inset-0 z-10"
+                          onError={(e) => { (e.currentTarget as HTMLImageElement).style.display = 'none'; }}
+                        />
+                      )}
+                      <div
+                        className="w-8 h-8 rounded-lg bg-primary/5 text-primary flex items-center justify-center text-[10px] font-bold"
+                        style={{ display: request.doctorProfileImage ? 'none' : 'flex' }}
+                      >
+                        {getDoctorInitials(request.doctorFirstName, request.doctorLastName, request.doctor?.name)}
+                      </div>
+                    </div>
                     <div>
                       <p className="text-xs font-bold text-slate-800">{`${request.doctorFirstName || ''} ${request.doctorLastName || ''}`.trim() || request.doctor?.name || 'Unknown Doctor'}</p>
                       <p className="text-[10px] text-slate-500">{request.doctorSpeciality || request.doctor?.specialty || 'Unknown Specialty'}</p>
