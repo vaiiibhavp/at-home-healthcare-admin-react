@@ -44,16 +44,10 @@ export const Services: React.FC = () => {
   };
 
   // Fetch services and stats from API
-  const { data: servicesData, isLoading, error, refetch } = useGetServicesQuery({ page: currentPage, size: itemsPerPage });
+  const { data: servicesData, isLoading, error, refetch } = useGetServicesQuery({ page: currentPage, size: itemsPerPage, search: searchTerm || undefined });
   const { data: statsData } = useGetServiceStatsQuery();
-  const rawServices = servicesData?.data?.services || [];
+  const services = servicesData?.data?.services || [];
   const pagination = servicesData?.data?.pagination;
-  
-  // Filter services based on search term
-  const services = rawServices.filter(service => 
-    service.serviceName.toLowerCase().includes(searchTerm.toLowerCase()) ||
-    service.description.toLowerCase().includes(searchTerm.toLowerCase())
-  );
   
   // Pagination calculations
   const totalItems = pagination?.total || 0;

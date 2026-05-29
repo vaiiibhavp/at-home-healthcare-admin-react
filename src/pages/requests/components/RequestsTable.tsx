@@ -102,12 +102,12 @@ export const RequestsTable: React.FC<RequestsTableProps> = ({
                     {/* eslint-disable-next-line jsx-a11y/alt-text */}
                     <img 
                       src={request.doctor?.avatar || 'https://storage.googleapis.com/uxpilot-auth.appspot.com/avatars/avatar-default.jpg'} 
-                      alt={`${request.doctor?.name || 'Unknown Doctor'} - Doctor Avatar`} 
+                      alt={`${`${request.doctorFirstName || ''} ${request.doctorLastName || ''}`.trim() || request.doctor?.name || 'Unknown Doctor'} - Doctor Avatar`} 
                       className="w-8 h-8 rounded-lg object-cover" 
                     />
                     <div>
-                      <p className="text-xs font-bold text-slate-800">{request.doctor?.name || 'Unknown Doctor'}</p>
-                      <p className="text-[10px] text-slate-500">{request.doctor?.specialty || 'Unknown Specialty'}</p>
+                      <p className="text-xs font-bold text-slate-800">{`${request.doctorFirstName || ''} ${request.doctorLastName || ''}`.trim() || request.doctor?.name || 'Unknown Doctor'}</p>
+                      <p className="text-[10px] text-slate-500">{request.doctorSpeciality || request.doctor?.specialty || 'Unknown Specialty'}</p>
                     </div>
                   </div>
                 </td>
