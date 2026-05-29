@@ -1,5 +1,5 @@
 {
-  "_cacheBust": "2026-05-28-22-00",
+  "_cacheBust": "2026-05-29-15-30",
   "navigation": {
     "dashboard": "Aperçu du tableau de bord",
     "doctors": "Médecins",
@@ -137,6 +137,7 @@
       "types": {
         "doctor_registration": "Nouvelle inscription de médecin",
         "completed": "Service terminé",
+        "service_completed": "Demande de service terminée",
         "returned": "Formulaire retourné",
         "pending": "Demande soumise",
         "submitted": "Demande soumise",
@@ -149,6 +150,7 @@
       "descriptions": {
         "doctor_registration": "Inscription soumise par {{user}} pour approbation.",
         "completed": "La demande #{{referenceId}} a été marquée comme terminée.",
+        "service_completed": "La demande de service #{{referenceId}} a été marquée comme terminée.",
         "returned": "{{user}} a retourné un formulaire pour correction.",
         "pending": "Nouvelle demande #{{referenceId}} soumise.",
         "submitted": "Nouvelle demande #{{referenceId}} soumise.",

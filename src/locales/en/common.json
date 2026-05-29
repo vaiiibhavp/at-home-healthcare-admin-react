@@ -1,5 +1,5 @@
 {
-  "_cacheBust": "2026-05-28-22-00",
+  "_cacheBust": "2026-05-29-15-30",
   "navigation": {
     "dashboard": "Dashboard Overview",
     "doctors": "Doctors",
@@ -135,6 +135,7 @@
       "types": {
         "doctor_registration": "New Doctor Registration",
         "completed": "Service Completed",
+        "service_completed": "Service Completed",
         "returned": "Form Returned",
         "pending": "Request Submitted",
         "submitted": "Request Submitted",
@@ -147,6 +148,7 @@
       "descriptions": {
         "doctor_registration": "Registration submitted by {{user}} for approval.",
         "completed": "Request #{{referenceId}} was marked as completed.",
+        "service_completed": "Request #{{referenceId}} was marked as completed.",
         "returned": "{{user}} returned a form for correction.",
         "pending": "New request #{{referenceId}} was submitted.",
         "submitted": "New request #{{referenceId}} was submitted.",
