@@ -21,6 +21,15 @@ export const RequestDetailModal: React.FC<RequestDetailModalProps> = ({
   const { t, i18n } = useTranslation();
   const dateLocale = i18n.language === 'fr' ? 'fr-FR' : 'en-US';
 
+  const toTitleCase = (str: string): string => {
+    if (!str) return '';
+    return str
+      .replace(/([A-Z])/g, ' $1')
+      .replace(/^\s/, '')
+      .replace(/\s+/g, ' ')
+      .trim();
+  };
+
   const getTranslatedServiceName = (name: string): string => {
     const key = name.toLowerCase().replace(/[\s-]+/g, '_').replace(/[^a-z0-9_]/g, '');
     return t(`serviceNames.${key}`, { defaultValue: name });
@@ -691,7 +700,7 @@ export const RequestDetailModal: React.FC<RequestDetailModalProps> = ({
                         <i className="fa-solid fa-history text-slate-600"></i>
                       </div>
                       <div className="flex-1">
-                        <p className="text-sm font-bold text-slate-900">{log.actionType}</p>
+                        <p className="text-sm font-bold text-slate-900 capitalize">{toTitleCase(log.actionType)}</p>
                         <p className="text-xs text-slate-500 mt-1">
                           {t('requests.by')} {log.performedBy?.fName && log.performedBy?.lName 
                             ? `${log.performedBy.fName} ${log.performedBy.lName}` 
