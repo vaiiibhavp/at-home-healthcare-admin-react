@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { RequestData } from './RequestTypes';
+import { resolveImageUrl } from '../../utils/resolveImageUrl';
 
 interface RequestDetailModalProps {
   isOpen: boolean;
@@ -19,6 +20,15 @@ export const RequestDetailModal: React.FC<RequestDetailModalProps> = ({
 }) => {
   const { t, i18n } = useTranslation();
   const dateLocale = i18n.language === 'fr' ? 'fr-FR' : 'en-US';
+
+  const toTitleCase = (str: string): string => {
+    if (!str) return '';
+    return str
+      .replace(/([A-Z])/g, ' $1')
+      .replace(/^\s/, '')
+      .replace(/\s+/g, ' ')
+      .trim();
+  };
 
   const getTranslatedServiceName = (name: string): string => {
     const key = name.toLowerCase().replace(/[\s-]+/g, '_').replace(/[^a-z0-9_]/g, '');
@@ -297,7 +307,7 @@ export const RequestDetailModal: React.FC<RequestDetailModalProps> = ({
                 </h3>
                 <div className="flex items-center gap-4">
                   <img
-                    src={request.doctorProfileImage || "https://storage.googleapis.com/uxpilot-auth.appspot.com/avatars/avatar-3.jpg"}
+                    src={resolveImageUrl(request.doctorProfileImage, 'https://storage.googleapis.com/uxpilot-auth.appspot.com/avatars/avatar-3.jpg')}
                     alt={`${request.doctorName || t('requests.unknownDoctor')} - Doctor Avatar`}
                     className="w-14 h-14 rounded-xl object-cover"
                   />
@@ -514,7 +524,7 @@ export const RequestDetailModal: React.FC<RequestDetailModalProps> = ({
                   <h3 className="text-[10px] font-bold text-slate-400 uppercase tracking-widest mb-6">
                     {t('requests.requestLifecycle')}
                   </h3>
-                  <div className="relative space-y-8 pl-4">
+                  <div className="relative space-y-8 pl-4 max-h-[400px] overflow-y-auto pr-2">
                     <div className="timeline-line"></div>
                     {timelineEvents.map((event, index) => (
                       <div key={index} className="flex gap-4 items-start relative">
@@ -690,7 +700,7 @@ export const RequestDetailModal: React.FC<RequestDetailModalProps> = ({
                         <i className="fa-solid fa-history text-slate-600"></i>
                       </div>
                       <div className="flex-1">
-                        <p className="text-sm font-bold text-slate-900">{log.actionType}</p>
+                        <p className="text-sm font-bold text-slate-900 capitalize">{toTitleCase(log.actionType)}</p>
                         <p className="text-xs text-slate-500 mt-1">
                           {t('requests.by')} {log.performedBy?.fName && log.performedBy?.lName 
                             ? `${log.performedBy.fName} ${log.performedBy.lName}` 
