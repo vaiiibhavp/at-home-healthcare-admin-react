@@ -55,10 +55,10 @@ export const formMappingsApi = createApi({
   baseQuery: baseQueryWithAuth,
   tagTypes: ['FormMappings'],
   endpoints: (builder) => ({
-    getFormMappings: builder.query<FormMappingsResponse, { page?: number; limit?: number }>({
-      query: ({ page = 1, limit = 10 }) => ({
+    getFormMappings: builder.query<FormMappingsResponse, { page?: number; limit?: number; search?: string; status?: string }>({
+      query: ({ page = 1, limit = 10, search, status }) => ({
         url: '/services/admin/form-mappings',
-        params: { page, limit },
+        params: { page, limit, ...(search && { search }), ...(status && { status }) },
       }),
     }),
   }),

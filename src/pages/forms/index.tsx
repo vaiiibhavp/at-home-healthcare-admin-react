@@ -17,14 +17,22 @@ const Forms: React.FC = () => {
   const [isUnmapModalOpen, setIsUnmapModalOpen] = useState(false);
   const [toastMessage, setToastMessage] = useState<string>('');
   const [showToast, setShowToast] = useState(false);
-  
+
+  // Search/filter state (handled by backend)
+  const [searchTerm, setSearchTerm] = useState('');
+  const [filter, setFilter] = useState<'all' | 'mapped' | 'unmapped'>('all');
+
+  const apiStatus = filter === 'all' ? undefined : filter;
+
   // Fetch form mappings from API - get first page to see total
-  const { data: firstPageData, isLoading, error } = useGetFormMappingsQuery({ page: 1, limit: 10 });
-  
+  const { data: firstPageData, isLoading, error } = useGetFormMappingsQuery({ page: 1, limit: 10, search: searchTerm || undefined, status: apiStatus });
+
   // Fetch second page if it exists
-  const { data: secondPageData } = useGetFormMappingsQuery({ 
-    page: 2, 
-    limit: 10 
+  const { data: secondPageData } = useGetFormMappingsQuery({
+    page: 2,
+    limit: 10,
+    search: searchTerm || undefined,
+    status: apiStatus
   }, {
     skip: !firstPageData?.data?.pagination?.hasNextPage
   });
@@ -174,6 +182,10 @@ const Forms: React.FC = () => {
                 services={services}
                 selectedService={selectedService}
                 onServiceSelect={handleServiceSelect}
+                searchTerm={searchTerm}
+                onSearchChange={setSearchTerm}
+                filter={filter}
+                onFilterChange={setFilter}
               />
 
               {/* Right: Form Structure Viewer */}
