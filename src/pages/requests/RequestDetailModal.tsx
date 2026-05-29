@@ -317,11 +317,8 @@ export const RequestDetailModal: React.FC<RequestDetailModalProps> = ({
                     <p className="text-[11px] font-mono text-primary mt-1">{t('requests.rppsLabel')}: {request.doctorId?.rppsNumber || t('requests.notAvailable')}</p>
                   </div>
                 </div>
-                <div className="mt-4 pt-4 border-t border-slate-50 flex justify-between items-center">
+                <div className="mt-4 pt-4 border-t border-slate-50 flex justify-start items-center">
                   <button onClick={() => setShowPhysicianModal(true)} className="text-xs font-bold text-primary hover:underline">{t('requests.viewFullProfile')}</button>
-                  <button className="text-slate-400 hover:text-primary">
-                    <i className="fa-solid fa-envelope"></i>
-                  </button>
                 </div>
               </div>
 
