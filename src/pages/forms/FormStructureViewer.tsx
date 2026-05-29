@@ -9,41 +9,42 @@ interface FormStructureViewerProps {
 
 // CNO (Home Oral Nutrition Supplement) Form Component
 const CNOForm: React.FC = () => {
+  const { t } = useTranslation();
   return (
     <div className="max-w-5xl mx-auto space-y-6 bg-white">
       {/* Form Header */}
       <div className="text-center border-b-2 border-slate-300 pb-4">
-        <h1 className="text-lg font-bold text-slate-800">HOME ORAL NUTRITION SUPLEMENT PRESCRIPTION FORM</h1>
+        <h1 className="text-lg font-bold text-slate-800">{t('forms.cnoFormTitle')}</h1>
       </div>
       
       {/* Patient Section */}
       <div className="border border-slate-200 rounded-lg p-4">
-        <h3 className="font-bold text-sm mb-4">PATIENT</h3>
+        <h3 className="font-bold text-sm mb-4">{t('forms.patient')}</h3>
         <div className="grid grid-cols-2 gap-4 text-sm">
           <div>
-            <label className="block">Last name:</label>
+            <label className="block">{t('forms.lastName')}</label>
             <input type="text" className="w-full h-9 border border-slate-300 rounded mt-1 px-3 text-sm" />
           </div>
           <div>
-            <label className="block">First name:</label>
+            <label className="block">{t('forms.firstName')}</label>
             <input type="text" className="w-full h-9 border border-slate-300 rounded mt-1 px-3 text-sm" />
           </div>
           <div>
-            <label className="block">Date of birth:</label>
+            <label className="block">{t('forms.dateOfBirth')}</label>
             <input type="date" className="w-40 h-9 border border-slate-300 rounded mt-1 px-3 text-sm" />
           </div>
           <div>
-            <label className="block">Weight (kg):</label>
+            <label className="block">{t('forms.weight')}</label>
             <input type="number" className="w-24 h-9 border border-slate-300 rounded mt-1 px-3 text-sm" />
           </div>
           <div className="col-span-2">
-            <label className="block">Social Insurance number (NIR):</label>
+            <label className="block">{t('forms.socialInsuranceNumber')}</label>
             <input type="text" className="w-full h-9 border border-slate-300 rounded mt-1 px-3 text-sm" />
           </div>
           <div className="col-span-2">
             <label className="flex items-center gap-2">
               <input type="checkbox" className="w-4 h-4" />
-              <span>Care related to a long-term condition (ALD)</span>
+              <span>{t('forms.careRelatedALD')}</span>
             </label>
           </div>
         </div>
@@ -51,42 +52,42 @@ const CNOForm: React.FC = () => {
       
       {/* Prescriber Section */}
       <div className="border border-slate-200 rounded-lg p-4">
-        <h3 className="font-bold text-sm mb-4">PRESCRIBER IDENTIFICATION</h3>
+        <h3 className="font-bold text-sm mb-4">{t('forms.prescriberIdentification')}</h3>
         <div className="grid grid-cols-2 gap-4 text-sm">
           <div>
-            <label className="block">Last name: (automatic by Login)</label>
+            <label className="block">{t('forms.lastNameAuto')}</label>
             <input type="text" className="w-full h-9 border border-slate-300 rounded mt-1 px-3 text-sm bg-slate-100" readOnly />
           </div>
           <div>
-            <label className="block">First name: (automatic by Login)</label>
+            <label className="block">{t('forms.firstNameAuto')}</label>
             <input type="text" className="w-full h-9 border border-slate-300 rounded mt-1 px-3 text-sm bg-slate-100" readOnly />
           </div>
           <div>
-            <label className="block">Phone: (automatic by Login)</label>
+            <label className="block">{t('forms.phoneAuto')}</label>
             <input type="tel" className="w-full h-9 border border-slate-300 rounded mt-1 px-3 text-sm bg-slate-100" readOnly />
           </div>
           <div>
-            <label className="block">RPPS ID: (automatic by Login)</label>
+            <label className="block">{t('forms.rppsIdAuto')}</label>
             <input type="text" className="w-full h-9 border border-slate-300 rounded mt-1 px-3 text-sm bg-slate-100" readOnly />
           </div>
         </div>
-        <p className="text-xs text-slate-500 mt-2">*Shared directory of healthcare professionals</p>
+        <p className="text-xs text-slate-500 mt-2">{t('forms.sharedDirectory')}</p>
       </div>
       
       {/* Practice/Facility Section */}
       <div className="border border-slate-200 rounded-lg p-4">
-        <h3 className="font-bold text-sm mb-4">PRESCRIBER'S PRACTICE / FACILITY</h3>
+        <h3 className="font-bold text-sm mb-4">{t('forms.prescriberPractice')}</h3>
         <div className="grid grid-cols-1 gap-4 text-sm">
           <div>
-            <label className="block">HOSPITAL name:</label>
+            <label className="block">{t('forms.hospitalName')}</label>
             <input type="text" className="w-full h-9 border border-slate-300 rounded mt-1 px-3 text-sm" />
           </div>
           <div>
-            <label className="block">Address:</label>
+            <label className="block">{t('forms.addressLabel')}</label>
             <textarea className="w-full h-20 border border-slate-300 rounded mt-1 px-3 text-sm resize-none" />
           </div>
           <div>
-            <label className="block">Geographic FINESS No.: (automatic by Login)</label>
+            <label className="block">{t('forms.geographicFiness')}</label>
             <input type="text" className="w-32 h-9 border border-slate-300 rounded mt-1 px-3 text-sm bg-slate-100" readOnly />
           </div>
         </div>
@@ -95,9 +96,9 @@ const CNOForm: React.FC = () => {
       {/* Prescription Details */}
       <div className="space-y-4">
         <div className="text-sm">
-          <p>Done at 
+          <p>{t('forms.doneAt')} 
             <input type="text" className="w-32 h-9 border border-slate-300 rounded mx-2 px-3 text-sm" />
-            on 
+            {t('forms.on')} 
             <div className="flex items-center gap-1 mx-2">
               <input type="text" className="w-12 h-9 border border-slate-300 rounded px-3 text-sm" />
               <span>/</span>
@@ -111,24 +112,24 @@ const CNOForm: React.FC = () => {
         <div className="flex gap-6 text-sm">
           <label className="flex items-center gap-2">
             <input type="checkbox" className="w-4 h-4" />
-            <span>Prescription outside ALD</span>
+            <span>{t('forms.prescriptionOutsideALD')}</span>
           </label>
           <label className="flex items-center gap-2">
             <input type="checkbox" className="w-4 h-4" />
-            <span>Prescription outside ALD</span>
+            <span>{t('forms.prescriptionOutsideALD')}</span>
           </label>
         </div>
         
         <div className="text-sm space-y-3">
-          <p>The health status of Mr/Ms 
+          <p>{t('forms.healthStatusOf')} 
             <input type="text" className="w-32 h-9 border border-slate-300 rounded mx-2 px-3 text-sm" />
-            aged 
+            {t('forms.aged')} 
             <input type="number" className="w-16 h-9 border border-slate-300 rounded mx-2 px-3 text-sm" />
           </p>
           
-          <p>Weighing 
+          <p>{t('forms.weighing')} 
             <input type="number" className="w-16 h-9 border border-slate-300 rounded mx-2 px-3 text-sm" />
-            kg, requires oral nutritional supplements:
+            {t('forms.requiresONS')}
           </p>
         </div>
         
@@ -136,37 +137,37 @@ const CNOForm: React.FC = () => {
           <div className="flex gap-6">
             <label className="flex items-center gap-2">
               <input type="checkbox" className="w-4 h-4" />
-              <span className="text-sm">Diabetic range</span>
+              <span className="text-sm">{t('forms.diabeticRange')}</span>
             </label>
             <label className="flex items-center gap-2">
               <input type="checkbox" className="w-4 h-4" />
-              <span className="text-sm">Standard carbohydrate range</span>
+              <span className="text-sm">{t('forms.standardCarbohydrate')}</span>
             </label>
           </div>
           
           <div className="space-y-2 text-sm">
             {[
-              "High protein / high calorie ONS drink 1.5 kcal/ml",
-              "High protein / high calorie ONS drink 1.5 kcal/ml + fiber",
-              "High protein / high calorie ONS drink 2 kcal/ml",
-              "High protein / high calorie ONS 2 kcal/ml concentrated (small volume)",
-              "High protein / high calorie ONS cream 1.5 kcal/ml",
-              "High protein / high calorie ONS soup 1.5 kcal",
-              "Blended high-protein meals (300 g), 500 kcal",
-              "Fruit juice ONS, standard protein, high calorie",
-              "Compote 250 kcal + 6–9 g protein"
+              t('forms.onsProduct1'),
+              t('forms.onsProduct2'),
+              t('forms.onsProduct3'),
+              t('forms.onsProduct4'),
+              t('forms.onsProduct5'),
+              t('forms.onsProduct6'),
+              t('forms.onsProduct7'),
+              t('forms.onsProduct8'),
+              t('forms.onsProduct9')
             ].map((item, index) => (
               <div key={index} className="flex items-center gap-2">
                 <span className="flex-1">{item}</span>
                 <input type="text" className="w-24 h-9 border border-slate-300 rounded px-3 text-sm" />
-                <span>Qty</span>
+                <span>{t('forms.qty')}</span>
                 <input type="text" className="w-16 h-9 border border-slate-300 rounded px-3 text-sm" />
-                <span>/day</span>
+                <span>{t('forms.perDay')}</span>
               </div>
             ))}
             
             <div className="flex items-center gap-2">
-              <span>Other:</span>
+              <span>{t('forms.otherLabel')}</span>
               <input type="text" className="w-full h-9 border border-slate-300 rounded px-3 text-sm" />
             </div>
           </div>
@@ -174,11 +175,11 @@ const CNOForm: React.FC = () => {
         
         <div className="grid grid-cols-2 gap-4 text-sm">
           <div>
-            <label className="block">Patient Name:</label>
+            <label className="block">{t('forms.patientNameLabel')}</label>
             <input type="text" className="w-full h-9 border border-slate-300 rounded mt-1 px-3 text-sm" />
           </div>
           <div>
-            <label className="block">Date of Birth:</label>
+            <label className="block">{t('forms.dateOfBirthLabel')}</label>
             <div className="flex items-center gap-1 mt-1">
               <input type="text" className="w-12 h-9 border border-slate-300 rounded px-3 text-sm" />
               <span>/</span>
@@ -190,61 +191,57 @@ const CNOForm: React.FC = () => {
         </div>
         
         <div className="text-sm">
-          <h4 className="font-medium">Prescriber Identification</h4>
+          <h4 className="font-medium">{t('forms.prescriberIdentificationLabel')}</h4>
         </div>
         
         <div className="text-sm space-y-3">
-          <p>To be consumed at least 2 hours before or after each meal for 1 month</p>
+          <p>{t('forms.toBeConsumed')}</p>
           
           <div>
-            <label className="block">Texture:</label>
+            <label className="block">{t('forms.texture')}</label>
             <input type="text" className="w-full h-9 border border-slate-300 rounded mt-1 px-3 text-sm" />
           </div>
           
-          <p>Reassessment at 1 month</p>
+          <p>{t('forms.reassessmentAt1Month')}</p>
           
-          <p>Renewal to be carried out for 
+          <p>{t('forms.renewalForMonths')} 
             <input type="number" className="w-16 h-9 border border-slate-300 rounded mx-2 px-3 text-sm" />
-            months
+            {t('forms.months')}
           </p>
           
-          <p>After a reassessment including:</p>
+          <p>{t('forms.afterReassessment')}</p>
           <div className="ml-4 space-y-1">
             <label className="flex items-center gap-2">
               <input type="checkbox" className="w-4 h-4" />
-              <span>Weight</span>
+              <span>{t('forms.weightCheckbox')}</span>
             </label>
             <label className="flex items-center gap-2">
               <input type="checkbox" className="w-4 h-4" />
-              <span>Nutritional status</span>
+              <span>{t('forms.nutritionalStatus')}</span>
             </label>
             <label className="flex items-center gap-2">
               <input type="checkbox" className="w-4 h-4" />
-              <span>Progression of the pathology</span>
+              <span>{t('forms.progressionOfPathology')}</span>
             </label>
             <label className="flex items-center gap-2">
               <input type="checkbox" className="w-4 h-4" />
-              <span>Level of spontaneous oral intake</span>
+              <span>{t('forms.levelOfSpontaneousOralIntake')}</span>
             </label>
             <label className="flex items-center gap-2">
               <input type="checkbox" className="w-4 h-4" />
-              <span>Tolerance of oral nutritional supplements (ONS)</span>
+              <span>{t('forms.toleranceOfONS')}</span>
             </label>
             <label className="flex items-center gap-2">
               <input type="checkbox" className="w-4 h-4" />
-              <span>Compliance with ONS</span>
+              <span>{t('forms.complianceWithONS')}</span>
             </label>
           </div>
         </div>
         
-        <div className="grid grid-cols-2 gap-4 text-sm">
+        <div className="grid grid-cols-1 gap-4 text-sm">
           <div>
-            <label className="block">Date:</label>
+            <label className="block">{t('forms.date')}</label>
             <input type="date" className="w-40 h-9 border border-slate-300 rounded mt-1 px-3 text-sm" />
-          </div>
-          <div>
-            <label className="block">Signature:</label>
-            <input type="text" className="w-full h-9 border border-slate-300 rounded mt-1 px-3 text-sm" />
           </div>
         </div>
       </div>
@@ -252,7 +249,7 @@ const CNOForm: React.FC = () => {
       {/* Signature Section */}
       <div className="border-t-2 border-slate-300 pt-4 text-center">
         <div className="w-48 h-12 border-b-2 border-slate-400 mx-auto"></div>
-        <p className="text-sm font-medium mt-2">Sign</p>
+        <p className="text-sm font-medium mt-2">{t('forms.sign')}</p>
       </div>
     </div>
   );
@@ -260,31 +257,32 @@ const CNOForm: React.FC = () => {
 
 // Wound Care Form Component
 const WoundCareForm: React.FC = () => {
+  const { t } = useTranslation();
   return (
     <div className="max-w-5xl mx-auto space-y-6 bg-white">
       {/* Form Header */}
       <div className="text-center border-b-2 border-slate-300 pb-4">
-        <h1 className="text-lg font-bold text-slate-800">Wound Dressing Prescription Support Form</h1>
+        <h1 className="text-lg font-bold text-slate-800">{t('forms.woundCareFormTitle')}</h1>
       </div>
       
       {/* Physician Information */}
       <div className="border border-slate-200 rounded-lg p-4">
-        <h3 className="font-bold text-sm mb-4">Physician Information</h3>
+        <h3 className="font-bold text-sm mb-4">{t('forms.physicianInformation')}</h3>
         <div className="grid grid-cols-2 gap-4 text-sm">
           <div>
-            <label className="block">Last name:</label>
+            <label className="block">{t('forms.lastName')}</label>
             <input type="text" className="w-full h-9 border border-slate-300 rounded mt-1 px-3 text-sm" />
           </div>
           <div>
-            <label className="block">First name:</label>
+            <label className="block">{t('forms.firstName')}</label>
             <input type="text" className="w-full h-9 border border-slate-300 rounded mt-1 px-3 text-sm" />
           </div>
           <div>
-            <label className="block">RPPS No.:</label>
+            <label className="block">{t('forms.rppsNo')}</label>
             <input type="text" className="w-full h-9 border border-slate-300 rounded mt-1 px-3 text-sm" />
           </div>
           <div>
-            <label className="block">FINESS:</label>
+            <label className="block">{t('forms.finess')}</label>
             <input type="text" className="w-full h-9 border border-slate-300 rounded mt-1 px-3 text-sm" />
           </div>
         </div>
@@ -292,18 +290,18 @@ const WoundCareForm: React.FC = () => {
       
       {/* Patient Information */}
       <div className="border border-slate-200 rounded-lg p-4">
-        <h3 className="font-bold text-sm mb-4">Patient Information</h3>
+        <h3 className="font-bold text-sm mb-4">{t('forms.patientInformation')}</h3>
         <div className="grid grid-cols-2 gap-4 text-sm">
           <div>
-            <label className="block">Last name:</label>
+            <label className="block">{t('forms.lastName')}</label>
             <input type="text" className="w-full h-9 border border-slate-300 rounded mt-1 px-3 text-sm" />
           </div>
           <div>
-            <label className="block">First name:</label>
+            <label className="block">{t('forms.firstName')}</label>
             <input type="text" className="w-full h-9 border border-slate-300 rounded mt-1 px-3 text-sm" />
           </div>
           <div>
-            <label className="block">Date of birth:</label>
+            <label className="block">{t('forms.dateOfBirth')}</label>
             <input type="date" className="w-40 h-9 border border-slate-300 rounded mt-1 px-3 text-sm" />
           </div>
         </div>
@@ -311,20 +309,20 @@ const WoundCareForm: React.FC = () => {
 
       {/* Care Related to ALD */}
       <div className="border border-slate-200 rounded-lg p-4">
-        <h3 className="font-bold text-sm mb-4">Care Related to ALD</h3>
+        <h3 className="font-bold text-sm mb-4">{t('forms.careRelatedALDTitle')}</h3>
         <div className="space-y-3 text-sm">
           <div className="space-y-2">
             <label className="flex items-center gap-2">
               <input type="checkbox" className="w-4 h-4" />
-              <span>Care related to long-term condition (ALD)</span>
+              <span>{t('forms.careRelatedALD')}</span>
             </label>
             <label className="flex items-center gap-2">
               <input type="checkbox" className="w-4 h-4" />
-              <span>Care not related to long-term condition (ALD)</span>
+              <span>{t('forms.careNotRelatedALD')}</span>
             </label>
           </div>
           <div>
-            <label className="block">Date:</label>
+            <label className="block">{t('forms.date')}</label>
             <input type="date" className="w-40 h-9 border border-slate-300 rounded mt-1 px-3 text-sm" />
           </div>
         </div>
@@ -332,44 +330,44 @@ const WoundCareForm: React.FC = () => {
       
       {/* Type of Wound */}
       <div className="border border-slate-200 rounded-lg p-4">
-        <h3 className="font-bold text-sm mb-4">Type of wound:</h3>
+        <h3 className="font-bold text-sm mb-4">{t('forms.typeOfWound')}</h3>
         <div className="space-y-3 text-sm">
           <div className="flex items-center gap-2">
-            <label className="block">Size:</label>
+            <label className="block">{t('forms.sizeLabel')}</label>
             <input type="text" className="w-32 h-9 border border-slate-300 rounded px-3 text-sm" />
           </div>
           <div className="grid grid-cols-2 gap-2">
             <label className="flex items-center gap-2">
               <input type="checkbox" className="w-4 h-4" />
-              <span>Acute</span>
+              <span>{t('forms.acute')}</span>
             </label>
             <label className="flex items-center gap-2">
               <input type="checkbox" className="w-4 h-4" />
-              <span>Chronic</span>
+              <span>{t('forms.chronic')}</span>
             </label>
             <label className="flex items-center gap-2">
               <input type="checkbox" className="w-4 h-4" />
-              <span>Ulcer</span>
+              <span>{t('forms.ulcer')}</span>
             </label>
             <label className="flex items-center gap-2">
               <input type="checkbox" className="w-4 h-4" />
-              <span>Pressure ulcer</span>
+              <span>{t('forms.pressureUlcer')}</span>
             </label>
             <label className="flex items-center gap-2">
               <input type="checkbox" className="w-4 h-4" />
-              <span>Postoperative wound</span>
+              <span>{t('forms.postoperativeWound')}</span>
             </label>
             <label className="flex items-center gap-2">
               <input type="checkbox" className="w-4 h-4" />
-              <span>Cavity wound</span>
+              <span>{t('forms.cavityWound')}</span>
             </label>
             <label className="flex items-center gap-2">
               <input type="checkbox" className="w-4 h-4" />
-              <span>Wound with fibrin</span>
+              <span>{t('forms.woundWithFibrin')}</span>
             </label>
             <label className="flex items-center gap-2">
               <input type="checkbox" className="w-4 h-4" />
-              <span>Other:</span>
+              <span>{t('forms.otherLabel')}</span>
               <input type="text" className="w-32 h-9 border border-slate-300 rounded px-3 text-sm" />
             </label>
           </div>
@@ -378,76 +376,76 @@ const WoundCareForm: React.FC = () => {
       
       {/* Desired Dressing Type */}
       <div className="border border-slate-200 rounded-lg p-4">
-        <h3 className="font-bold text-sm mb-4">Desired dressing type</h3>
+        <h3 className="font-bold text-sm mb-4">{t('forms.desiredDressingType')}</h3>
         <div className="space-y-2 text-sm">
           <label className="flex items-center gap-2">
             <input type="checkbox" className="w-4 h-4" />
-            <span>Hyperabsorbent (ulcer-type wound)</span>
+            <span>{t('forms.hyperabsorbent')}</span>
           </label>
           <label className="flex items-center gap-2">
             <input type="checkbox" className="w-4 h-4" />
-            <span>Post-op (e.g., Mediane Post-op)</span>
+            <span>{t('forms.postOp')}</span>
           </label>
           <label className="flex items-center gap-2">
             <input type="checkbox" className="w-4 h-4" />
-            <span>Debridement and healing dressing (e.g., Algosteril)</span>
+            <span>{t('forms.debridementHealing')}</span>
           </label>
           <label className="flex items-center gap-2">
             <input type="checkbox" className="w-4 h-4" />
-            <span>Hydrocolloid: absorbs exudate and forms a moist gel on contact with the wound</span>
+            <span>{t('forms.hydrocolloid')}</span>
           </label>
           <label className="flex items-center gap-2">
             <input type="checkbox" className="w-4 h-4" />
-            <span>Packing:</span>
+            <span>{t('forms.packingLabel')}</span>
           </label>
           <div className="ml-6 space-y-2">
-            <div>- Fill a cavity</div>
-            <div>- Occupy dead space</div>
-            <div>- Prevent premature superficial closure</div>
+            <div>{t('forms.fillACavity')}</div>
+            <div>{t('forms.occupyDeadSpace')}</div>
+            <div>- {t('forms.preventPrematureClosure')}</div>
           </div>
         </div>
       </div>
       
       {/* Additional Wound Assessment */}
       <div className="border border-slate-200 rounded-lg p-4">
-        <h3 className="font-bold text-sm mb-4">Additional Wound Assessment</h3>
+        <h3 className="font-bold text-sm mb-4">{t('forms.additionalWoundAssessment')}</h3>
         <div className="space-y-3 text-sm">
           <div className="space-y-2">
-            <label className="block">Exudate</label>
+            <label className="block">{t('forms.exudate')}</label>
             <div className="flex gap-4">
               <label className="flex items-center gap-2">
                 <input type="checkbox" className="w-4 h-4" />
-                <span>Yes</span>
+                <span>{t('forms.yes')}</span>
               </label>
               <label className="flex items-center gap-2">
                 <input type="checkbox" className="w-4 h-4" />
-                <span>No</span>
+                <span>{t('forms.no')}</span>
               </label>
             </div>
           </div>
           <div className="space-y-2">
-            <label className="block">Cavity</label>
+            <label className="block">{t('forms.cavity')}</label>
             <div className="flex gap-4">
               <label className="flex items-center gap-2">
                 <input type="checkbox" className="w-4 h-4" />
-                <span>Yes</span>
+                <span>{t('forms.yes')}</span>
               </label>
               <label className="flex items-center gap-2">
                 <input type="checkbox" className="w-4 h-4" />
-                <span>No</span>
+                <span>{t('forms.no')}</span>
               </label>
             </div>
           </div>
           <div className="space-y-2">
-            <label className="block">Septic wound:</label>
+            <label className="block">{t('forms.septicWound')}</label>
             <div className="flex gap-4">
               <label className="flex items-center gap-2">
                 <input type="checkbox" className="w-4 h-4" />
-                <span>Yes</span>
+                <span>{t('forms.yes')}</span>
               </label>
               <label className="flex items-center gap-2">
                 <input type="checkbox" className="w-4 h-4" />
-                <span>No</span>
+                <span>{t('forms.no')}</span>
               </label>
             </div>
           </div>
@@ -456,37 +454,37 @@ const WoundCareForm: React.FC = () => {
       
       {/* Required Materials and Applicable Protocol */}
       <div className="border border-slate-200 rounded-lg p-4">
-        <h3 className="font-bold text-sm mb-4">Required Materials and Applicable Protocol</h3>
+        <h3 className="font-bold text-sm mb-4">{t('forms.requiredMaterials')}</h3>
         <div className="space-y-3 text-sm">
           <div className="flex items-center gap-2">
             <input type="checkbox" className="w-4 h-4" />
-            <span>Dressing kits</span>
+            <span>{t('forms.dressingKits')}</span>
             <input type="text" className="w-16 h-9 border border-slate-300 rounded px-3 text-sm" />
-            <span>per day</span>
+            <span>{t('forms.perDay')}</span>
           </div>
           <div className="flex items-center gap-2">
             <input type="checkbox" className="w-4 h-4" />
-            <span>Nylex or Velpeau retention bandage</span>
+            <span>{t('forms.nylexRetentionBandage')}</span>
             <input type="text" className="w-16 h-9 border border-slate-300 rounded px-3 text-sm" />
-            <span>per day</span>
+            <span>{t('forms.perDay')}</span>
           </div>
           <div className="flex items-center gap-2">
             <input type="checkbox" className="w-4 h-4" />
-            <span>Cleaning with</span>
+            <span>{t('forms.cleaningWith')}</span>
             <input type="text" className="w-48 h-9 border border-slate-300 rounded px-3 text-sm" />
           </div>
           <div className="flex items-center gap-2">
             <input type="checkbox" className="w-4 h-4" />
-            <span>Disinfection with</span>
+            <span>{t('forms.disinfectionWith')}</span>
             <input type="text" className="w-48 h-9 border border-slate-300 rounded px-3 text-sm" />
           </div>
           <div className="space-y-2 ml-6">
             <div className="flex items-center gap-2">
-              <span>1st layer in contact with the wound</span>
+              <span>{t('forms.firstLayer')}</span>
               <input type="text" className="w-32 h-9 border border-slate-300 rounded px-3 text-sm" />
             </div>
             <div className="flex items-center gap-2">
-              <span>2nd overlapping layer</span>
+              <span>{t('forms.secondLayer')}</span>
               <input type="text" className="w-32 h-9 border border-slate-300 rounded px-3 text-sm" />
             </div>
           </div>
@@ -495,33 +493,25 @@ const WoundCareForm: React.FC = () => {
       
       {/* Treatment Duration */}
       <div className="border border-slate-200 rounded-lg p-4">
-        <h3 className="font-bold text-sm mb-4">Treatment Duration</h3>
+        <h3 className="font-bold text-sm mb-4">{t('forms.treatmentDuration')}</h3>
         <div className="space-y-2 text-sm">
           <div className="flex items-center gap-2">
             <input type="checkbox" className="w-4 h-4" />
-            <span>Treatment duration</span>
+            <span>{t('forms.treatmentDurationLabel')}</span>
             <input type="text" className="w-32 h-9 border border-slate-300 rounded px-3 text-sm" />
-            <span>or</span>
+            <span>{t('forms.or')}</span>
           </div>
           <label className="flex items-center gap-2">
             <input type="checkbox" className="w-4 h-4" />
-            <span>Until healed</span>
+            <span>{t('forms.untilHealed')}</span>
           </label>
-        </div>
-      </div>
-      
-      {/* Physician Signature */}
-      <div className="border border-slate-200 rounded-lg p-4">
-        <div className="flex items-center gap-4 text-sm">
-          <label className="block">Physician signature:</label>
-          <input type="text" className="w-64 h-9 border border-slate-300 rounded px-3 text-sm" />
         </div>
       </div>
       
       {/* Signature Section */}
       <div className="border-t-2 border-slate-300 pt-4 text-center">
         <div className="w-48 h-12 border-b-2 border-slate-400 mx-auto"></div>
-        <p className="text-sm font-medium mt-2">Sign</p>
+        <p className="text-sm font-medium mt-2">{t('forms.sign')}</p>
       </div>
     </div>
   );
@@ -529,60 +519,61 @@ const WoundCareForm: React.FC = () => {
 
 // Generic Form Component with Free Text Zone
 const GenericForm: React.FC = () => {
+  const { t } = useTranslation();
   return (
     <div className="max-w-5xl mx-auto space-y-6 bg-white">
       {/* Form Header */}
       <div className="text-center border-b-2 border-slate-300 pb-4">
-        <h1 className="text-lg font-bold text-slate-800">FREE PRESCRIPTION FORMS</h1>
-        <p className="text-sm text-slate-600 mt-2">TICK THE APPROPRIATE BOXES ON THE FORM</p>
+        <h1 className="text-lg font-bold text-slate-800">{t('forms.genericFormTitle')}</h1>
+        <p className="text-sm text-slate-600 mt-2">{t('forms.tickAppropriateBoxes')}</p>
       </div>
       
       {/* Prescription Type */}
       <div className="space-y-3">
         <div className="flex items-center gap-3">
-          <span className="text-sm font-medium">Prescription date:</span>
+          <span className="text-sm font-medium">{t('forms.prescriptionDate')}</span>
           <input type="date" className="w-40 h-9 border border-slate-300 rounded px-3 text-sm" />
         </div>
         <div className="flex gap-6">
           <label className="flex items-center gap-2">
             <input type="checkbox" className="w-4 h-4" />
-            <span className="text-sm">Start of home infusion therapy</span>
+            <span className="text-sm">{t('forms.startOfHomeInfusion')}</span>
           </label>
           <label className="flex items-center gap-2">
             <input type="checkbox" className="w-4 h-4" />
-            <span className="text-sm">Renewal or modification</span>
+            <span className="text-sm">{t('forms.renewalOrModification')}</span>
           </label>
         </div>
       </div>
       
       {/* Patient Section */}
       <div className="border border-slate-200 rounded-lg p-4">
-        <h3 className="font-bold text-sm mb-4">PATIENT</h3>
+        <h3 className="font-bold text-sm mb-4">{t('forms.patient')}</h3>
         <div className="grid grid-cols-2 gap-4 text-sm">
           <div>
-            <label className="block">Last name:</label>
+            <label className="block">{t('forms.lastName')}</label>
             <input type="text" className="w-full h-9 border border-slate-300 rounded mt-1 px-3 text-sm" />
           </div>
           <div>
-            <label className="block">First name:</label>
+            <label className="block">{t('forms.firstName')}</label>
             <input type="text" className="w-full h-9 border border-slate-300 rounded mt-1 px-3 text-sm" />
           </div>
           <div>
-            <label className="block">Date of birth:</label>
+            <label className="block">{t('forms.dateOfBirth')}</label>
             <input type="date" className="w-40 h-9 border border-slate-300 rounded mt-1 px-3 text-sm" />
           </div>
           <div>
-            <label className="block">Weight (kg):</label>
+            <label className="block">{t('forms.weight')}</label>
             <input type="number" className="w-24 h-9 border border-slate-300 rounded mt-1 px-3 text-sm" />
           </div>
           <div className="col-span-2">
-            <label className="block">Social Insurance number (NIR):</label>
+            <label className="block">{t('forms.socialInsuranceNumber')}</label>
             <input type="text" className="w-full h-9 border border-slate-300 rounded mt-1 px-3 text-sm" />
           </div>
           <div className="col-span-2">
             <label className="flex items-center gap-2">
               <input type="checkbox" className="w-4 h-4" />
-              <span>Care related to a long-term condition (ALD)</span>
+              <span>{t('forms.careRelatedALD')}</span>
             </label>
           </div>
         </div>
@@ -590,42 +581,42 @@ const GenericForm: React.FC = () => {
       
       {/* Prescriber Section */}
       <div className="border border-slate-200 rounded-lg p-4">
-        <h3 className="font-bold text-sm mb-4">PRESCRIBER IDENTIFICATION</h3>
+        <h3 className="font-bold text-sm mb-4">{t('forms.prescriberIdentification')}</h3>
         <div className="grid grid-cols-2 gap-4 text-sm">
           <div>
-            <label className="block">Last name: (automatic by Login)</label>
+            <label className="block">{t('forms.lastNameAuto')}</label>
             <input type="text" className="w-full h-9 border border-slate-300 rounded mt-1 px-3 text-sm bg-slate-100" readOnly />
           </div>
           <div>
-            <label className="block">First name: (automatic by Login)</label>
+            <label className="block">{t('forms.firstNameAuto')}</label>
             <input type="text" className="w-full h-9 border border-slate-300 rounded mt-1 px-3 text-sm bg-slate-100" readOnly />
           </div>
           <div>
-            <label className="block">Phone: (automatic by Login)</label>
+            <label className="block">{t('forms.phoneAuto')}</label>
             <input type="tel" className="w-full h-9 border border-slate-300 rounded mt-1 px-3 text-sm bg-slate-100" readOnly />
           </div>
           <div>
-            <label className="block">RPPS ID: (automatic by Login)</label>
+            <label className="block">{t('forms.rppsIdAuto')}</label>
             <input type="text" className="w-full h-9 border border-slate-300 rounded mt-1 px-3 text-sm bg-slate-100" readOnly />
           </div>
         </div>
-        <p className="text-xs text-slate-500 mt-2">*Shared directory of healthcare professionals</p>
+        <p className="text-xs text-slate-500 mt-2">{t('forms.sharedDirectory')}</p>
       </div>
       
       {/* Practice/Facility Section */}
       <div className="border border-slate-200 rounded-lg p-4">
-        <h3 className="font-bold text-sm mb-4">PRESCRIBER'S PRACTICE / FACILITY</h3>
+        <h3 className="font-bold text-sm mb-4">{t('forms.prescriberPractice')}</h3>
         <div className="grid grid-cols-1 gap-4 text-sm">
           <div>
-            <label className="block">HOSPITAL name:</label>
+            <label className="block">{t('forms.hospitalName')}</label>
             <input type="text" className="w-full h-9 border border-slate-300 rounded mt-1 px-3 text-sm" />
           </div>
           <div>
-            <label className="block">Address:</label>
+            <label className="block">{t('forms.addressLabel')}</label>
             <textarea className="w-full h-20 border border-slate-300 rounded mt-1 px-3 text-sm resize-none" />
           </div>
           <div>
-            <label className="block">Geographic FINESS No.: (automatic by Login)</label>
+            <label className="block">{t('forms.geographicFiness')}</label>
             <input type="text" className="w-32 h-9 border border-slate-300 rounded mt-1 px-3 text-sm bg-slate-100" readOnly />
           </div>
         </div>
@@ -633,10 +624,10 @@ const GenericForm: React.FC = () => {
       
       {/* Free Text Zone */}
       <div className="space-y-4">
-        <h3 className="font-bold text-sm">Forms for</h3>
+        <h3 className="font-bold text-sm">{t('forms.formsFor')}</h3>
         
         <div className="border-2 border-slate-300 rounded-lg p-4">
-          <h4 className="font-bold text-sm mb-4">FREE ZONE TEXTE</h4>
+          <h4 className="font-bold text-sm mb-4">{t('forms.freeZoneTexte')}</h4>
           
           <div className="space-y-4">
             <div>
@@ -670,7 +661,7 @@ const GenericForm: React.FC = () => {
       {/* Signature Section */}
       <div className="border-t-2 border-slate-300 pt-4 text-center">
         <div className="w-48 h-12 border-b-2 border-slate-400 mx-auto"></div>
-        <p className="text-sm font-medium mt-2">Sign</p>
+        <p className="text-sm font-medium mt-2">{t('forms.sign')}</p>
       </div>
     </div>
   );
@@ -678,60 +669,61 @@ const GenericForm: React.FC = () => {
 
 // Artificial Nutrition Form Component
 const ArtificialNutritionForm: React.FC = () => {
+  const { t } = useTranslation();
   return (
     <div className="max-w-5xl mx-auto space-y-6 bg-white">
       {/* Form Header */}
       <div className="text-center border-b-2 border-slate-300 pb-4">
-        <h1 className="text-lg font-bold text-slate-800">ARTIFICIAL NUTRITION PRESCRIPTION FORM</h1>
-        <p className="text-sm text-slate-600 mt-2">TICK THE APPROPRIATE BOXES ON THE FORM</p>
+        <h1 className="text-lg font-bold text-slate-800">{t('forms.artificialNutritionFormTitle')}</h1>
+        <p className="text-sm text-slate-600 mt-2">{t('forms.tickAppropriateBoxes')}</p>
       </div>
       
       {/* Prescription Type */}
       <div className="space-y-3">
         <div className="flex items-center gap-3">
-          <span className="text-sm font-medium">Prescription date:</span>
+          <span className="text-sm font-medium">{t('forms.prescriptionDate')}</span>
           <input type="date" className="w-40 h-9 border border-slate-300 rounded px-3 text-sm" />
         </div>
         <div className="flex gap-6">
           <label className="flex items-center gap-2">
             <input type="checkbox" className="w-4 h-4" />
-            <span className="text-sm">Start of home infusion therapy</span>
+            <span className="text-sm">{t('forms.startOfHomeInfusion')}</span>
           </label>
           <label className="flex items-center gap-2">
             <input type="checkbox" className="w-4 h-4" />
-            <span className="text-sm">Renewal or modification</span>
+            <span className="text-sm">{t('forms.renewalOrModification')}</span>
           </label>
         </div>
       </div>
       
       {/* Patient Section */}
       <div className="border border-slate-200 rounded-lg p-4">
-        <h3 className="font-bold text-sm mb-4">PATIENT</h3>
+        <h3 className="font-bold text-sm mb-4">{t('forms.patient')}</h3>
         <div className="grid grid-cols-2 gap-4 text-sm">
           <div>
-            <label className="block">Last name:</label>
+            <label className="block">{t('forms.lastName')}</label>
             <input type="text" className="w-full h-9 border border-slate-300 rounded mt-1 px-3 text-sm" />
           </div>
           <div>
-            <label className="block">First name:</label>
+            <label className="block">{t('forms.firstName')}</label>
             <input type="text" className="w-full h-9 border border-slate-300 rounded mt-1 px-3 text-sm" />
           </div>
           <div>
-            <label className="block">Date of birth:</label>
+            <label className="block">{t('forms.dateOfBirth')}</label>
             <input type="date" className="w-40 h-9 border border-slate-300 rounded mt-1 px-3 text-sm" />
           </div>
           <div>
-            <label className="block">Weight (kg):</label>
+            <label className="block">{t('forms.weight')}</label>
             <input type="number" className="w-24 h-9 border border-slate-300 rounded mt-1 px-3 text-sm" />
           </div>
           <div className="col-span-2">
-            <label className="block">Social Insurance number (NIR):</label>
+            <label className="block">{t('forms.socialInsuranceNumber')}</label>
             <input type="text" className="w-full h-9 border border-slate-300 rounded mt-1 px-3 text-sm" />
           </div>
           <div className="col-span-2">
             <label className="flex items-center gap-2">
               <input type="checkbox" className="w-4 h-4" />
-              <span>Care related to a long-term condition (ALD)</span>
+              <span>{t('forms.careRelatedALD')}</span>
             </label>
           </div>
         </div>
@@ -739,42 +731,42 @@ const ArtificialNutritionForm: React.FC = () => {
       
       {/* Prescriber Section */}
       <div className="border border-slate-200 rounded-lg p-4">
-        <h3 className="font-bold text-sm mb-4">PRESCRIBER IDENTIFICATION</h3>
+        <h3 className="font-bold text-sm mb-4">{t('forms.prescriberIdentification')}</h3>
         <div className="grid grid-cols-2 gap-4 text-sm">
           <div>
-            <label className="block">Last name: (automatic by Login)</label>
+            <label className="block">{t('forms.lastNameAuto')}</label>
             <input type="text" className="w-full h-9 border border-slate-300 rounded mt-1 px-3 text-sm bg-slate-100" readOnly />
           </div>
           <div>
-            <label className="block">First name: (automatic by Login)</label>
+            <label className="block">{t('forms.firstNameAuto')}</label>
             <input type="text" className="w-full h-9 border border-slate-300 rounded mt-1 px-3 text-sm bg-slate-100" readOnly />
           </div>
           <div>
-            <label className="block">Phone: (automatic by Login)</label>
+            <label className="block">{t('forms.phoneAuto')}</label>
             <input type="tel" className="w-full h-9 border border-slate-300 rounded mt-1 px-3 text-sm bg-slate-100" readOnly />
           </div>
           <div>
-            <label className="block">RPPS ID: (automatic by Login)</label>
+            <label className="block">{t('forms.rppsIdAuto')}</label>
             <input type="text" className="w-full h-9 border border-slate-300 rounded mt-1 px-3 text-sm bg-slate-100" readOnly />
           </div>
         </div>
-        <p className="text-xs text-slate-500 mt-2">*Shared directory of healthcare professionals</p>
+        <p className="text-xs text-slate-500 mt-2">{t('forms.sharedDirectory')}</p>
       </div>
       
       {/* Practice/Facility Section */}
       <div className="border border-slate-200 rounded-lg p-4">
-        <h3 className="font-bold text-sm mb-4">PRESCRIBER'S PRACTICE / FACILITY</h3>
+        <h3 className="font-bold text-sm mb-4">{t('forms.prescriberPractice')}</h3>
         <div className="grid grid-cols-1 gap-4 text-sm">
           <div>
-            <label className="block">HOSPITAL name:</label>
+            <label className="block">{t('forms.hospitalName')}</label>
             <input type="text" className="w-full h-9 border border-slate-300 rounded mt-1 px-3 text-sm" />
           </div>
           <div>
-            <label className="block">Address:</label>
+            <label className="block">{t('forms.addressLabel')}</label>
             <textarea className="w-full h-20 border border-slate-300 rounded mt-1 px-3 text-sm resize-none" />
           </div>
           <div>
-            <label className="block">Geographic FINESS No.: (automatic by Login)</label>
+            <label className="block">{t('forms.geographicFiness')}</label>
             <input type="text" className="w-32 h-9 border border-slate-300 rounded mt-1 px-3 text-sm bg-slate-100" readOnly />
           </div>
         </div>
@@ -782,12 +774,12 @@ const ArtificialNutritionForm: React.FC = () => {
       
       {/* Artificial Nutrition Specific Section */}
       <div className="space-y-4">
-        <h3 className="font-bold text-sm">Forms for</h3>
+        <h3 className="font-bold text-sm">{t('forms.formsFor')}</h3>
         
         <div className="border-2 border-slate-300 rounded-lg p-4 space-y-4">
           <div className="grid grid-cols-2 gap-4 text-sm">
             <div>
-              <label className="block">From:</label>
+              <label className="block">{t('forms.from')}</label>
               <div className="flex items-center gap-2 mt-1">
                 <input type="text" className="w-16 h-9 border border-slate-300 rounded px-3 text-sm" />
                 <span>/</span>
@@ -797,92 +789,92 @@ const ArtificialNutritionForm: React.FC = () => {
               </div>
             </div>
             <div>
-              <label className="block">Prescription for ……… week(s), to be renewed ……… times</label>
+              <label className="block">{t('forms.prescriptionForWeeks')}</label>
               <div className="flex items-center gap-2 mt-1">
                 <input type="number" className="w-20 h-9 border border-slate-300 rounded px-3 text-sm" />
-                <span>week(s)</span>
+                <span>{t('forms.weeks')}</span>
                 <input type="number" className="w-20 h-9 border border-slate-300 rounded px-3 text-sm" />
-                <span>times</span>
+                <span>{t('forms.times')}</span>
               </div>
             </div>
           </div>
           
           <div className="text-sm">
-            <p className="font-medium mb-2">The health condition of MR (Name of patient) requires enteral nutrition by gravity (package 1), at home, for a duration of ..................... week(s), with:</p>
+            <p className="font-medium mb-2">{t('forms.healthConditionOfMR')}</p>
             
             <div className="space-y-3 mt-4">
               <div className="space-y-2">
-                <h5 className="font-medium">Initial setup package for enteral nutrition</h5>
-                <h5 className="font-medium">Weekly enteral nutrition package by:</h5>
+                <h5 className="font-medium">{t('forms.initialSetupPackage')}</h5>
+                <h5 className="font-medium">{t('forms.weeklyEnteralPackage')}</h5>
                 <div className="ml-4 space-y-2">
-                  <div>- Gravity (package 1)</div>
-                  <div>- Pump (package 2)</div>
+                  <div>- {t('forms.gravityPackage1')}</div>
+                  <div>- {t('forms.pumpPackage2')}</div>
                 </div>
               </div>
               
               <div className="grid grid-cols-2 gap-4">
                 <div>
-                  <label className="block">Nasogastric tube CH:</label>
+                  <label className="block">{t('forms.nasogastricTube')}</label>
                   <div className="flex items-center gap-2 mt-1">
                     <input type="text" className="w-24 h-9 border border-slate-300 rounded px-3 text-sm" />
-                    <span>to be used at a rate of</span>
+                    <span>{t('forms.toBeUsedAtRate')}</span>
                     <input type="text" className="w-24 h-9 border border-slate-300 rounded px-3 text-sm" />
-                    <span>per month</span>
+                    <span>{t('forms.perMonth')}</span>
                   </div>
                 </div>
                 <div>
-                  <label className="block">Jejunostomy or gastrostomy tube CH:</label>
+                  <label className="block">{t('forms.jejunostomyTube')}</label>
                   <input type="text" className="w-full h-9 border border-slate-300 rounded mt-1 px-3 text-sm" />
                 </div>
               </div>
               
               <div className="space-y-2">
-                <div>- Rental of an IV pole</div>
+                <div>{t('forms.rentalIVPole')}</div>
                 <div>
-                  <label className="block">Equipment for adult nasogastric tube care every ………… days</label>
+                  <label className="block">{t('forms.equipmentAdultNG')}</label>
                   <input type="number" className="w-20 h-9 border border-slate-300 rounded mt-1 px-3 text-sm" />
                 </div>
-                <div>- Equipment for gastrostomy or jejunostomy care</div>
+                <div>{t('forms.equipmentGastrostomy')}</div>
               </div>
             </div>
           </div>
           
           <div className="border-t pt-4 space-y-3">
             <div>
-              <h5 className="font-medium text-sm">Prescriptions unrelated to the recognized long-term condition (listed or not listed) (Intercurrent illnesses)</h5>
+              <h5 className="font-medium text-sm">{t('forms.prescriptionsUnrelatedALD')}</h5>
               <textarea className="w-full h-20 border border-slate-300 rounded p-3 text-sm resize-none mt-2" />
             </div>
             
             <div>
-              <h5 className="font-medium text-sm">Prescriptions related to the treatment of the recognized long-term condition (listed or not listed) (Exempting condition)</h5>
+              <h5 className="font-medium text-sm">{t('forms.prescriptionsRelatedALD')}</h5>
               <textarea className="w-full h-20 border border-slate-300 rounded p-3 text-sm resize-none mt-2" />
             </div>
             
             <div className="grid grid-cols-2 gap-4">
               <div>
-                <label className="block">Jejunostomy care every ………… days</label>
+                <label className="block">{t('forms.jejunostomyCareEveryDays')}</label>
                 <input type="number" className="w-20 h-9 border border-slate-300 rounded mt-1 px-3 text-sm" />
               </div>
               <div>
-                <div>- Equipment in case of gastrostomy tube replacement</div>
+                <div>- {t('forms.equipmentInCaseOfGastrostomyTubeReplacement')}</div>
               </div>
             </div>
 
             <div>
-              <div>- One gastrostomy button extension set, to be renewed every 7 days</div>
+              <div>- {t('forms.oneGastrostomyButtonExtensionSet')}</div>
             </div>
           </div>
           
           <div className="border-t pt-4">
-            <h5 className="font-medium text-sm mb-3">Nutrients:</h5>
+            <h5 className="font-medium text-sm mb-3">{t('forms.nutrients')}</h5>
             <div className="space-y-2">
               {[1, 2, 3].map((num) => (
                 <div key={num} className="flex items-center gap-2">
                   <span>{num})</span>
-                  <input type="text" className="flex-1 h-9 border border-slate-300 rounded px-3 text-sm" placeholder="nutrient name" />
-                  <input type="text" className="w-16 h-9 border border-slate-300 rounded px-3 text-sm" placeholder="ml" />
-                  <input type="text" className="w-16 h-9 border border-slate-300 rounded px-3 text-sm" placeholder="times" />
-                  <span>per day</span>
+                  <input type="text" className="flex-1 h-9 border border-slate-300 rounded px-3 text-sm" placeholder={t('forms.nutrientName')} />
+                  <input type="text" className="w-16 h-9 border border-slate-300 rounded px-3 text-sm" placeholder={t('forms.ml')} />
+                  <input type="text" className="w-16 h-9 border border-slate-300 rounded px-3 text-sm" placeholder={t('forms.times')} />
+                  <span>{t('forms.perDay')}</span>
                 </div>
               ))}
             </div>
@@ -890,11 +882,11 @@ const ArtificialNutritionForm: React.FC = () => {
           
           <div className="border-t pt-4 grid grid-cols-2 gap-4 text-sm">
             <div>
-              <label className="block">Signature:</label>
+              <label className="block">{t('forms.signature')}</label>
               <input type="text" className="w-full h-9 border border-slate-300 rounded mt-1 px-3 text-sm" />
             </div>
             <div>
-              <label className="block">Number of boxes checked:</label>
+              <label className="block">{t('forms.numberOfBoxesChecked')}</label>
               <input type="number" className="w-20 h-9 border border-slate-300 rounded mt-1 px-3 text-sm" />
             </div>
           </div>
@@ -904,7 +896,7 @@ const ArtificialNutritionForm: React.FC = () => {
       {/* Signature Section */}
       <div className="border-t-2 border-slate-300 pt-4 text-center">
         <div className="w-48 h-12 border-b-2 border-slate-400 mx-auto"></div>
-        <p className="text-sm font-medium mt-2">Sign</p>
+        <p className="text-sm font-medium mt-2">{t('forms.sign')}</p>
       </div>
     </div>
   );
@@ -912,32 +904,33 @@ const ArtificialNutritionForm: React.FC = () => {
 
 // Personal Hygiene Care Form Component
 const PersonalHygieneCareForm: React.FC = () => {
+  const { t } = useTranslation();
   return (
     <div className="max-w-5xl mx-auto space-y-6 bg-white">
       {/* Form Header */}
       <div className="text-center border-b-2 border-slate-300 pb-4">
-        <h1 className="text-lg font-bold text-slate-800">PRESCRIPTION FORM EXCLUSIVELY FOR NURSING CARE</h1>
-        <p className="text-sm text-slate-600 mt-2">This prescription form is intended exclusively for the prescription of nursing care.</p>
-        <p className="text-sm text-slate-600 mt-1">Cross out any items that do not apply.</p>
+        <h1 className="text-lg font-bold text-slate-800">{t('forms.personalHygieneFormTitle')}</h1>
+        <p className="text-sm text-slate-600 mt-2">{t('forms.personalHygieneDescription')}</p>
+        <p className="text-sm text-slate-600 mt-1">{t('forms.crossOutItems')}</p>
       </div>
       
       {/* Patient Information */}
       <div className="border border-slate-200 rounded-lg p-4">
         <div className="grid grid-cols-2 gap-4 text-sm">
           <div>
-            <label className="block">Patient's name:</label>
+            <label className="block">{t('forms.patientsNameLabel')}</label>
             <input type="text" className="w-full h-9 border border-slate-300 rounded mt-1 px-3 text-sm" />
           </div>
           <div>
-            <label className="block">Date of birth:</label>
+            <label className="block">{t('forms.dateOfBirth')}</label>
             <input type="date" className="w-40 h-9 border border-slate-300 rounded mt-1 px-3 text-sm" />
           </div>
           <div>
-            <label className="block">Prescriber identification:</label>
+            <label className="block">{t('forms.prescriberIdentificationLabel2')}</label>
             <input type="text" className="w-full h-9 border border-slate-300 rounded mt-1 px-3 text-sm" />
           </div>
           <div>
-            <label className="block">Date:</label>
+            <label className="block">{t('forms.date')}</label>
             <input type="date" className="w-40 h-9 border border-slate-300 rounded mt-1 px-3 text-sm" />
           </div>
         </div>
@@ -945,39 +938,39 @@ const PersonalHygieneCareForm: React.FC = () => {
       
       {/* Nursing Care Section */}
       <div className="border-2 border-slate-300 rounded-lg p-4">
-        <h3 className="font-bold text-sm mb-4">To be carried out by a private/home care nurse at the patient's home, every day, including Sundays and public holidays:</h3>
+        <h3 className="font-bold text-sm mb-4">{t('forms.toBeCarriedOutByNurse')}</h3>
         
         <div className="space-y-4">
           {/* Hygiene Care */}
           <div>
-            <h4 className="font-medium text-sm mb-2">Assistance with hygiene care:</h4>
+            <h4 className="font-medium text-sm mb-2">{t('forms.assistanceHygieneCare')}</h4>
             <div className="space-y-2 ml-4">
               <label className="flex items-center gap-2">
                 <input type="checkbox" className="w-4 h-4" />
-                <span className="text-sm">Assistance with hygiene care twice a day</span>
+                <span className="text-sm">{t('forms.assistanceHygieneTwice')}</span>
               </label>
               <label className="flex items-center gap-2">
                 <input type="checkbox" className="w-4 h-4" />
-                <span className="text-sm">Complete bed hygiene care twice a day</span>
+                <span className="text-sm">{t('forms.completeBedHygiene')}</span>
               </label>
             </div>
           </div>
           
           {/* Vital Signs Monitoring */}
           <div>
-            <h4 className="font-medium text-sm mb-2">Monitoring of vital signs:</h4>
+            <h4 className="font-medium text-sm mb-2">{t('forms.monitoringVitalSigns')}</h4>
             <div className="space-y-2 ml-4">
               <label className="flex items-center gap-2">
                 <input type="checkbox" className="w-4 h-4" />
-                <span className="text-sm">Blood pressure / Pulse</span>
+                <span className="text-sm">{t('forms.bloodPressurePulse')}</span>
               </label>
               <label className="flex items-center gap-2">
                 <input type="checkbox" className="w-4 h-4" />
-                <span className="text-sm">Temperature</span>
+                <span className="text-sm">{t('forms.temperature')}</span>
               </label>
               <label className="flex items-center gap-2">
                 <input type="checkbox" className="w-4 h-4" />
-                <span className="text-sm">Oxygen saturation</span>
+                <span className="text-sm">{t('forms.oxygenSaturation')}</span>
               </label>
             </div>
           </div>
@@ -986,46 +979,46 @@ const PersonalHygieneCareForm: React.FC = () => {
           <div>
             <label className="flex items-center gap-2">
               <input type="checkbox" className="w-4 h-4" />
-              <span className="text-sm font-medium">Weekly monitoring of body weight with maintenance of a weight chart</span>
+              <span className="text-sm font-medium">{t('forms.weeklyWeightMonitoring')}</span>
             </label>
           </div>
           
           {/* Treatment Administration */}
           <div>
-            <h4 className="font-medium text-sm mb-2">Preparation and administration of treatments</h4>
+            <h4 className="font-medium text-sm mb-2">{t('forms.preparationAdministrationTreatments')}</h4>
             <div className="space-y-2 ml-4">
               <label className="flex items-center gap-2">
                 <input type="checkbox" className="w-4 h-4" />
-                <span className="text-sm">Capillary blood glucose monitoring and insulin injection according to medical prescription</span>
-                <input type="number" className="w-16 h-9 border border-slate-300 rounded px-3 text-sm" placeholder="times" />
-                <span className="text-sm">times per day</span>
+                <span className="text-sm">{t('forms.capillaryBloodGlucose')}</span>
+                <input type="number" className="w-16 h-9 border border-slate-300 rounded px-3 text-sm" placeholder={t('forms.times')} />
+                <span className="text-sm">{t('forms.timesPerDay')}</span>
               </label>
             </div>
           </div>
           
           {/* Dressing Changes */}
           <div>
-            <h4 className="font-medium text-sm mb-2">Dressing changes</h4>
+            <h4 className="font-medium text-sm mb-2">{t('forms.dressingChanges')}</h4>
             <div className="space-y-2 ml-4">
               <div className="flex items-center gap-2">
-                <label className="block">Location:</label>
+                <label className="block">{t('forms.locationLabel')}</label>
                 <input type="text" className="flex-1 h-9 border border-slate-300 rounded px-3 text-sm" />
               </div>
               <div className="flex gap-4">
                 <label className="flex items-center gap-2">
                   <input type="checkbox" className="w-4 h-4" />
-                  <span className="text-sm">Simple</span>
+                  <span className="text-sm">{t('forms.simple')}</span>
                 </label>
                 <label className="flex items-center gap-2">
                   <input type="checkbox" className="w-4 h-4" />
-                  <span className="text-sm">Complex</span>
+                  <span className="text-sm">{t('forms.complex')}</span>
                 </label>
               </div>
               <div className="flex items-center gap-2">
-                <input type="number" className="w-16 h-9 border border-slate-300 rounded px-3 text-sm" placeholder="times" />
-                <span className="text-sm">times per day / every</span>
-                <input type="number" className="w-16 h-9 border border-slate-300 rounded px-3 text-sm" placeholder="days" />
-                <span className="text-sm">days</span>
+                <input type="number" className="w-16 h-9 border border-slate-300 rounded px-3 text-sm" placeholder={t('forms.times')} />
+                <span className="text-sm">{t('forms.timesPerDayEvery')}</span>
+                <input type="number" className="w-16 h-9 border border-slate-300 rounded px-3 text-sm" placeholder={t('forms.days')} />
+                <span className="text-sm">{t('forms.days')}</span>
               </div>
             </div>
           </div>
@@ -1034,9 +1027,9 @@ const PersonalHygieneCareForm: React.FC = () => {
           <div>
             <label className="flex items-center gap-2">
               <input type="checkbox" className="w-4 h-4" />
-              <span className="text-sm">Removal of sutures or staples in</span>
-              <input type="number" className="w-16 h-9 border border-slate-300 rounded px-3 text-sm" placeholder="days" />
-              <span className="text-sm">days</span>
+              <span className="text-sm">{t('forms.removalSutures')}</span>
+              <input type="number" className="w-16 h-9 border border-slate-300 rounded px-3 text-sm" placeholder={t('forms.days')} />
+              <span className="text-sm">{t('forms.days')}</span>
             </label>
           </div>
           
@@ -1045,17 +1038,17 @@ const PersonalHygieneCareForm: React.FC = () => {
             <div className="space-y-2 ml-4">
               <label className="flex items-center gap-2">
                 <input type="checkbox" className="w-4 h-4" />
-                <span className="text-sm">Urinary catheter care</span>
-                <input type="number" className="w-16 h-9 border border-slate-300 rounded px-3 text-sm" placeholder="times" />
-                <span className="text-sm">times per day</span>
+                <span className="text-sm">{t('forms.urinaryCatheterCare')}</span>
+                <input type="number" className="w-16 h-9 border border-slate-300 rounded px-3 text-sm" placeholder={t('forms.times')} />
+                <span className="text-sm">{t('forms.timesPerDay')}</span>
               </label>
               <div className="flex items-center gap-2">
-                <div className="text-sm">- Removal of the urinary catheter on:</div>
+                <div className="text-sm">{t('forms.removalUrinaryCatheter')}</div>
                 <input type="date" className="w-40 h-9 border border-slate-300 rounded px-3 text-sm" />
               </div>
               <label className="flex items-center gap-2">
                 <input type="checkbox" className="w-4 h-4" />
-                <span className="text-sm">Monitoring of urine output</span>
+                <span className="text-sm">{t('forms.monitoringOfUrineOutput')}</span>
               </label>
             </div>
           </div>
@@ -1065,31 +1058,31 @@ const PersonalHygieneCareForm: React.FC = () => {
       {/* Prescription Sections */}
       <div className="grid grid-cols-1 gap-4">
         <div className="border border-slate-200 rounded-lg p-4">
-          <h4 className="font-medium text-sm mb-2">Prescriptions not related to the recognized long-term condition (listed or unlisted) (INTERCURRENT ILLNESSES)</h4>
+          <h4 className="font-medium text-sm mb-2">{t('forms.prescriptionsNotRelated')}</h4>
           <textarea className="w-full h-24 border border-slate-300 rounded p-3 text-sm resize-none" />
         </div>
         
         <div className="border border-slate-200 rounded-lg p-4">
-          <h4 className="font-medium text-sm mb-2">Prescriptions related to the treatment of the recognized long-term condition (listed or unlisted) (EXEMPTING LONG-TERM CONDITION)</h4>
+          <h4 className="font-medium text-sm mb-2">{t('forms.prescriptionsRelatedTreatmentALD')}</h4>
           <textarea className="w-full h-24 border border-slate-300 rounded p-3 text-sm resize-none" />
         </div>
       </div>
       
       {/* Medical Certification */}
       <div className="border-2 border-slate-300 rounded-lg p-4">
-        <h3 className="font-bold text-sm mb-4">Medical certification</h3>
+        <h3 className="font-bold text-sm mb-4">{t('forms.medicalCertification')}</h3>
         <div className="space-y-3 text-sm">
-          <p>I, the undersigned Dr. 
+          <p>{t('forms.certifyNursingCare')}
             <input type="text" className="w-48 h-9 border border-slate-300 rounded mx-2 px-3 text-sm" />
-            , after examining Mr / Mrs / Ms 
+            {t('forms.afterExamining')}
             <input type="text" className="w-48 h-9 border border-slate-300 rounded mx-2 px-3 text-sm" />
-            , certify that his/her state of health requires nursing care at home.
+            {t('forms.certifyNursingCare2')}
           </p>
           
           <div className="flex items-center gap-2">
-            <label className="font-medium">Prescription for</label>
+            <label className="font-medium">{t('forms.prescriptionForDaysLabel')}</label>
             <input type="number" className="w-20 h-9 border border-slate-300 rounded px-3 text-sm" />
-            <span className="font-medium">days, renewable</span>
+            <span className="font-medium">{t('forms.daysRenewable')}</span>
           </div>
         </div>
       </div>
@@ -1097,7 +1090,7 @@ const PersonalHygieneCareForm: React.FC = () => {
       {/* Signature Section */}
       <div className="border-t-2 border-slate-300 pt-4 text-center">
         <div className="w-48 h-12 border-b-2 border-slate-400 mx-auto"></div>
-        <p className="text-sm font-medium mt-2">Sign</p>
+        <p className="text-sm font-medium mt-2">{t('forms.sign')}</p>
       </div>
     </div>
   );
@@ -1105,60 +1098,61 @@ const PersonalHygieneCareForm: React.FC = () => {
 
 // PCA (Pain Management) Form Component
 const PCAPainManagementForm: React.FC = () => {
+  const { t } = useTranslation();
   return (
     <div className="max-w-5xl mx-auto space-y-6 bg-white">
       {/* Form Header */}
       <div className="text-center border-b-2 border-slate-300 pb-4">
-        <h1 className="text-lg font-bold text-slate-800">PCA infusion prescription Forms</h1>
-        <p className="text-sm text-slate-600 mt-2">TICK THE APPROPRIATE BOXES ON THE FORM</p>
+        <h1 className="text-lg font-bold text-slate-800">{t('forms.pcaFormTitle')}</h1>
+        <p className="text-sm text-slate-600 mt-2">{t('forms.tickAppropriateBoxes')}</p>
       </div>
       
       {/* Prescription Type */}
       <div className="space-y-3">
         <div className="flex items-center gap-3">
-          <span className="text-sm font-medium">Prescription date:</span>
+          <span className="text-sm font-medium">{t('forms.prescriptionDate')}</span>
           <input type="date" className="w-40 h-9 border border-slate-300 rounded px-3 text-sm" />
         </div>
         <div className="flex gap-6">
           <label className="flex items-center gap-2">
             <input type="checkbox" className="w-4 h-4" />
-            <span className="text-sm">Start of home infusion therapy</span>
+            <span className="text-sm">{t('forms.startOfHomeInfusion')}</span>
           </label>
           <label className="flex items-center gap-2">
             <input type="checkbox" className="w-4 h-4" />
-            <span className="text-sm">Renewal or modification</span>
+            <span className="text-sm">{t('forms.renewalOrModification')}</span>
           </label>
         </div>
       </div>
       
       {/* Patient Section */}
       <div className="border border-slate-200 rounded-lg p-4">
-        <h3 className="font-bold text-sm mb-4">PATIENT</h3>
+        <h3 className="font-bold text-sm mb-4">{t('forms.patient')}</h3>
         <div className="grid grid-cols-2 gap-4 text-sm">
           <div>
-            <label className="block">Last name:</label>
+            <label className="block">{t('forms.lastName')}</label>
             <input type="text" className="w-full h-9 border border-slate-300 rounded mt-1 px-3 text-sm" />
           </div>
           <div>
-            <label className="block">First name:</label>
+            <label className="block">{t('forms.firstName')}</label>
             <input type="text" className="w-full h-9 border border-slate-300 rounded mt-1 px-3 text-sm" />
           </div>
           <div>
-            <label className="block">Date of birth:</label>
+            <label className="block">{t('forms.dateOfBirth')}</label>
             <input type="date" className="w-40 h-9 border border-slate-300 rounded mt-1 px-3 text-sm" />
           </div>
           <div>
-            <label className="block">Weight (kg):</label>
+            <label className="block">{t('forms.weight')}</label>
             <input type="number" className="w-24 h-9 border border-slate-300 rounded mt-1 px-3 text-sm" />
           </div>
           <div className="col-span-2">
-            <label className="block">Social Insurance number (NIR):</label>
+            <label className="block">{t('forms.socialInsuranceNumber')}</label>
             <input type="text" className="w-full h-9 border border-slate-300 rounded mt-1 px-3 text-sm" />
           </div>
           <div className="col-span-2">
             <label className="flex items-center gap-2">
               <input type="checkbox" className="w-4 h-4" />
-              <span>Care related to a long-term condition (ALD)</span>
+              <span>{t('forms.careRelatedALD')}</span>
             </label>
           </div>
         </div>
@@ -1166,42 +1160,42 @@ const PCAPainManagementForm: React.FC = () => {
       
       {/* Prescriber Section */}
       <div className="border border-slate-200 rounded-lg p-4">
-        <h3 className="font-bold text-sm mb-4">PRESCRIBER IDENTIFICATION</h3>
+        <h3 className="font-bold text-sm mb-4">{t('forms.prescriberIdentification')}</h3>
         <div className="grid grid-cols-2 gap-4 text-sm">
           <div>
-            <label className="block">Last name: (automatic by Login)</label>
+            <label className="block">{t('forms.lastNameAuto')}</label>
             <input type="text" className="w-full h-9 border border-slate-300 rounded mt-1 px-3 text-sm bg-slate-100" readOnly />
           </div>
           <div>
-            <label className="block">First name: (automatic by Login)</label>
+            <label className="block">{t('forms.firstNameAuto')}</label>
             <input type="text" className="w-full h-9 border border-slate-300 rounded mt-1 px-3 text-sm bg-slate-100" readOnly />
           </div>
           <div>
-            <label className="block">Phone: (automatic by Login)</label>
+            <label className="block">{t('forms.phoneAuto')}</label>
             <input type="tel" className="w-full h-9 border border-slate-300 rounded mt-1 px-3 text-sm bg-slate-100" readOnly />
           </div>
           <div>
-            <label className="block">RPPS ID: (automatic by Login)</label>
+            <label className="block">{t('forms.rppsIdAuto')}</label>
             <input type="text" className="w-full h-9 border border-slate-300 rounded mt-1 px-3 text-sm bg-slate-100" readOnly />
           </div>
         </div>
-        <p className="text-xs text-slate-500 mt-2">*Shared directory of healthcare professionals</p>
+        <p className="text-xs text-slate-500 mt-2">{t('forms.sharedDirectory')}</p>
       </div>
       
       {/* Practice/Facility Section */}
       <div className="border border-slate-200 rounded-lg p-4">
-        <h3 className="font-bold text-sm mb-4">PRESCRIBER'S PRACTICE / FACILITY</h3>
+        <h3 className="font-bold text-sm mb-4">{t('forms.prescriberPractice')}</h3>
         <div className="grid grid-cols-1 gap-4 text-sm">
           <div>
-            <label className="block">HOSPITAL name:</label>
+            <label className="block">{t('forms.hospitalName')}</label>
             <input type="text" className="w-full h-9 border border-slate-300 rounded mt-1 px-3 text-sm" />
           </div>
           <div>
-            <label className="block">Address:</label>
+            <label className="block">{t('forms.addressLabel')}</label>
             <textarea className="w-full h-20 border border-slate-300 rounded mt-1 px-3 text-sm resize-none" />
           </div>
           <div>
-            <label className="block">Geographic FINESS No.: (automatic by Login)</label>
+            <label className="block">{t('forms.geographicFiness')}</label>
             <input type="text" className="w-32 h-9 border border-slate-300 rounded mt-1 px-3 text-sm bg-slate-100" readOnly />
           </div>
         </div>
@@ -1209,17 +1203,17 @@ const PCAPainManagementForm: React.FC = () => {
       
       {/* Important Notice */}
       <div className="bg-red-50 border border-red-200 rounded-lg p-4">
-        <p className="text-sm font-bold text-red-800">**This form must be accompanied by a handwritten secure prescription.</p>
+        <p className="text-sm font-bold text-red-800">{t('forms.importantNotice')}</p>
       </div>
       
       {/* PCA Specific Section */}
       <div className="space-y-4">
-        <h3 className="font-bold text-sm">Forms for</h3>
+        <h3 className="font-bold text-sm">{t('forms.formsFor')}</h3>
         
         <div className="border-2 border-slate-300 rounded-lg p-4 space-y-4">
           <div className="grid grid-cols-2 gap-4 text-sm">
             <div>
-              <label className="block">Effective from:</label>
+              <label className="block">{t('forms.effectiveFrom')}</label>
               <div className="flex items-center gap-2 mt-1">
                 <input type="text" className="w-16 h-9 border border-slate-300 rounded px-3 text-sm" />
                 <span>/</span>
@@ -1229,105 +1223,99 @@ const PCAPainManagementForm: React.FC = () => {
               </div>
             </div>
             <div>
-              <label className="block">Prescription for ……… week(s), to be renewed ……… times</label>
+              <label className="block">{t('forms.prescriptionForWeeks')}</label>
               <div className="flex items-center gap-2 mt-1">
                 <input type="number" className="w-20 h-9 border border-slate-300 rounded px-3 text-sm" />
-                <span>week(s)</span>
+                <span>{t('forms.weeks')}</span>
                 <input type="number" className="w-20 h-9 border border-slate-300 rounded px-3 text-sm" />
-                <span>times</span>
+                <span>{t('forms.times')}</span>
               </div>
             </div>
           </div>
           
           <div className="text-sm">
-            <p className="font-medium mb-3">To be carried out at home by a home care nurse (RN), every day, including Sundays and public holidays, for PCA morphine administration.</p>
+            <p className="font-medium mb-3">{t('forms.pcaMorphineAdministration')}</p>
             
             <div className="space-y-2">
-              <h5 className="font-medium">Nursing care to be provided:</h5>
+              <h5 className="font-medium">{t('forms.nursingCareProvided')}</h5>
               <div className="ml-4 space-y-2">
-                <div>- Preparation and programming of a portable pump</div>
-                <div>- Filling and setting up the portable pump</div>
-                <div>- Connecting the infusion and starting the device</div>
-                <div>- Reservoir change (flexible bag)</div>
-                <div>- Stopping and removing the device</div>
-                <div>- Flush / "heparinization"</div>
-                <div>- Dressing change and replacement of the Huber needle once a week</div>
-                <div>- Organization of infusion monitoring, care planning, and, where applicable, coordination of 24-hour monitoring services, including Saturdays, Sundays, and public holidays</div>
+                <div>- {t('forms.preparationProgrammingPump')}</div>
+                <div>- {t('forms.fillingSettingUpPump')}</div>
+                <div>- {t('forms.connectingTheInfusion')}</div>
+                <div>- {t('forms.reservoirChange')}</div>
+                <div>- {t('forms.stoppingRemovingDevice')}</div>
+                <div>- {t('forms.flushHeparinization')}</div>
+                <div>- {t('forms.dressingChangeHuber')}</div>
+                <div>- {t('forms.organizationMonitoring')}</div>
               </div>
             </div>
           </div>
           
           <div className="border-t pt-4">
-            <h5 className="font-medium text-sm mb-3">Administration by continuous infusion PCA pump of:</h5>
+            <h5 className="font-medium text-sm mb-3">{t('forms.administrationContinuousInfusion')}</h5>
             <div className="space-y-3 text-sm">
               <div>
-                <label className="block">Morphine hydrochloride injectable, concentration of</label>
+                <label className="block">{t('forms.morphineHydrochloride')}</label>
                 <div className="flex items-center gap-2 mt-1">
                   <input type="number" className="w-24 h-9 border border-slate-300 rounded px-3 text-sm" />
-                  <span>mg/h</span>
+                  <span>{t('forms.mgPerHour')}</span>
                 </div>
               </div>
               
               <div className="flex items-center gap-2">
                 <input type="number" className="w-24 h-9 border border-slate-300 rounded px-3 text-sm" />
-                <span>mg of pure morphine, i.e.</span>
+                <span>{t('forms.mgPureMorphine')}</span>
                 <input type="number" className="w-24 h-9 border border-slate-300 rounded px-3 text-sm" />
-                <span>ml in a flexible bag with a maximum capacity of 50 ml</span>
+                <span>{t('forms.mlFlexibleBag')}</span>
               </div>
             </div>
           </div>
           
           <div className="border-t pt-4">
-            <h5 className="font-medium text-sm mb-3">Pump settings</h5>
+            <h5 className="font-medium text-sm mb-3">{t('forms.pumpSettings')}</h5>
             <div className="grid grid-cols-2 gap-4 text-sm">
               <div>
-                <label className="block">Basal rate:</label>
+                <label className="block">{t('forms.basalRate')}</label>
                 <div className="flex items-center gap-2 mt-1">
                   <input type="number" className="w-24 h-9 border border-slate-300 rounded px-3 text-sm" />
-                  <span>mg/h</span>
+                  <span>{t('forms.mgPerHour')}</span>
                 </div>
               </div>
               <div>
-                <label className="block">Bolus dose:</label>
+                <label className="block">{t('forms.bolusDose')}</label>
                 <div className="flex items-center gap-2 mt-1">
                   <input type="number" className="w-24 h-9 border border-slate-300 rounded px-3 text-sm" />
-                  <span>mg</span>
+                  <span>{t('forms.mg')}</span>
                 </div>
               </div>
               <div>
-                <label className="block">Lockout period:</label>
+                <label className="block">{t('forms.lockoutPeriod')}</label>
                 <div className="flex items-center gap-2 mt-1">
                   <input type="number" className="w-24 h-9 border border-slate-300 rounded px-3 text-sm" />
-                  <span>minutes</span>
+                  <span>{t('forms.minutes')}</span>
                 </div>
               </div>
               <div>
-                <label className="block">Maximum number of boluses per hour:</label>
+                <label className="block">{t('forms.maxBolusesPerHour')}</label>
                 <input type="number" className="w-24 h-9 border border-slate-300 rounded mt-1 px-3 text-sm" />
               </div>
             </div>
           </div>
           
           <div className="border-t pt-4 text-sm">
-            <p>To be renewed for connection 
+            <p>{t('forms.renewedForConnection')}
               <input type="number" className="w-20 h-9 border border-slate-300 rounded mx-2 px-3 text-sm" />
-              times per week for 28 days for administration by continuous infusion PCA pump of injectable morphine hydrochloride.
+              {t('forms.timesPerWeekFor28Days')}
             </p>
           </div>
           
-          <div className="border-t pt-4 grid grid-cols-2 gap-4 text-sm">
-            <div>
-              <label className="block">Signature:</label>
-              <input type="text" className="w-full h-9 border border-slate-300 rounded mt-1 px-3 text-sm" />
-            </div>
-          </div>
         </div>
       </div>
       
       {/* Signature Section */}
       <div className="border-t-2 border-slate-300 pt-4 text-center">
         <div className="w-48 h-12 border-b-2 border-slate-400 mx-auto"></div>
-        <p className="text-sm font-medium mt-2">Sign</p>
+        <p className="text-sm font-medium mt-2">{t('forms.sign')}</p>
       </div>
     </div>
   );
@@ -1335,41 +1323,42 @@ const PCAPainManagementForm: React.FC = () => {
 
 // Medical Oxygen Form Component
 const MedicalOxygenForm: React.FC = () => {
+  const { t } = useTranslation();
   return (
     <div className="max-w-5xl mx-auto space-y-6 bg-white">
       {/* Form Header */}
       <div className="text-center border-b-2 border-slate-300 pb-4">
-        <h1 className="text-lg font-bold text-slate-800">SHORT-TERM HOME OXYGEN THERAPY</h1>
+        <h1 className="text-lg font-bold text-slate-800">{t('forms.medicalOxygenFormTitle')}</h1>
       </div>
       
       {/* Patient Section */}
       <div className="border border-slate-200 rounded-lg p-4">
-        <h3 className="font-bold text-sm mb-4">PATIENT</h3>
+        <h3 className="font-bold text-sm mb-4">{t('forms.patient')}</h3>
         <div className="grid grid-cols-2 gap-4 text-sm">
           <div>
-            <label className="block">Last name:</label>
+            <label className="block">{t('forms.lastName')}</label>
             <input type="text" className="w-full h-9 border border-slate-300 rounded mt-1 px-3 text-sm" />
           </div>
           <div>
-            <label className="block">First name:</label>
+            <label className="block">{t('forms.firstName')}</label>
             <input type="text" className="w-full h-9 border border-slate-300 rounded mt-1 px-3 text-sm" />
           </div>
           <div>
-            <label className="block">Date of birth:</label>
+            <label className="block">{t('forms.dateOfBirth')}</label>
             <input type="date" className="w-40 h-9 border border-slate-300 rounded mt-1 px-3 text-sm" />
           </div>
           <div>
-            <label className="block">Weight (kg):</label>
+            <label className="block">{t('forms.weight')}</label>
             <input type="number" className="w-24 h-9 border border-slate-300 rounded mt-1 px-3 text-sm" />
           </div>
           <div className="col-span-2">
-            <label className="block">Social Insurance number (NIR):</label>
+            <label className="block">{t('forms.socialInsuranceNumber')}</label>
             <input type="text" className="w-full h-9 border border-slate-300 rounded mt-1 px-3 text-sm" />
           </div>
           <div className="col-span-2">
             <label className="flex items-center gap-2">
               <input type="checkbox" className="w-4 h-4" />
-              <span>Care related to a long-term condition (ALD)</span>
+              <span>{t('forms.careRelatedALD')}</span>
             </label>
           </div>
         </div>
@@ -1377,42 +1366,42 @@ const MedicalOxygenForm: React.FC = () => {
       
       {/* Prescriber Section */}
       <div className="border border-slate-200 rounded-lg p-4">
-        <h3 className="font-bold text-sm mb-4">PRESCRIBER IDENTIFICATION</h3>
+        <h3 className="font-bold text-sm mb-4">{t('forms.prescriberIdentification')}</h3>
         <div className="grid grid-cols-2 gap-4 text-sm">
           <div>
-            <label className="block">Last name: (automatic by Login)</label>
+            <label className="block">{t('forms.lastNameAuto')}</label>
             <input type="text" className="w-full h-9 border border-slate-300 rounded mt-1 px-3 text-sm bg-slate-100" readOnly />
           </div>
           <div>
-            <label className="block">First name: (automatic by Login)</label>
+            <label className="block">{t('forms.firstNameAuto')}</label>
             <input type="text" className="w-full h-9 border border-slate-300 rounded mt-1 px-3 text-sm bg-slate-100" readOnly />
           </div>
           <div>
-            <label className="block">Phone: (automatic by Login)</label>
+            <label className="block">{t('forms.phoneAuto')}</label>
             <input type="tel" className="w-full h-9 border border-slate-300 rounded mt-1 px-3 text-sm bg-slate-100" readOnly />
           </div>
           <div>
-            <label className="block">RPPS ID: (automatic by Login)</label>
+            <label className="block">{t('forms.rppsIdAuto')}</label>
             <input type="text" className="w-full h-9 border border-slate-300 rounded mt-1 px-3 text-sm bg-slate-100" readOnly />
           </div>
         </div>
-        <p className="text-xs text-slate-500 mt-2">*Shared directory of healthcare professionals</p>
+        <p className="text-xs text-slate-500 mt-2">{t('forms.sharedDirectory')}</p>
       </div>
       
       {/* Practice/Facility Section */}
       <div className="border border-slate-200 rounded-lg p-4">
-        <h3 className="font-bold text-sm mb-4">PRESCRIBER'S PRACTICE / FACILITY</h3>
+        <h3 className="font-bold text-sm mb-4">{t('forms.prescriberPractice')}</h3>
         <div className="grid grid-cols-1 gap-4 text-sm">
           <div>
-            <label className="block">HOSPITAL name:</label>
+            <label className="block">{t('forms.hospitalName')}</label>
             <input type="text" className="w-full h-9 border border-slate-300 rounded mt-1 px-3 text-sm" />
           </div>
           <div>
-            <label className="block">Address:</label>
+            <label className="block">{t('forms.addressLabel')}</label>
             <textarea className="w-full h-20 border border-slate-300 rounded mt-1 px-3 text-sm resize-none" />
           </div>
           <div>
-            <label className="block">Geographic FINESS No.: (automatic by Login)</label>
+            <label className="block">{t('forms.geographicFiness')}</label>
             <input type="text" className="w-32 h-9 border border-slate-300 rounded mt-1 px-3 text-sm bg-slate-100" readOnly />
           </div>
         </div>
@@ -1420,145 +1409,145 @@ const MedicalOxygenForm: React.FC = () => {
       
       {/* Prescription Section */}
       <div className="space-y-4">
-        <h3 className="font-bold text-sm">Prescription</h3>
+        <h3 className="font-bold text-sm">{t('forms.prescription')}</h3>
         
         <div className="border-2 border-slate-300 rounded-lg p-4 space-y-4">
           <div className="text-sm">
-            <label className="block">Type of primary oxygen (O₂) source:</label>
+            <label className="block">{t('forms.typeOfOxygenSource')}</label>
             <div className="flex items-center gap-4 mt-2">
               <label className="flex items-center gap-2">
                 <input type="checkbox" className="w-4 h-4" />
-                <span>stationary concentrator</span>
+                <span>{t('forms.stationaryConcentrator')}</span>
               </label>
               <label className="flex items-center gap-2">
                 <input type="checkbox" className="w-4 h-4" />
-                <span>compressed oxygen cylinder with pressure regulator and appropriate flowmeter*</span>
+                <span>{t('forms.compressedOxygenCylinder')}</span>
               </label>
             </div>
           </div>
           
           <div className="text-sm">
-            <label className="block">Ambulatory cylinder:</label>
+            <label className="block">{t('forms.ambulatoryCylinder')}</label>
             <div className="flex items-center gap-4 mt-2">
               <label className="flex items-center gap-2">
                 <input type="checkbox" className="w-4 h-4" />
-                <span>YES*</span>
+                <span>{t('forms.yes')}</span>
               </label>
               <label className="flex items-center gap-2">
                 <input type="checkbox" className="w-4 h-4" />
-                <span>NO*</span>
+                <span>{t('forms.no')}</span>
               </label>
             </div>
           </div>
           
           <div className="text-sm">
-            <label className="block">Oxygen delivery method:</label>
+            <label className="block">{t('forms.oxygenDeliveryMethod')}</label>
             <div className="flex items-center gap-4 mt-2">
               <label className="flex items-center gap-2">
                 <input type="checkbox" className="w-4 h-4" />
-                <span>Oxygen nasal cannula*</span>
+                <span>{t('forms.oxygenNasalCannula')}</span>
               </label>
               <label className="flex items-center gap-2">
                 <input type="checkbox" className="w-4 h-4" />
-                <span>Oxygen mask*</span>
+                <span>{t('forms.oxygenMask')}</span>
               </label>
             </div>
           </div>
           
           <div className="grid grid-cols-2 gap-4 text-sm">
             <div>
-              <label className="block">Duration:</label>
+              <label className="block">{t('forms.durationLabel')}</label>
               <div className="flex items-center gap-2 mt-1">
                 <input type="number" className="w-20 h-9 border border-slate-300 rounded px-3 text-sm" />
-                <span>hours / day / Month</span>
+                <span>{t('forms.hoursDayMonth')}</span>
               </div>
             </div>
             <div>
-              <label className="block">Flow rate:</label>
+              <label className="block">{t('forms.flowRate')}</label>
               <div className="flex items-center gap-2 mt-1">
                 <input type="number" className="w-20 h-9 border border-slate-300 rounded px-3 text-sm" />
-                <span>L/min at rest and</span>
+                <span>{t('forms.lMinAtRest')}</span>
                 <input type="number" className="w-20 h-9 border border-slate-300 rounded px-3 text-sm" />
-                <span>L/min during exertion</span>
+                <span>{t('forms.lMinDuringExertion')}</span>
               </div>
             </div>
           </div>
           
           <div className="text-sm">
-            <label className="block">Humidifier compliant with NF EN ISO 8185 standard:</label>
+            <label className="block">{t('forms.humidifierCompliant')}</label>
             <div className="flex items-center gap-4 mt-2">
               <label className="flex items-center gap-2">
                 <input type="checkbox" className="w-4 h-4" />
-                <span>YES*</span>
+                <span>{t('forms.yes')}</span>
               </label>
               <label className="flex items-center gap-2">
                 <input type="checkbox" className="w-4 h-4" />
-                <span>NO*</span>
+                <span>{t('forms.no')}</span>
               </label>
             </div>
           </div>
           
           <div className="space-y-2 text-sm">
-            <div>- Backup source: compressed oxygen cylinder with pressure regulator and appropriate flowmeter</div>
-            <div>- Mobility source: 1 small compressed oxygen cylinder with pressure regulator and appropriate flowmeter</div>
-            <div>- Provision of a pulse oximeter</div>
-            <div>- Non-kinking star-lumen oxygen tubing if possible</div>
+            <div>{t('forms.backupSource')}</div>
+            <div>{t('forms.mobilitySource')}</div>
+            <div>{t('forms.provisionPulseOximeter')}</div>
+            <div>{t('forms.nonKinkingTubing')}</div>
           </div>
           
           <div className="text-sm">
-            <label className="block">Adjust oxygen to obtain an SpO₂ ≥</label>
+            <label className="block">{t('forms.adjustOxygenSpO2')}</label>
             <div className="flex items-center gap-2 mt-1">
               <input type="number" className="w-20 h-9 border border-slate-300 rounded px-3 text-sm" />
-              <span>%</span>
+              <span>{t('forms.percent')}</span>
             </div>
           </div>
           
           <div className="text-sm">
-            <label className="block">Prescriber's phone number to call if contact is necessary:</label>
+            <label className="block">{t('forms.prescriberPhoneNumber')}</label>
             <input type="tel" className="w-full h-9 border border-slate-300 rounded mt-1 px-3 text-sm" />
           </div>
           
           <div className="text-xs text-slate-500 italic">
-            * Cross out any items that do not apply
+            * {t('forms.crossOutItems')}
           </div>
         </div>
       </div>
       
       {/* Patient Instructions */}
       <div className="space-y-4">
-        <h3 className="font-bold text-sm">PATIENT INSTRUCTIONS</h3>
+        <h3 className="font-bold text-sm">{t('forms.patientInstructions')}</h3>
         
         <div className="border-2 border-slate-300 rounded-lg p-4 space-y-4">
           <div className="text-sm">
-            <p className="font-medium mb-3">It is essential to follow the instructions carefully.</p>
-            <p className="mb-3">Use your oxygen daily for at least the duration indicated on your prescription.</p>
-            <p className="mb-3">If oxygen comes into contact with a flame or combustible material, there is a risk of explosion, fire, and/or serious burns.</p>
+            <p className="font-medium mb-3">{t('forms.followInstructionsCarefully')}</p>
+            <p className="mb-3">{t('forms.useOxygenDaily')}</p>
+            <p className="mb-3">{t('forms.oxygenExplosionWarning')}</p>
           </div>
           
           <div className="space-y-2 text-sm">
             <div className="flex items-center gap-2">
-              <span className="font-bold text-red-600">NEVER</span>
-              <span>smoke or vape while using oxygen.</span>
+              <span className="font-bold text-red-600">{t('forms.never')}</span>
+              <span>{t('forms.neverSmokeVape')}</span>
             </div>
             <div className="flex items-center gap-2">
-              <span className="font-bold text-red-600">NEVER</span>
-              <span>smoke in the room where your oxygen is installed.</span>
+              <span className="font-bold text-red-600">{t('forms.never')}</span>
+              <span>{t('forms.neverSmokeRoom')}</span>
             </div>
             <div className="flex items-center gap-2">
-              <span className="font-bold text-red-600">NEVER</span>
-              <span>cook while using oxygen.</span>
+              <span className="font-bold text-red-600">{t('forms.never')}</span>
+              <span>{t('forms.neverCook')}</span>
             </div>
             <div className="flex items-center gap-2">
-              <span className="font-bold text-red-600">NEVER</span>
-              <span>use aerosol sprays or flammable solvents near oxygen (alcohol, gasoline, etc.).</span>
+              <span className="font-bold text-red-600">{t('forms.never')}</span>
+              <span>{t('forms.neverAerosol')}</span>
             </div>
             <div className="flex items-center gap-2">
-              <span className="font-bold text-red-600">NEVER</span>
-              <span>apply greasy ointment to the face and never handle the equipment with greasy hands.</span>
+              <span className="font-bold text-red-600">{t('forms.never')}</span>
+              <span>{t('forms.neverGreasyOintment')}</span>
             </div>
             <div className="flex items-center gap-2">
-              <span className="font-bold text-red-600">NEVER</span>
-              <span>keep the equipment near heat sources.</span>
+              <span className="font-bold text-red-600">{t('forms.never')}</span>
+              <span>{t('forms.neverHeatSources')}</span>
             </div>
           </div>
         </div>
@@ -1569,16 +1558,16 @@ const MedicalOxygenForm: React.FC = () => {
         <div className="text-sm">
           <label className="flex items-center gap-2">
             <input type="checkbox" className="w-4 h-4" />
-            <span>HOME OXYGEN THERAPY AS PART OF PALLIATIVE CARE yes or no (box)</span>
+            <span>{t('forms.homeOxygenPalliativeCare')}</span>
           </label>
-          <p className="text-xs text-slate-500 italic mt-1">Cross out any items that do not apply</p>
+          <p className="text-xs text-slate-500 italic mt-1">{t('forms.crossOutItems')}</p>
         </div>
       </div>
       
       {/* Signature Section */}
       <div className="border-t-2 border-slate-300 pt-4 text-center">
         <div className="w-48 h-12 border-b-2 border-slate-400 mx-auto"></div>
-        <p className="text-sm font-medium mt-2">Sign</p>
+        <p className="text-sm font-medium mt-2">{t('forms.sign')}</p>
       </div>
     </div>
   );
@@ -1586,6 +1575,7 @@ const MedicalOxygenForm: React.FC = () => {
 
 // Infusion Form Component (for both Antibiotherapy and Hydration)
 const InfusionForm: React.FC<{ serviceName: string }> = ({ serviceName }) => {
+  const { t } = useTranslation();
   const [infusionProducts, setInfusionProducts] = useState([1]);
   
   const addInfusionProduct = () => {
@@ -1596,15 +1586,15 @@ const InfusionForm: React.FC<{ serviceName: string }> = ({ serviceName }) => {
   
   const getFormTitle = () => {
     if (serviceName === 'Hydration Infusion') {
-      return 'HYDRATION INFUSION PRESCRIPTION FORM';
+      return t('forms.hydrationInfusionTitle');
     } else if (serviceName === 'Parenteral Nutrition (Central Line)') {
-      return 'PARENTERAL NUTRITION (CENTRAL LINE) PRESCRIPTION FORM';
+      return t('forms.parenteralNutritionTitle');
     } else if (serviceName === 'IV Therapy') {
-      return 'IV THERAPY PRESCRIPTION FORM';
+      return t('forms.ivTherapyTitle');
     } else if (serviceName === 'Pregnancy Related Care') {
-      return 'PREGNANCY-RELATED CARE PRESCRIPTION FORM';
+      return t('forms.pregnancyRelatedCareTitle');
     }
-    return 'ANTIBIOTHERAPY INFUSION PRESCRIPTION FORM';
+    return t('forms.antibiotherapyInfusionTitle');
   };
   
   return (
@@ -1612,55 +1602,55 @@ const InfusionForm: React.FC<{ serviceName: string }> = ({ serviceName }) => {
       {/* Form Header */}
       <div className="text-center border-b-2 border-slate-300 pb-4">
         <h1 className="text-lg font-bold text-slate-800">{getFormTitle()}</h1>
-        <p className="text-sm text-slate-600 mt-2">TICK THE APPROPRIATE BOXES ON THE FORM</p>
+        <p className="text-sm text-slate-600 mt-2">{t('forms.tickAppropriateBoxes')}</p>
       </div>
       
       {/* Prescription Type */}
       <div className="space-y-3">
         <div className="flex items-center gap-3">
-          <span className="text-sm font-medium">Prescription date:</span>
+          <span className="text-sm font-medium">{t('forms.prescriptionDate')}</span>
           <input type="date" className="w-40 h-9 border border-slate-300 rounded px-3 text-sm" />
         </div>
         <div className="flex gap-6">
           <label className="flex items-center gap-2">
             <input type="checkbox" className="w-4 h-4" />
-            <span className="text-sm">Start of home infusion therapy</span>
+            <span className="text-sm">{t('forms.startOfHomeInfusion')}</span>
           </label>
           <label className="flex items-center gap-2">
             <input type="checkbox" className="w-4 h-4" />
-            <span className="text-sm">Renewal or modification</span>
+            <span className="text-sm">{t('forms.renewalOrModification')}</span>
           </label>
         </div>
       </div>
       
       {/* Patient Section */}
       <div className="border border-slate-200 rounded-lg p-4">
-        <h3 className="font-bold text-sm mb-4">PATIENT</h3>
+        <h3 className="font-bold text-sm mb-4">{t('forms.patient')}</h3>
         <div className="grid grid-cols-2 gap-4 text-sm">
           <div>
-            <label className="block">Last name:</label>
+            <label className="block">{t('forms.lastName')}</label>
             <input type="text" className="w-full h-9 border border-slate-300 rounded mt-1 px-3 text-sm" />
           </div>
           <div>
-            <label className="block">First name:</label>
+            <label className="block">{t('forms.firstName')}</label>
             <input type="text" className="w-full h-9 border border-slate-300 rounded mt-1 px-3 text-sm" />
           </div>
           <div>
-            <label className="block">Date of birth:</label>
+            <label className="block">{t('forms.dateOfBirth')}</label>
             <input type="date" className="w-40 h-9 border border-slate-300 rounded mt-1 px-3 text-sm" />
           </div>
           <div>
-            <label className="block">Weight (kg):</label>
+            <label className="block">{t('forms.weight')}</label>
             <input type="number" className="w-24 h-9 border border-slate-300 rounded mt-1 px-3 text-sm" />
           </div>
           <div className="col-span-2">
-            <label className="block">Social Insurance number (NIR):</label>
+            <label className="block">{t('forms.socialInsuranceNumber')}</label>
             <input type="text" className="w-full h-9 border border-slate-300 rounded mt-1 px-3 text-sm" />
           </div>
           <div className="col-span-2">
             <label className="flex items-center gap-2">
               <input type="checkbox" className="w-4 h-4" />
-              <span>Care related to a long-term condition (ALD)</span>
+              <span>{t('forms.careRelatedALD')}</span>
             </label>
           </div>
         </div>
@@ -1668,42 +1658,42 @@ const InfusionForm: React.FC<{ serviceName: string }> = ({ serviceName }) => {
       
       {/* Prescriber Section */}
       <div className="border border-slate-200 rounded-lg p-4">
-        <h3 className="font-bold text-sm mb-4">PRESCRIBER IDENTIFICATION</h3>
+        <h3 className="font-bold text-sm mb-4">{t('forms.prescriberIdentification')}</h3>
         <div className="grid grid-cols-2 gap-4 text-sm">
           <div>
-            <label className="block">Last name: (automatic by Login)</label>
+            <label className="block">{t('forms.lastNameAuto')}</label>
             <input type="text" className="w-full h-9 border border-slate-300 rounded mt-1 px-3 text-sm bg-slate-100" readOnly />
           </div>
           <div>
-            <label className="block">First name: (automatic by Login)</label>
+            <label className="block">{t('forms.firstNameAuto')}</label>
             <input type="text" className="w-full h-9 border border-slate-300 rounded mt-1 px-3 text-sm bg-slate-100" readOnly />
           </div>
           <div>
-            <label className="block">Phone: (automatic by Login)</label>
+            <label className="block">{t('forms.phoneAuto')}</label>
             <input type="tel" className="w-full h-9 border border-slate-300 rounded mt-1 px-3 text-sm bg-slate-100" readOnly />
           </div>
           <div>
-            <label className="block">RPPS ID: (automatic by Login)</label>
+            <label className="block">{t('forms.rppsIdAuto')}</label>
             <input type="text" className="w-full h-9 border border-slate-300 rounded mt-1 px-3 text-sm bg-slate-100" readOnly />
           </div>
         </div>
-        <p className="text-xs text-slate-500 mt-2">*Shared directory of healthcare professionals</p>
+        <p className="text-xs text-slate-500 mt-2">{t('forms.sharedDirectory')}</p>
       </div>
       
       {/* Practice/Facility Section */}
       <div className="border border-slate-200 rounded-lg p-4">
-        <h3 className="font-bold text-sm mb-4">PRESCRIBER'S PRACTICE / FACILITY</h3>
+        <h3 className="font-bold text-sm mb-4">{t('forms.prescriberPractice')}</h3>
         <div className="grid grid-cols-1 gap-4 text-sm">
           <div>
-            <label className="block">HOSPITAL name:</label>
+            <label className="block">{t('forms.hospitalName')}</label>
             <input type="text" className="w-full h-9 border border-slate-300 rounded mt-1 px-3 text-sm" />
           </div>
           <div>
-            <label className="block">Address:</label>
+            <label className="block">{t('forms.addressLabel')}</label>
             <textarea className="w-full h-20 border border-slate-300 rounded mt-1 px-3 text-sm resize-none" />
           </div>
           <div>
-            <label className="block">Geographic FINESS No.: (automatic by Login)</label>
+            <label className="block">{t('forms.geographicFiness')}</label>
             <input type="text" className="w-32 h-9 border border-slate-300 rounded mt-1 px-3 text-sm bg-slate-100" readOnly />
           </div>
         </div>
@@ -1711,52 +1701,52 @@ const InfusionForm: React.FC<{ serviceName: string }> = ({ serviceName }) => {
       
       {/* Infusion Products */}
       <div className="space-y-4">
-        <h3 className="font-bold text-sm">Forms for</h3>
+        <h3 className="font-bold text-sm">{t('forms.formsFor')}</h3>
         
         {infusionProducts.map((productNum) => (
           <div key={productNum} className="border-2 border-slate-300 rounded-lg p-4">
-            <h4 className="font-bold text-sm mb-4">INFUSION PRODUCT No. {productNum}</h4>
+            <h4 className="font-bold text-sm mb-4">{t('forms.infusionProduct', { num: productNum })}</h4>
             
             <div className="grid grid-cols-2 gap-4 text-sm space-y-3">
               <div>
-                <label className="block">Product name:</label>
+                <label className="block">{t('forms.productName')}</label>
                 <input type="text" className="w-full h-9 border border-slate-300 rounded mt-1 px-3 text-sm" />
               </div>
               <div>
-                <label className="block">Strength (concentration):</label>
+                <label className="block">{t('forms.strength')}</label>
                 <input type="text" className="w-full h-9 border border-slate-300 rounded mt-1 px-3 text-sm" />
               </div>
               <div>
-                <label className="block">Diluent:</label>
+                <label className="block">{t('forms.diluent')}</label>
                 <div className="flex items-center gap-2 mt-1">
                   <input type="text" className="w-20 h-9 border border-slate-300 rounded px-3 text-sm" />
                   <span>/</span>
                   <input type="text" className="w-20 h-9 border border-slate-300 rounded px-3 text-sm" />
-                  <span>ml</span>
+                  <span>{t('forms.ml')}</span>
                   <label className="flex items-center gap-1">
                     <input type="checkbox" className="w-4 h-4" />
-                    <span>Without Diluent</span>
+                    <span>{t('forms.withoutDiluent')}</span>
                   </label>
                 </div>
               </div>
               <div>
-                <label className="block">Duration of one infusion administration:</label>
+                <label className="block">{t('forms.durationOfInfusion')}</label>
                 <div className="flex items-center gap-2 mt-1">
                   <span>(x)</span>
                   <input type="number" className="w-16 h-9 border border-slate-300 rounded px-3 text-sm" />
-                  <span>hour(s) and</span>
+                  <span>{t('forms.hoursAnd')}</span>
                   <input type="number" className="w-16 h-9 border border-slate-300 rounded px-3 text-sm" />
-                  <span>minutes</span>
+                  <span>{t('forms.minutes')}</span>
                 </div>
               </div>
               <div>
-                <label className="block">Frequency of infusion(s):</label>
+                <label className="block">{t('forms.frequencyOfInfusion')}</label>
                 <div className="flex items-center gap-2 mt-1">
                   <input type="number" className="w-16 h-9 border border-slate-300 rounded px-3 text-sm" />
-                  <span>per</span>
+                  <span>{t('forms.per')}</span>
                   <label className="flex items-center gap-1">
                     <input type="checkbox" className="w-4 h-4" />
-                    <span>day (a)</span>
+                    <span>{t('forms.dayA')}</span>
                   </label>
                 </div>
               </div>
@@ -1764,37 +1754,37 @@ const InfusionForm: React.FC<{ serviceName: string }> = ({ serviceName }) => {
             
             {/* Route of Access */}
             <div className="mt-4">
-              <h5 className="font-bold text-sm mb-2">Route of access</h5>
+              <h5 className="font-bold text-sm mb-2">{t('forms.routeOfAccess')}</h5>
               <div className="grid grid-cols-2 gap-2 text-sm">
                 <div>
-                  <p className="font-medium">Central venous (CV):</p>
+                  <p className="font-medium">{t('forms.centralVenous')}</p>
                   <div className="space-y-1 ml-4">
                     <label className="flex items-center gap-2">
                       <input type="checkbox" className="w-4 h-4" />
-                      <span>implanted port</span>
+                      <span>{t('forms.implantedPort')}</span>
                     </label>
                     <label className="flex items-center gap-2">
                       <input type="checkbox" className="w-4 h-4" />
-                      <span>central catheter</span>
+                      <span>{t('forms.centralCatheter')}</span>
                     </label>
                     <label className="flex items-center gap-2">
                       <input type="checkbox" className="w-4 h-4" />
-                      <span>peripherally inserted central catheter (PICC)</span>
+                      <span>{t('forms.picc')}</span>
                     </label>
                   </div>
                 </div>
                 <div className="space-y-1">
                   <label className="flex items-center gap-2">
                     <input type="checkbox" className="w-4 h-4" />
-                    <span>Perineural</span>
+                    <span>{t('forms.perineural')}</span>
                   </label>
                   <label className="flex items-center gap-2">
                     <input type="checkbox" className="w-4 h-4" />
-                    <span>Peripheral venous</span>
+                    <span>{t('forms.peripheralVenous')}</span>
                   </label>
                   <label className="flex items-center gap-2">
                     <input type="checkbox" className="w-4 h-4" />
-                    <span>Subcutaneous</span>
+                    <span>{t('forms.subcutaneous')}</span>
                   </label>
                 </div>
               </div>
@@ -1802,19 +1792,19 @@ const InfusionForm: React.FC<{ serviceName: string }> = ({ serviceName }) => {
             
             {/* Mode of Administration */}
             <div className="mt-4">
-              <h5 className="font-bold text-sm mb-2">Mode of administration</h5>
+              <h5 className="font-bold text-sm mb-2">{t('forms.modeOfAdministration')}</h5>
               <div className="flex gap-4 text-sm">
                 <label className="flex items-center gap-2">
                   <input type="checkbox" className="w-4 h-4" />
-                  <span>Gravity</span>
+                  <span>{t('forms.gravity')}</span>
                 </label>
                 <label className="flex items-center gap-2">
                   <input type="checkbox" className="w-4 h-4" />
-                  <span>Elastomeric diffuser</span>
+                  <span>{t('forms.elastomericDiffuser')}</span>
                 </label>
                 <label className="flex items-center gap-2">
                   <input type="checkbox" className="w-4 h-4" />
-                  <span>Electric infusion pump</span>
+                  <span>{t('forms.electricInfusionPump')}</span>
                 </label>
               </div>
             </div>
@@ -1822,46 +1812,46 @@ const InfusionForm: React.FC<{ serviceName: string }> = ({ serviceName }) => {
             {/* Additional Questions */}
             <div className="mt-4 space-y-2 text-sm">
               <div>
-                <label className="block">The patient must remain ambulatory during treatment?:</label>
+                <label className="block">{t('forms.ambulatoryDuringTreatment')}</label>
                 <div className="flex gap-4 mt-1">
                   <label className="flex items-center gap-2">
                     <input type="radio" name={`ambulatory${productNum}`} className="w-4 h-4" />
-                    <span>yes</span>
+                    <span>{t('forms.yesSmall')}</span>
                   </label>
                   <label className="flex items-center gap-2">
                     <input type="radio" name={`ambulatory${productNum}`} className="w-4 h-4" />
-                    <span>no</span>
+                    <span>{t('forms.noSmall')}</span>
                   </label>
                 </div>
               </div>
               
               <label className="flex items-center gap-2">
                 <input type="checkbox" className="w-4 h-4" />
-                <span>If filled/prepared under the supervision of a healthcare facility, tick this box</span>
+                <span>{t('forms.supervisionBox')}</span>
               </label>
             </div>
             
             {/* Treatment Schedule */}
             <div className="mt-4 grid grid-cols-2 gap-4 text-sm">
               <div>
-                <label className="block">Start date of treatment cycle: (date «y»)</label>
+                <label className="block">{t('forms.startDateCycle')}</label>
                 <input type="date" className="w-40 h-9 border border-slate-300 rounded mt-1 px-3 text-sm" />
               </div>
               <div>
-                <label className="block">End date of treatment cycle: (date «p»)</label>
+                <label className="block">{t('forms.endDateCycle')}</label>
                 <input type="date" className="w-40 h-9 border border-slate-300 rounded mt-1 px-3 text-sm" />
               </div>
               <div>
-                <label className="block">or Treatment duration: (quantity «n»)</label>
+                <label className="block">{t('forms.treatmentDurationDays')}</label>
                 <div className="flex items-center gap-2 mt-1">
                   <input type="number" className="w-16 h-9 border border-slate-300 rounded px-3 text-sm" />
-                  <span>days</span>
+                  <span>{t('forms.days')}</span>
                 </div>
               </div>
               <div>
-                <label className="block">Total number of infusions (TNI): (Automatic)</label>
+                <label className="block">{t('forms.totalInfusions')}</label>
                 <div className="text-xs text-slate-600 mt-1">
-                  = (y-p)= «M» days. TNI= (M) x (a) or TNI =(n) x (a)
+                  {t('forms.formulaTNI')}
                 </div>
                 <input type="text" className="w-16 h-9 border border-slate-300 rounded mt-1 px-3 text-sm bg-slate-100" readOnly />
               </div>
@@ -1870,7 +1860,7 @@ const InfusionForm: React.FC<{ serviceName: string }> = ({ serviceName }) => {
             <div className="mt-2">
               <label className="flex items-center gap-2">
                 <input type="checkbox" className="w-4 h-4" />
-                <span>If this treatment must be infused ALONE, tick this box</span>
+                <span>{t('forms.infusedAlone')}</span>
               </label>
             </div>
           </div>
@@ -1882,7 +1872,7 @@ const InfusionForm: React.FC<{ serviceName: string }> = ({ serviceName }) => {
             className="flex items-center gap-2 text-sm text-blue-600 hover:text-blue-800"
           >
             <i className="fa-solid fa-plus-circle"></i>
-            <span>ADD a infusion Product</span>
+            <span>{t('forms.addInfusionProduct')}</span>
           </button>
         )}
       </div>
@@ -1890,7 +1880,7 @@ const InfusionForm: React.FC<{ serviceName: string }> = ({ serviceName }) => {
       {/* Signature Section */}
       <div className="border-t-2 border-slate-300 pt-4 text-center">
         <div className="w-48 h-12 border-b-2 border-slate-400 mx-auto"></div>
-        <p className="text-sm font-medium mt-2">Sign</p>
+        <p className="text-sm font-medium mt-2">{t('forms.sign')}</p>
       </div>
     </div>
   );
@@ -1925,7 +1915,7 @@ export const FormStructureViewer: React.FC<FormStructureViewerProps> = ({
               <i className="fa-solid fa-file-signature text-lg"></i>
             </div>
             <div>
-              <h2 className="text-base font-bold text-slate-800">No Form Assigned</h2>
+              <h2 className="text-base font-bold text-slate-800">{t('forms.noFormAssignedTitle')}</h2>
               <p className="text-[11px] text-slate-500">{t('forms.structuredFieldPreview')}</p>
             </div>
           </div>
@@ -1942,8 +1932,8 @@ export const FormStructureViewer: React.FC<FormStructureViewerProps> = ({
         <div className="flex-1 flex items-center justify-center text-slate-400">
           <div className="text-center">
             <i className="fa-solid fa-file-circle-question text-4xl mb-4"></i>
-            <p className="text-sm font-medium">No form mapped for this service</p>
-            <p className="text-xs text-slate-500 mt-2">This service cannot be used until a form is assigned</p>
+            <p className="text-sm font-medium">{t('forms.noFormMappedMessage')}</p>
+            <p className="text-xs text-slate-500 mt-2">{t('forms.serviceCannotBeUsed')}</p>
           </div>
         </div>
       </section>
@@ -1959,7 +1949,7 @@ export const FormStructureViewer: React.FC<FormStructureViewerProps> = ({
           </div>
           <div>
             <h2 className="text-base font-bold text-slate-800">
-              {selectedService.formName || 'No Form Assigned'}
+              {selectedService.formName || t('forms.noFormAssignedTitle')}
             </h2>
             <p className="text-[11px] text-slate-500">{t('forms.structuredFieldPreview')}</p>
           </div>
@@ -1981,7 +1971,7 @@ export const FormStructureViewer: React.FC<FormStructureViewerProps> = ({
             {/* Read-only banner */}
             <div className="bg-amber-50 border border-amber-200 rounded-lg p-3 flex items-center gap-3 mb-6">
               <i className="fa-solid fa-lock text-amber-600"></i>
-              <p className="text-sm font-medium text-amber-800">This is read-only preview</p>
+              <p className="text-sm font-medium text-amber-800">{t('forms.readOnlyPreview')}</p>
             </div>
             <GenericForm />
           </div>
@@ -1990,7 +1980,7 @@ export const FormStructureViewer: React.FC<FormStructureViewerProps> = ({
             {/* Read-only banner */}
             <div className="bg-amber-50 border border-amber-200 rounded-lg p-3 flex items-center gap-3 mb-6">
               <i className="fa-solid fa-lock text-amber-600"></i>
-              <p className="text-sm font-medium text-amber-800">This is read-only preview</p>
+              <p className="text-sm font-medium text-amber-800">{t('forms.readOnlyPreview')}</p>
             </div>
             <WoundCareForm />
           </div>
@@ -1999,7 +1989,7 @@ export const FormStructureViewer: React.FC<FormStructureViewerProps> = ({
             {/* Read-only banner */}
             <div className="bg-amber-50 border border-amber-200 rounded-lg p-3 flex items-center gap-3 mb-6">
               <i className="fa-solid fa-lock text-amber-600"></i>
-              <p className="text-sm font-medium text-amber-800">This is read-only preview</p>
+              <p className="text-sm font-medium text-amber-800">{t('forms.readOnlyPreview')}</p>
             </div>
             <CNOForm />
           </div>
@@ -2008,7 +1998,7 @@ export const FormStructureViewer: React.FC<FormStructureViewerProps> = ({
             {/* Read-only banner */}
             <div className="bg-amber-50 border border-amber-200 rounded-lg p-3 flex items-center gap-3 mb-6">
               <i className="fa-solid fa-lock text-amber-600"></i>
-              <p className="text-sm font-medium text-amber-800">This is read-only preview</p>
+              <p className="text-sm font-medium text-amber-800">{t('forms.readOnlyPreview')}</p>
             </div>
             <ArtificialNutritionForm />
           </div>
@@ -2017,7 +2007,7 @@ export const FormStructureViewer: React.FC<FormStructureViewerProps> = ({
             {/* Read-only banner */}
             <div className="bg-amber-50 border border-amber-200 rounded-lg p-3 flex items-center gap-3 mb-6">
               <i className="fa-solid fa-lock text-amber-600"></i>
-              <p className="text-sm font-medium text-amber-800">This is read-only preview</p>
+              <p className="text-sm font-medium text-amber-800">{t('forms.readOnlyPreview')}</p>
             </div>
             <PersonalHygieneCareForm />
           </div>
@@ -2026,7 +2016,7 @@ export const FormStructureViewer: React.FC<FormStructureViewerProps> = ({
             {/* Read-only banner */}
             <div className="bg-amber-50 border border-amber-200 rounded-lg p-3 flex items-center gap-3 mb-6">
               <i className="fa-solid fa-lock text-amber-600"></i>
-              <p className="text-sm font-medium text-amber-800">This is read-only preview</p>
+              <p className="text-sm font-medium text-amber-800">{t('forms.readOnlyPreview')}</p>
             </div>
             <PCAPainManagementForm />
           </div>
@@ -2035,7 +2025,7 @@ export const FormStructureViewer: React.FC<FormStructureViewerProps> = ({
             {/* Read-only banner */}
             <div className="bg-amber-50 border border-amber-200 rounded-lg p-3 flex items-center gap-3 mb-6">
               <i className="fa-solid fa-lock text-amber-600"></i>
-              <p className="text-sm font-medium text-amber-800">This is read-only preview</p>
+              <p className="text-sm font-medium text-amber-800">{t('forms.readOnlyPreview')}</p>
             </div>
             <MedicalOxygenForm />
           </div>
@@ -2048,7 +2038,7 @@ export const FormStructureViewer: React.FC<FormStructureViewerProps> = ({
             {/* Read-only banner */}
             <div className="bg-amber-50 border border-amber-200 rounded-lg p-3 flex items-center gap-3 mb-6">
               <i className="fa-solid fa-lock text-amber-600"></i>
-              <p className="text-sm font-medium text-amber-800">This is read-only preview</p>
+              <p className="text-sm font-medium text-amber-800">{t('forms.readOnlyPreview')}</p>
             </div>
             <InfusionForm serviceName={selectedService.name} />
           </div>
@@ -2057,7 +2047,7 @@ export const FormStructureViewer: React.FC<FormStructureViewerProps> = ({
             {/* Read-only banner */}
             <div className="bg-amber-50 border border-amber-200 rounded-lg p-3 flex items-center gap-3">
               <i className="fa-solid fa-lock text-amber-600"></i>
-              <p className="text-sm font-medium text-amber-800">This is read-only preview</p>
+              <p className="text-sm font-medium text-amber-800">{t('forms.readOnlyPreview')}</p>
             </div>
             
             {/* Section: Patient Demographics */}
@@ -2104,8 +2094,8 @@ export const FormStructureViewer: React.FC<FormStructureViewerProps> = ({
           <div className="flex items-center justify-center h-full">
             <div className="text-center text-slate-400">
               <i className="fa-solid fa-file-circle-question text-4xl mb-4"></i>
-              <p className="text-sm font-medium">No form mapped for this service</p>
-              <p className="text-xs text-slate-500 mt-2">This service cannot be used until a form is assigned</p>
+              <p className="text-sm font-medium">{t('forms.noFormMappedMessage')}</p>
+              <p className="text-xs text-slate-500 mt-2">{t('forms.serviceCannotBeUsed')}</p>
               {/* <button
                 onClick={onMapService}
                 className="mt-4 px-4 py-2 text-xs font-bold text-white bg-primary rounded-lg hover:bg-primary/90 transition-all shadow-sm"

@@ -26,7 +26,8 @@ interface ApiResponse {
 }
 
 const Requests: React.FC = () => {
-  const { t } = useTranslation();
+  const { t, i18n } = useTranslation();
+  const dateLocale = i18n.language === 'fr' ? 'fr-FR' : 'en-US';
   const [selectedRequest, setSelectedRequest] = useState<RequestData | null>(null);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [showResetModal, setShowResetModal] = useState(false);
@@ -97,17 +98,17 @@ const Requests: React.FC = () => {
   };
 
   // Helper function to format form status from API response
-  const formatFormStatus = (status?: string): string => {
-    if (!status) return 'PENDING';
+  const formatFormStatus = useCallback((status?: string): string => {
+    if (!status) return t('requests.pending').toUpperCase();
     const statusMap: Record<string, string> = {
-      draft: 'DRAFT',
-      signed: 'SIGNED',
-      submitted: 'SUBMITTED',
-      awaitingSignature: 'AWAITING SIGNATURE',
-      cancelled: 'CANCELLED',
+      draft: t('requests.draft').toUpperCase(),
+      signed: t('requests.signed').toUpperCase(),
+      submitted: t('requests.submitted').toUpperCase(),
+      awaitingSignature: t('requests.awaitingSignature').toUpperCase(),
+      cancelled: t('requests.cancelled').toUpperCase(),
     };
     return statusMap[status] || status.toUpperCase();
-  };
+  }, [t]);
 
   // API function to fetch services for filter dropdown
   const fetchServices = useCallback(async () => {
@@ -167,26 +168,26 @@ const Requests: React.FC = () => {
           ...apiRequest,
           // Add backward compatibility properties
           doctor: {
-            name: apiRequest.doctorName || 'Unknown Doctor',
-            specialty: apiRequest.doctorSpeciality || 'Unknown Specialty',
+            name: apiRequest.doctorName || t('requests.unknownDoctor'),
+            specialty: apiRequest.doctorSpeciality || t('requests.unknownSpecialty'),
             avatar: apiRequest.doctorProfileImage || 'https://storage.googleapis.com/uxpilot-auth.appspot.com/avatars/avatar-default.jpg'
           },
-          patient: apiRequest.patientName || 'Unknown Patient',
-          serviceType: apiRequest.serviceName || 'Unknown Service',
-          dateCreated: apiRequest.createdAt ? new Date(apiRequest.createdAt).toLocaleDateString('en-US', { 
+          patient: apiRequest.patientName || t('requests.unknownPatient'),
+          serviceType: apiRequest.serviceName || t('requests.unknownService'),
+          dateCreated: apiRequest.createdAt ? new Date(apiRequest.createdAt).toLocaleDateString(dateLocale, { 
             month: 'short', 
             day: 'numeric', 
             year: 'numeric',
             hour: '2-digit',
             minute: '2-digit'
-          }) : 'Unknown Date',
-          lastUpdated: apiRequest.updatedAt ? new Date(apiRequest.updatedAt).toLocaleDateString('en-US', { 
+          }) : t('requests.unknownDate'),
+          lastUpdated: apiRequest.updatedAt ? new Date(apiRequest.updatedAt).toLocaleDateString(dateLocale, { 
             month: 'short', 
             day: 'numeric', 
             year: 'numeric',
             hour: '2-digit',
             minute: '2-digit'
-          }) : 'Unknown Date',
+          }) : t('requests.unknownDate'),
           serviceColor: getServiceColor(apiRequest.status),
           formStatus: formatFormStatus(apiRequest.formStatus)
         }));
@@ -216,7 +217,7 @@ const Requests: React.FC = () => {
     } finally {
       // no-op
     }
-  }, []); // Empty dependency array since this function doesn't depend on any props/state
+  }, [t, dateLocale, formatFormStatus]);
 
   // API function to fetch detailed request data
   const fetchRequestDetails = useCallback(async (requestId: string) => {
@@ -349,20 +350,20 @@ const Requests: React.FC = () => {
         requestId: request.requestId, // Always preserve human-readable request ID from list data
         // Keep backward compatibility for existing UI
         doctor: {
-          name: detailedData.doctorId?.fName + ' ' + detailedData.doctorId?.lName || request.doctorName || 'Unknown Doctor',
-          specialty: detailedData.doctorId?.specialty || request.doctorSpeciality || 'Unknown Specialty',
+          name: detailedData.doctorId?.fName + ' ' + detailedData.doctorId?.lName || request.doctorName || t('requests.unknownDoctor'),
+          specialty: detailedData.doctorId?.specialty || request.doctorSpeciality || t('requests.unknownSpecialty'),
           avatar: request.doctorProfileImage || 'https://storage.googleapis.com/uxpilot-auth.appspot.com/avatars/avatar-default.jpg'
         },
-        patient: detailedData.patientId?.fullName || request.patientName || 'Unknown Patient',
-        serviceType: detailedData.serviceId?.serviceName || request.serviceName || 'Unknown Service',
-        dateCreated: detailedData.createdAt ? new Date(detailedData.createdAt).toLocaleDateString('en-US', { 
+        patient: detailedData.patientId?.fullName || request.patientName || t('requests.unknownPatient'),
+        serviceType: detailedData.serviceId?.serviceName || request.serviceName || t('requests.unknownService'),
+        dateCreated: detailedData.createdAt ? new Date(detailedData.createdAt).toLocaleDateString(dateLocale, { 
           month: 'short', 
           day: 'numeric', 
           year: 'numeric',
           hour: '2-digit',
           minute: '2-digit'
         }) : request.dateCreated,
-        lastUpdated: detailedData.updatedAt ? new Date(detailedData.updatedAt).toLocaleDateString('en-US', { 
+        lastUpdated: detailedData.updatedAt ? new Date(detailedData.updatedAt).toLocaleDateString(dateLocale, { 
           month: 'short', 
           day: 'numeric', 
           year: 'numeric',
@@ -408,18 +409,18 @@ const Requests: React.FC = () => {
       setRequestsData(prevData =>
         prevData.map(req =>
           req.id === request.id
-            ? { ...req, status: 'cancelled', serviceColor: 'red', formStatus: 'CANCELLED' }
+            ? { ...req, status: 'cancelled', serviceColor: 'red', formStatus: formatFormStatus('cancelled') }
             : req
         )
       );
       setIsModalOpen(false);
       setSelectedRequest(null);
-      setToastMessage('Request cancelled successfully');
+      setToastMessage(t('requests.requestCancelledSuccess'));
       setShowToast(true);
       setTimeout(() => setShowToast(false), 3000);
     } catch (error) {
       console.error('Cancel Request Error:', error);
-      setToastMessage('Failed to cancel request');
+      setToastMessage(t('requests.failedToCancelRequest'));
       setShowToast(true);
       setTimeout(() => setShowToast(false), 3000);
     }
@@ -437,7 +438,7 @@ const Requests: React.FC = () => {
       );
     }
 
-    setToastMessage('Request status reset successfully');
+    setToastMessage(t('requests.requestStatusResetSuccess'));
     setShowToast(true);
     setShowResetModal(false);
     setSelectedRequestForReset(null);
@@ -489,12 +490,12 @@ const Requests: React.FC = () => {
       document.body.removeChild(link);
       window.URL.revokeObjectURL(url);
 
-      setToastMessage('Export downloaded successfully');
+      setToastMessage(t('requests.exportDownloaded'));
       setShowToast(true);
       setTimeout(() => setShowToast(false), 3000);
     } catch (error) {
       console.error('Export Error:', error);
-      setToastMessage('Export failed');
+      setToastMessage(t('requests.exportFailed'));
       setShowToast(true);
       setTimeout(() => setShowToast(false), 3000);
     } finally {
@@ -537,7 +538,7 @@ const Requests: React.FC = () => {
               disabled={exporting}
               className="px-4 py-2 bg-primary text-white rounded-xl text-sm font-bold flex items-center gap-2 hover:bg-slate-800 transition-all disabled:opacity-70 disabled:cursor-not-allowed"
             >
-              {exporting ? 'Exporting...' : t('common.export')}
+              {exporting ? t('requests.exporting') : t('common.export')}
             </button>
             <div className="ml-2">
               <LanguageSwitcher />
@@ -666,7 +667,7 @@ const Requests: React.FC = () => {
                       <td colSpan={9} className="px-6 py-8 text-center">
                         <div className="flex flex-col items-center">
                           <i className="fa-solid fa-inbox text-slate-300 text-3xl mb-3"></i>
-                          <span className="text-sm text-slate-500">No requests found</span>
+                          <span className="text-sm text-slate-500">{t('requests.noRequestsFound')}</span>
                         </div>
                       </td>
                     </tr>
@@ -685,12 +686,12 @@ const Requests: React.FC = () => {
                           {/* eslint-disable-next-line jsx-a11y/alt-text */}
                           <img 
                             src={request.doctor?.avatar || 'https://storage.googleapis.com/uxpilot-auth.appspot.com/avatars/avatar-default.jpg'} 
-                            alt={`${request.doctor?.name || 'Unknown Doctor'} - Doctor Avatar`} 
+                            alt={`${request.doctor?.name || t('requests.unknownDoctor')} - Doctor Avatar`} 
                             className="w-8 h-8 rounded-lg object-cover" 
                           />
                           <div>
-                            <p className="text-xs font-bold text-slate-800">{request.doctor?.name || 'Unknown Doctor'}</p>
-                            <p className="text-[10px] text-slate-500">{request.doctor?.specialty || 'Unknown Specialty'}</p>
+                            <p className="text-xs font-bold text-slate-800">{request.doctor?.name || t('requests.unknownDoctor')}</p>
+                            <p className="text-[10px] text-slate-500">{request.doctor?.specialty || t('requests.unknownSpecialty')}</p>
                           </div>
                         </div>
                       </td>
@@ -707,7 +708,7 @@ const Requests: React.FC = () => {
                         </span>
                       </td>
                       <td className="px-6 py-4 text-xs text-slate-500">
-                        {request.formStatus || 'No form'}
+                        {request.formStatus || t('requests.noForm')}
                       </td>
                       <td className="px-6 py-4 text-xs text-slate-500">{request.dateCreated}</td>
                       <td className="px-6 py-4 text-xs text-slate-500">{request.lastUpdated}</td>
@@ -781,7 +782,7 @@ const Requests: React.FC = () => {
         <div className="fixed inset-0 z-[60] flex items-center justify-center p-4 modal-overlay backdrop-blur-sm">
           <div className="bg-white w-full max-w-md rounded-2xl overflow-hidden tradingview-shadow">
             <div className="p-6 border-b border-slate-100 flex items-center justify-between">
-              <h3 className="text-lg font-bold text-slate-900">Reset Request Status</h3>
+              <h3 className="text-lg font-bold text-slate-900">{t('requests.resetRequestStatus')}</h3>
               <button onClick={() => setShowResetModal(false)} className="text-slate-400 hover:text-slate-600">
                 <i className="fa-solid fa-xmark"></i>
               </button>
@@ -790,11 +791,11 @@ const Requests: React.FC = () => {
               <div className="p-4 bg-amber-50 border border-amber-200 rounded-xl flex gap-3">
                 <i className="fa-solid fa-exclamation-triangle text-amber-600 mt-0.5"></i>
                 <p className="text-sm text-amber-800">
-                  This action will reset the request status to "Submitted". All progress after that point will be lost.
+                  {t('requests.resetWarning')}
                 </p>
               </div>
               <div className="space-y-2">
-                <label className="text-sm font-medium text-slate-700">Reason for Reset *</label>
+                <label className="text-sm font-medium text-slate-700">{t('requests.reasonForReset')}</label>
                 <input 
                   type="text"
                   placeholder="" 
@@ -808,7 +809,7 @@ const Requests: React.FC = () => {
                   className="w-4 h-4 text-primary border-slate-300 rounded mt-0.5 focus:ring-primary"
                 />
                 <label htmlFor="understand-checkbox" className="text-sm text-slate-600">
-                  I understand this action cannot be undone
+                  {t('requests.iUnderstand')}
                 </label>
               </div>
             </div>
@@ -817,13 +818,13 @@ const Requests: React.FC = () => {
                 onClick={() => setShowResetModal(false)}
                 className="flex-1 px-4 py-2 border border-slate-200 rounded-xl text-sm font-bold text-slate-600 hover:bg-white transition-all"
               >
-                Cancel
+                {t('common.cancel')}
               </button>
               <button 
                 onClick={handleResetStatus}
                 className="flex-1 px-4 py-2 bg-primary text-white rounded-xl text-sm font-bold hover:bg-slate-800 transition-all"
               >
-                Reset Request
+                {t('requests.resetRequestButton')}
               </button>
             </div>
           </div>
@@ -838,7 +839,7 @@ const Requests: React.FC = () => {
               <i className="fa-solid fa-circle-check text-success"></i>
             </div>
             <div className="flex-1">
-              <p className="text-sm font-bold text-slate-900">Success</p>
+              <p className="text-sm font-bold text-slate-900">{t('common.success')}</p>
               <p className="text-xs text-slate-500 mt-1">{toastMessage}</p>
             </div>
             <button onClick={() => setShowToast(false)} className="text-slate-400 hover:text-slate-600">
