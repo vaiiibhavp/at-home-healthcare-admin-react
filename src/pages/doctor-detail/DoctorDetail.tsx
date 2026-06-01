@@ -6,6 +6,7 @@ import Modal from '../../components/doctors/Modal';
 import Toast from '../../components/doctors/Toast';
 import { useGetDoctorDetailsQuery, useUpdateDoctorStatusMutation, useUpdateInternalNotesMutation } from '../../services/doctorsApi';
 import { Doctor } from '../../types/doctor';
+import { camelCaseToTitleCase } from '../../utils/formatText';
 
 interface DoctorDetailProps {
   isApproved?: boolean; // Optional prop to pass doctor's approval status
@@ -280,7 +281,7 @@ const DoctorDetail: React.FC<DoctorDetailProps> = ({ isApproved: propIsApproved 
                   </div>
                   <div className="flex-1">
                     <h2 className="text-2xl font-bold text-slate-900">Dr. {doctor.fullName}</h2>
-                    <p className="text-primary font-medium">{doctor.specialty}</p>
+                    <p className="text-primary font-medium">{camelCaseToTitleCase(doctor.specialty)}</p>
                     <div className="flex flex-wrap gap-4 mt-4">
                       <div className="flex items-center gap-2 text-slate-500 text-sm">
                         <i className="fa-solid fa-envelope opacity-60"></i>
