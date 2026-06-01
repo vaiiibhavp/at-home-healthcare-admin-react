@@ -12,6 +12,58 @@ const getServiceKey = (name: string): string => {
   return name.toLowerCase().replace(/[^a-z0-9]+/g, '_').replace(/^_+|_+$/g, '');
 };
 
+const getServiceIcon = (name: string): string => {
+  const iconMap: Record<string, string> = {
+    'antibiotherapy_infusion': 'fa-pills',
+    'antibiotherapy infusion': 'fa-pills',
+    'antibiothérapy_infusion': 'fa-pills',
+    'antibiothérapy infusion': 'fa-pills',
+    'artificial_nutrition': 'fa-utensils',
+    'artificial nutrition': 'fa-utensils',
+    'cno': 'fa-user-nurse',
+    'generic': 'fa-file-medical',
+    'hydration_infusion': 'fa-droplet',
+    'hydration infusion': 'fa-droplet',
+    'iv_therapy': 'fa-syringe',
+    'iv therapy': 'fa-syringe',
+    'medical_oxygen': 'fa-lungs',
+    'medical oxygen': 'fa-lungs',
+    'wound_care': 'fa-bandage',
+    'wound care': 'fa-bandage',
+    'physical_therapy': 'fa-person-walking',
+    'physical therapy': 'fa-person-walking',
+    'home_health_aide': 'fa-hands-holding-circle',
+    'home health aide': 'fa-hands-holding-circle',
+    'speech_therapy': 'fa-comments',
+    'speech therapy': 'fa-comments',
+    'occupational_therapy': 'fa-hand-holding-medical',
+    'occupational therapy': 'fa-hand-holding-medical',
+    'dialysis': 'fa-kidneys',
+    'chemotherapy': 'fa-flask',
+    'palliative_care': 'fa-heart-pulse',
+    'palliative care': 'fa-heart-pulse',
+    'respiratory_therapy': 'fa-lungs',
+    'respiratory therapy': 'fa-lungs',
+  };
+  
+  const key = getServiceKey(name);
+  if (iconMap[key]) return iconMap[key];
+  
+  // Fallback: assign unique icon based on name hash if not in map
+  const fallbackIcons = [
+    'fa-heart-pulse', 'fa-stethoscope', 'fa-notes-medical', 'fa-user-doctor',
+    'fa-hospital', 'fa-truck-medical', 'fa-suitcase-medical', 'fa-vial',
+    'fa-dna', 'fa-microscope', 'fa-x-ray', 'fa-crutch'
+  ];
+  
+  let hash = 0;
+  for (let i = 0; i < name.length; i++) {
+    hash = name.charCodeAt(i) + ((hash << 5) - hash);
+  }
+  const index = Math.abs(hash) % fallbackIcons.length;
+  return fallbackIcons[index];
+};
+
 interface ServicesTableProps {
   services: Service[];
   onEdit: (service: Service) => void;
@@ -144,7 +196,11 @@ export const ServicesTable: React.FC<ServicesTableProps> = ({
                 <td className="px-6 py-4">
                   <div className="flex items-center gap-3">
                     <div className={`w-8 h-8 bg-slate-50 text-slate-600 rounded-lg flex items-center justify-center`}>
-                      <i className={`fa-solid fa-kit-medical text-xs`}></i>
+                      {service.icon ? (
+                        <i className={`fa-solid ${service.icon} text-xs`}></i>
+                      ) : (
+                        <i className={`fa-solid ${getServiceIcon(service.serviceName)} text-xs`}></i>
+                      )}
                     </div>
                     <span className="text-sm font-bold text-slate-700">{t(`serviceNames.${getServiceKey(service.serviceName)}`, service.serviceName)}</span>
                   </div>
