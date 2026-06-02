@@ -37,7 +37,7 @@ const Doctors: React.FC = () => {
     if (!searchQuery) return true;
     const query = searchQuery.toLowerCase();
     return (
-      doctor.fullName?.toLowerCase().includes(query) ||
+      `${doctor.fName} ${doctor.lName}`?.toLowerCase().includes(query) ||
       doctor.email?.toLowerCase().includes(query) ||
       doctor.specialty?.toLowerCase().includes(query)
     );
@@ -89,7 +89,7 @@ const Doctors: React.FC = () => {
     setModalState({
       isOpen: true,
       type: 'approve',
-      doctorName: `Dr. ${doctor.fullName}`,
+      doctorName: `Dr. ${doctor.fName} ${doctor.lName}`,
       doctorId: doctor.id
     });
   };
@@ -98,7 +98,7 @@ const Doctors: React.FC = () => {
     setModalState({
       isOpen: true,
       type: 'reject',
-      doctorName: `Dr. ${doctor.fullName}`,
+      doctorName: `Dr. ${doctor.fName} ${doctor.lName}`,
       doctorId: doctor.id
     });
   };
@@ -106,7 +106,7 @@ const Doctors: React.FC = () => {
   const handleDisable = (doctor: Doctor) => {
     const statusKey = doctor.status === 'inactive' ? 'doctors.activated' : 'doctors.disabled';
     const status = t(statusKey);
-    const doctorName = `Dr. ${doctor.fullName}`;
+    const doctorName = `Dr. ${doctor.fName} ${doctor.lName}`;
     setToast({
       show: true,
       message: t('doctors.statusChangeSuccess', { doctorName, status })
