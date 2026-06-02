@@ -164,7 +164,7 @@ const Doctors: React.FC = () => {
   return (
     <div className="flex h-screen overflow-hidden">
       <Sidebar />
-      <main className="flex-1 flex flex-col min-w-0 bg-slate-50 overflow-y-auto">
+      <div className="flex-1 flex flex-col min-w-0 bg-slate-50">
         {/* Header */}
         <header className="h-16 bg-white border-b border-slate-200 flex items-center justify-between px-8 sticky top-0 z-10 pt-10 pb-10">
           <div className="flex items-center gap-4 flex-1">
@@ -190,7 +190,8 @@ const Doctors: React.FC = () => {
           </div>
         </header>
 
-        <div className="p-8 space-y-6">
+        <main className="flex-1 overflow-y-auto">
+          <div className="p-8 space-y-6">
           {/* Page Title & Header */}
           <div className="flex flex-col gap-6">
             <div className="flex justify-between items-end">
@@ -232,25 +233,26 @@ const Doctors: React.FC = () => {
             </div>
           )} */}
         </div>
-      </main>
+        </main>
 
-      {/* Modals */}
-      {modalState.type && (
-        <Modal
-          isOpen={modalState.isOpen}
-          onClose={hideModal}
-          type={modalState.type}
-          onConfirm={confirmAction}
-          doctorName={modalState.doctorName}
+        {/* Modals */}
+        {modalState.type && (
+          <Modal
+            isOpen={modalState.isOpen}
+            onClose={hideModal}
+            type={modalState.type}
+            onConfirm={confirmAction}
+            doctorName={modalState.doctorName}
+          />
+        )}
+
+        {/* Toast */}
+        <Toast
+          message={toast.message}
+          show={toast.show}
+          onClose={hideToast}
         />
-      )}
-
-      {/* Toast */}
-      <Toast
-        message={toast.message}
-        show={toast.show}
-        onClose={hideToast}
-      />
+      </div>
     </div>
   );
 };
