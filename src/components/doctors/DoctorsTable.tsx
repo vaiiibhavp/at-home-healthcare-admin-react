@@ -136,16 +136,8 @@ const DoctorsTable = ({ doctors, loading = false, onApprove, onReject, onView, o
   };
 
   // Handle approve action
-  const handleApprove = async (doctor: Doctor) => {
-    try {
-      await updateDoctorStatus({ 
-        doctorId: doctor.id, 
-        statusData: { status: 'approved' } 
-      }).unwrap();
-      onApprove(doctor);
-    } catch (error) {
-      console.error('Error approving doctor:', error);
-    }
+  const handleApprove = (doctor: Doctor) => {
+    onApprove(doctor);
   };
 
   // Handle disable/activate action
@@ -165,16 +157,8 @@ const DoctorsTable = ({ doctors, loading = false, onApprove, onReject, onView, o
   };
 
   // Handle reject action
-  const handleReject = async (doctor: Doctor) => {
-    try {
-      await updateDoctorStatus({ 
-        doctorId: doctor.id, 
-        statusData: { status: 'rejected', reason: 'Rejected by admin' } 
-      }).unwrap();
-      onReject(doctor);
-    } catch (error) {
-      console.error('Error rejecting doctor:', error);
-    }
+  const handleReject = (doctor: Doctor) => {
+    onReject(doctor);
   };
 
   if (loading) {

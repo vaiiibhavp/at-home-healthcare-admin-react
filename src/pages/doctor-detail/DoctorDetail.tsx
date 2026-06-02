@@ -98,7 +98,7 @@ const DoctorDetail: React.FC<DoctorDetailProps> = ({ isApproved: propIsApproved 
   };
 
   const handleApprove = () => {
-    handleAction('approved');
+    showModal('approve');
   };
 
   // Generate avatar URL based on doctor's name
