@@ -98,6 +98,13 @@ const Requests: React.FC = () => {
     return colorMap[status as keyof typeof colorMap] || 'gray';
   };
 
+  // Helper function to get initials from doctor name
+  const getDoctorInitials = (firstName?: string, lastName?: string): string => {
+    const firstInitial = firstName?.charAt(0).toUpperCase() || '';
+    const lastInitial = lastName?.charAt(0).toUpperCase() || '';
+    return (firstInitial + lastInitial) || 'DR';
+  };
+
   // Helper function to format form status from API response
   const formatFormStatus = useCallback((status?: string): string => {
     if (!status) return t('requests.pending').toUpperCase();
@@ -695,12 +702,20 @@ const Requests: React.FC = () => {
                       </td>
                       <td className="px-6 py-4">
                         <div className="flex items-center gap-3">
-                          {/* eslint-disable-next-line jsx-a11y/alt-text */}
-                          <img
-                            src={request.doctor?.avatar || 'https://storage.googleapis.com/uxpilot-auth.appspot.com/avatars/avatar-default.jpg'}
-                            alt={`${request.doctor?.name || t('requests.unknownDoctor')} - Doctor Avatar`}
-                            className="w-10 h-10 rounded-lg object-cover"
-                          />
+                          {request.doctor?.avatar && request.doctor?.avatar !== 'https://storage.googleapis.com/uxpilot-auth.appspot.com/avatars/avatar-default.jpg' ? (
+                            /* eslint-disable-next-line jsx-a11y/alt-text */
+                            <img
+                              src={request.doctor.avatar}
+                              alt={`${request.doctor?.name || t('requests.unknownDoctor')} - Doctor Avatar`}
+                              className="w-10 h-10 rounded-lg object-cover"
+                            />
+                          ) : (
+                            <div className="w-10 h-10 rounded-lg bg-primary flex items-center justify-center">
+                              <span className="text-xs font-bold text-white">
+                                {getDoctorInitials(request.doctorFirstName, request.doctorLastName)}
+                              </span>
+                            </div>
+                          )}
                           <div>
                             <p className="text-xs font-bold text-slate-800">{request.doctor?.name || t('requests.unknownDoctor')}</p>
                             <p className="text-[10px] text-slate-500">{request.doctor?.specialty || t('requests.unknownSpecialty')}</p>
