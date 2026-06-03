@@ -11,7 +11,7 @@ interface FormStructureViewerProps {
 const CNOForm: React.FC = () => {
   const { t } = useTranslation();
   return (
-    <div className="max-w-5xl mx-auto space-y-6 bg-white">
+    <div className="w-full max-w-full space-y-6 bg-white">
       {/* Form Header */}
       <div className="text-center border-b-2 border-slate-300 pb-4">
         <h1 className="text-lg font-bold text-slate-800">{t('forms.cnoFormTitle')}</h1>
@@ -259,7 +259,7 @@ const CNOForm: React.FC = () => {
 const WoundCareForm: React.FC = () => {
   const { t } = useTranslation();
   return (
-    <div className="max-w-5xl mx-auto space-y-6 bg-white">
+    <div className="w-full max-w-full space-y-6 bg-white">
       {/* Form Header */}
       <div className="text-center border-b-2 border-slate-300 pb-4">
         <h1 className="text-lg font-bold text-slate-800">{t('forms.woundCareFormTitle')}</h1>
@@ -521,7 +521,7 @@ const WoundCareForm: React.FC = () => {
 const GenericForm: React.FC = () => {
   const { t } = useTranslation();
   return (
-    <div className="max-w-5xl mx-auto space-y-6 bg-white">
+    <div className="w-full max-w-full space-y-6 bg-white">
       {/* Form Header */}
       <div className="text-center border-b-2 border-slate-300 pb-4">
         <h1 className="text-lg font-bold text-slate-800">{t('forms.genericFormTitle')}</h1>
@@ -671,7 +671,7 @@ const GenericForm: React.FC = () => {
 const ArtificialNutritionForm: React.FC = () => {
   const { t } = useTranslation();
   return (
-    <div className="max-w-5xl mx-auto space-y-6 bg-white">
+    <div className="w-full max-w-full space-y-6 bg-white">
       {/* Form Header */}
       <div className="text-center border-b-2 border-slate-300 pb-4">
         <h1 className="text-lg font-bold text-slate-800">{t('forms.artificialNutritionFormTitle')}</h1>
@@ -906,7 +906,7 @@ const ArtificialNutritionForm: React.FC = () => {
 const PersonalHygieneCareForm: React.FC = () => {
   const { t } = useTranslation();
   return (
-    <div className="max-w-5xl mx-auto space-y-6 bg-white">
+    <div className="w-full max-w-full space-y-6 bg-white">
       {/* Form Header */}
       <div className="text-center border-b-2 border-slate-300 pb-4">
         <h1 className="text-lg font-bold text-slate-800">{t('forms.personalHygieneFormTitle')}</h1>
@@ -1100,7 +1100,7 @@ const PersonalHygieneCareForm: React.FC = () => {
 const PCAPainManagementForm: React.FC = () => {
   const { t } = useTranslation();
   return (
-    <div className="max-w-5xl mx-auto space-y-6 bg-white">
+    <div className="w-full max-w-full space-y-6 bg-white">
       {/* Form Header */}
       <div className="text-center border-b-2 border-slate-300 pb-4">
         <h1 className="text-lg font-bold text-slate-800">{t('forms.pcaFormTitle')}</h1>
@@ -1325,7 +1325,7 @@ const PCAPainManagementForm: React.FC = () => {
 const MedicalOxygenForm: React.FC = () => {
   const { t } = useTranslation();
   return (
-    <div className="max-w-5xl mx-auto space-y-6 bg-white">
+    <div className="w-full max-w-full space-y-6 bg-white">
       {/* Form Header */}
       <div className="text-center border-b-2 border-slate-300 pb-4">
         <h1 className="text-lg font-bold text-slate-800">{t('forms.medicalOxygenFormTitle')}</h1>
@@ -1598,7 +1598,7 @@ const InfusionForm: React.FC<{ serviceName: string }> = ({ serviceName }) => {
   };
   
   return (
-    <div className="max-w-5xl mx-auto space-y-6 bg-white">
+    <div className="w-full max-w-full space-y-6 bg-white">
       {/* Form Header */}
       <div className="text-center border-b-2 border-slate-300 pb-4">
         <h1 className="text-lg font-bold text-slate-800">{getFormTitle()}</h1>
@@ -1920,7 +1920,7 @@ export const FormStructureViewer: React.FC<FormStructureViewerProps> = ({
             </div>
           </div>
         </div>
-        <div ref={formPreviewRef} className="flex-1 overflow-y-auto p-8 bg-slate-50/30">
+        <div ref={formPreviewRef} className="flex-1 overflow-y-auto overflow-x-hidden p-8 bg-slate-50/30">
           {/* Read-only banner */}
           <div className="bg-amber-50 border border-amber-200 rounded-lg p-3 flex items-center gap-3 mb-6">
             <i className="fa-solid fa-lock text-amber-600"></i>
@@ -1957,7 +1957,7 @@ export const FormStructureViewer: React.FC<FormStructureViewerProps> = ({
         </div> */}
       </div>
       
-      <div ref={formPreviewRef} className="flex-1 overflow-y-auto p-8 bg-slate-50/30">
+      <div ref={formPreviewRef} className="flex-1 overflow-y-auto overflow-x-hidden p-8 bg-slate-50/30">
         {selectedService.name === 'Generic' ? (
           <div>
             {/* Read-only banner */}
@@ -2035,7 +2035,7 @@ export const FormStructureViewer: React.FC<FormStructureViewerProps> = ({
             <InfusionForm serviceName={selectedService.name} />
           </div>
         ) : selectedService.formName ? (
-          <div className="max-w-4xl mx-auto space-y-6">
+          <div className="w-full max-w-full space-y-6">
             {/* Read-only banner */}
             <div className="bg-amber-50 border border-amber-200 rounded-lg p-3 flex items-center gap-3">
               <i className="fa-solid fa-lock text-amber-600"></i>
