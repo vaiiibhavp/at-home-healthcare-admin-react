@@ -162,7 +162,7 @@
     "title": "Gestion des Médecins",
     "subtitle": "Examiner les inscriptions et gérer les professionnels de la médecine active.",
     "addDoctor": "Ajouter un médecin",
-    "searchDoctors": "Rechercher par nom, email ou spécialité...",
+    "searchDoctors": "Rechercher par nom, email...",
     "doctorName": "Nom du médecin",
     "specialization": "Spécialisation",
     "department": "Département",
