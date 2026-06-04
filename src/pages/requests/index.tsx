@@ -459,6 +459,13 @@ const Requests: React.FC = () => {
       return;
     }
 
+    if (resetReason.trim().length < 5) {
+      setToastMessage('Reason must be at least 5 characters');
+      setShowToast(true);
+      setTimeout(() => setShowToast(false), 3000);
+      return;
+    }
+
     try {
       const result = await resetRequestStatus(selectedRequestForReset.id, 'submitted', resetReason);
 
@@ -849,14 +856,17 @@ const Requests: React.FC = () => {
                 </p>
               </div>
               <div className="space-y-2">
-                <label className="text-sm font-medium text-slate-700">{t('requests.reasonForReset')}</label>
+                <label htmlFor="reset-reason" className="text-sm font-medium text-slate-700">{t('requests.reasonForReset')}</label>
                 <input
+                  id="reset-reason"
+                  name="reset-reason"
                   type="text"
-                  placeholder={t('requests.enterReason')}
+                  placeholder={t('requests.resetPlaceholder')}
                   value={resetReason}
                   onChange={(e) => setResetReason(e.target.value)}
                   className="w-full bg-white border border-slate-200 rounded-lg px-3 py-2 text-sm outline-none focus:ring-2 focus:ring-primary/20"
                 />
+                <p className="text-xs text-slate-500">Minimum 5 characters required</p>
               </div>
               <div className="flex items-start gap-3">
                 <input 
