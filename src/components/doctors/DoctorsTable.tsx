@@ -122,12 +122,12 @@ const DoctorsTable = ({ doctors, loading = false, onApprove, onReject, onView, o
 
   // Generate avatar URL based on doctor's name
   const getAvatarUrl = (doctor: Doctor) => {
-    return `https://ui-avatars.com/api/?name=${encodeURIComponent(doctor.fullName)}&background=random&color=fff`;
+    return `https://ui-avatars.com/api/?name=${encodeURIComponent(`${doctor.fName} ${doctor.lName}`)}&background=random&color=fff`;
   };
 
   // Get doctor's full name
   const getDoctorName = (doctor: Doctor) => {
-    return `Dr. ${doctor.fullName}`;
+    return `Dr. ${doctor.fName} ${doctor.lName}`;
   };
 
   const getTranslatedSpecialty = (specialty: string) => {
@@ -136,16 +136,8 @@ const DoctorsTable = ({ doctors, loading = false, onApprove, onReject, onView, o
   };
 
   // Handle approve action
-  const handleApprove = async (doctor: Doctor) => {
-    try {
-      await updateDoctorStatus({ 
-        doctorId: doctor.id, 
-        statusData: { status: 'approved' } 
-      }).unwrap();
-      onApprove(doctor);
-    } catch (error) {
-      console.error('Error approving doctor:', error);
-    }
+  const handleApprove = (doctor: Doctor) => {
+    onApprove(doctor);
   };
 
   // Handle disable/activate action
@@ -165,16 +157,8 @@ const DoctorsTable = ({ doctors, loading = false, onApprove, onReject, onView, o
   };
 
   // Handle reject action
-  const handleReject = async (doctor: Doctor) => {
-    try {
-      await updateDoctorStatus({ 
-        doctorId: doctor.id, 
-        statusData: { status: 'rejected', reason: 'Rejected by admin' } 
-      }).unwrap();
-      onReject(doctor);
-    } catch (error) {
-      console.error('Error rejecting doctor:', error);
-    }
+  const handleReject = (doctor: Doctor) => {
+    onReject(doctor);
   };
 
   if (loading) {

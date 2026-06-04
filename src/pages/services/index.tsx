@@ -116,7 +116,7 @@ export const Services: React.FC = () => {
   return (
     <div className="flex h-screen overflow-hidden">
       <Sidebar />
-      <main className="flex-1 flex flex-col min-w-0 bg-slate-50 overflow-y-auto">
+      <div className="flex-1 flex flex-col min-w-0 bg-slate-50">
         {/* Header */}
         <header className="h-16 bg-white border-b border-slate-200 flex items-center justify-between px-8 sticky top-0 z-20 pt-10 pb-10">
           <div className="flex items-center gap-4">
@@ -154,7 +154,8 @@ export const Services: React.FC = () => {
           </div>
         </header>
 
-        <div className="p-8 space-y-6">
+        <main className="flex-1 overflow-y-auto">
+          <div className="p-8 space-y-6">
           {/* Stats Section */}
           <section className="grid grid-cols-1 md:grid-cols-1 gap-4">
             <div className="bg-white p-4 rounded-xl border border-slate-200 tradingview-shadow">
@@ -189,10 +190,10 @@ export const Services: React.FC = () => {
             />
           )}
         </div>
-      </main>
+        </main>
 
-      {/* Modals */}
-      <AddServiceModal
+        {/* Modals */}
+        <AddServiceModal
         isOpen={isAddModalOpen}
         onClose={() => {
           setIsAddModalOpen(false);
@@ -230,6 +231,7 @@ export const Services: React.FC = () => {
         }}
         service={selectedService}
       />
+      </div>
     </div>
   );
 };

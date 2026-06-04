@@ -7,8 +7,8 @@ import Modal from '../../components/doctors/Modal';
 import Toast from '../../components/doctors/Toast';
 import LanguageSwitcher from '../../components/LanguageSwitcher';
 import NotificationDropdown from '../../components/common/NotificationDropdown';
-import { useGetDoctorsQuery } from '../../services/doctorsApi';
-import { Doctor } from '../../types/doctor';
+import { useGetDoctorsQuery, useUpdateDoctorStatusMutation } from '../../services/doctorsApi';
+import { Doctor, DoctorStatusUpdateRequest } from '../../types/doctor';
 
 const Doctors: React.FC = () => {
   const { t } = useTranslation('common');
@@ -18,6 +18,9 @@ const Doctors: React.FC = () => {
   // Fetch doctors data
   const { data: doctorsData, isLoading } = useGetDoctorsQuery({ page: 1, size: 50 });  //error handled in component
   const doctors = doctorsData?.data?.doctors || [];
+  
+  // Status update mutation
+  const [updateDoctorStatus] = useUpdateDoctorStatusMutation();
   
   // Tab state managed at parent level
   const [activeTab, setActiveTab] = useState<'pending' | 'approved'>('pending');
@@ -34,7 +37,7 @@ const Doctors: React.FC = () => {
     if (!searchQuery) return true;
     const query = searchQuery.toLowerCase();
     return (
-      doctor.fullName?.toLowerCase().includes(query) ||
+      `${doctor.fName} ${doctor.lName}`?.toLowerCase().includes(query) ||
       doctor.email?.toLowerCase().includes(query) ||
       doctor.specialty?.toLowerCase().includes(query)
     );
@@ -69,10 +72,12 @@ const Doctors: React.FC = () => {
     isOpen: boolean;
     type: 'approve' | 'reject' | null;
     doctorName: string;
+    doctorId: string;
   }>({
     isOpen: false,
     type: null,
-    doctorName: ''
+    doctorName: '',
+    doctorId: ''
   });
   
   const [toast, setToast] = useState({
@@ -84,7 +89,8 @@ const Doctors: React.FC = () => {
     setModalState({
       isOpen: true,
       type: 'approve',
-      doctorName: `Dr. ${doctor.fullName}`
+      doctorName: `Dr. ${doctor.fName} ${doctor.lName}`,
+      doctorId: doctor.id
     });
   };
 
@@ -92,14 +98,15 @@ const Doctors: React.FC = () => {
     setModalState({
       isOpen: true,
       type: 'reject',
-      doctorName: `Dr. ${doctor.fullName}`
+      doctorName: `Dr. ${doctor.fName} ${doctor.lName}`,
+      doctorId: doctor.id
     });
   };
 
   const handleDisable = (doctor: Doctor) => {
     const statusKey = doctor.status === 'inactive' ? 'doctors.activated' : 'doctors.disabled';
     const status = t(statusKey);
-    const doctorName = `Dr. ${doctor.fullName}`;
+    const doctorName = `Dr. ${doctor.fName} ${doctor.lName}`;
     setToast({
       show: true,
       message: t('doctors.statusChangeSuccess', { doctorName, status })
@@ -114,17 +121,37 @@ const Doctors: React.FC = () => {
     setModalState({
       isOpen: false,
       type: null,
-      doctorName: ''
+      doctorName: '',
+      doctorId: ''
     });
   };
 
-  const confirmAction = () => {
-    const status = modalState.type === 'approve' ? t('doctors.approved') : t('status.rejected');
-    setToast({
-      show: true,
-      message: t('doctors.statusUpdate', { status, doctorName: modalState.doctorName })
-    });
-    hideModal();
+  const confirmAction = async () => {
+    try {
+      if (!modalState.type) return;
+      
+      const statusData: DoctorStatusUpdateRequest = modalState.type === 'approve' 
+        ? { status: 'approved' } 
+        : { status: 'rejected', reason: 'Rejected by admin' };
+      
+      await updateDoctorStatus({ 
+        doctorId: modalState.doctorId, 
+        statusData 
+      }).unwrap();
+      
+      const statusText = modalState.type === 'approve' ? t('doctors.approved') : t('status.rejected');
+      setToast({
+        show: true,
+        message: t('doctors.statusUpdate', { status: statusText, doctorName: modalState.doctorName })
+      });
+      hideModal();
+    } catch (error) {
+      console.error('Error updating doctor status:', error);
+      setToast({
+        show: true,
+        message: t('doctors.errorUpdatingStatus') || 'Error updating doctor status'
+      });
+    }
   };
 
   const hideToast = () => {
@@ -137,7 +164,7 @@ const Doctors: React.FC = () => {
   return (
     <div className="flex h-screen overflow-hidden">
       <Sidebar />
-      <main className="flex-1 flex flex-col min-w-0 bg-slate-50 overflow-y-auto">
+      <div className="flex-1 flex flex-col min-w-0 bg-slate-50">
         {/* Header */}
         <header className="h-16 bg-white border-b border-slate-200 flex items-center justify-between px-8 sticky top-0 z-10 pt-10 pb-10">
           <div className="flex items-center gap-4 flex-1">
@@ -163,7 +190,8 @@ const Doctors: React.FC = () => {
           </div>
         </header>
 
-        <div className="p-8 space-y-6">
+        <main className="flex-1 overflow-y-auto">
+          <div className="p-8 space-y-6">
           {/* Page Title & Header */}
           <div className="flex flex-col gap-6">
             <div className="flex justify-between items-end">
@@ -205,25 +233,26 @@ const Doctors: React.FC = () => {
             </div>
           )} */}
         </div>
-      </main>
+        </main>
 
-      {/* Modals */}
-      {modalState.type && (
-        <Modal
-          isOpen={modalState.isOpen}
-          onClose={hideModal}
-          type={modalState.type}
-          onConfirm={confirmAction}
-          doctorName={modalState.doctorName}
+        {/* Modals */}
+        {modalState.type && (
+          <Modal
+            isOpen={modalState.isOpen}
+            onClose={hideModal}
+            type={modalState.type}
+            onConfirm={confirmAction}
+            doctorName={modalState.doctorName}
+          />
+        )}
+
+        {/* Toast */}
+        <Toast
+          message={toast.message}
+          show={toast.show}
+          onClose={hideToast}
         />
-      )}
-
-      {/* Toast */}
-      <Toast
-        message={toast.message}
-        show={toast.show}
-        onClose={hideToast}
-      />
+      </div>
     </div>
   );
 };
