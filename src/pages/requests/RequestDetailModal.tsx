@@ -77,7 +77,7 @@ export const RequestDetailModal: React.FC<RequestDetailModalProps> = ({
       try {
         const token = localStorage.getItem('authToken');
         const response = await fetch(
-          `${process.env.REACT_APP_API_BASE_URL}/${request.signedPdfUrl}`,
+          `${(process.env.REACT_APP_API_BASE_URL || '').replace(/\/+$/, '')}/${request.signedPdfUrl}`,
           {
             headers: token ? { Authorization: `Bearer ${token}` } : undefined
           }
@@ -205,7 +205,7 @@ export const RequestDetailModal: React.FC<RequestDetailModalProps> = ({
     try {
       const token = localStorage.getItem('authToken');
       const response = await fetch(
-        `${process.env.REACT_APP_API_BASE_URL}/admin/requests/${request.requestId || request.id}/reset-status`,
+        `${(process.env.REACT_APP_API_BASE_URL || '').replace(/\/+$/, '')}/admin/requests/${request.requestId || request.id}/reset-status`,
         {
           method: 'PUT',
           headers: {
