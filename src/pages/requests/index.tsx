@@ -159,7 +159,7 @@ const Requests: React.FC = () => {
         ...(apiStatus && { status: apiStatus }),
         ...(startDate && { startDate }),
         ...(endDate && { endDate }),
-        ...(service && { service }),
+        ...(service && { serviceId: service }),
         ...(search && { search })
       });
       
@@ -656,7 +656,7 @@ const Requests: React.FC = () => {
               >
                 <option value="">{t('requests.allServices')}</option>
                 {servicesList.map((svc) => (
-                  <option key={svc.id} value={svc.serviceName}>{getTranslatedServiceName(svc.serviceName)}</option>
+                  <option key={svc.id} value={svc.id}>{getTranslatedServiceName(svc.serviceName)}</option>
                 ))}
               </select>
             </div>
