@@ -45,6 +45,11 @@ export const RequestDetailModal: React.FC<RequestDetailModalProps> = ({
     return t(`serviceNames.${key}`, { defaultValue: name });
   };
 
+  const getTranslatedSpecialtyName = (name: string): string => {
+    const key = name.toLowerCase().replace(/[\s-]+/g, '_').replace(/[^a-z0-9_]/g, '');
+    return t(`specialtyNames.${key}`, { defaultValue: name });
+  };
+
   const [showResetModal, setShowResetModal] = useState(false);
   const [showAuditModal, setShowAuditModal] = useState(false);
   const [showPhysicianModal, setShowPhysicianModal] = useState(false);
@@ -329,7 +334,7 @@ export const RequestDetailModal: React.FC<RequestDetailModalProps> = ({
                   )}
                   <div>
                     <p className="text-sm font-bold text-slate-900 capitalize">{`${request.doctorFirstName || ''} ${request.doctorLastName || ''}`.trim() || request.doctorName || t('requests.unknownDoctor')}</p>
-                    <p className="text-xs text-slate-500 capitalize">{request.doctorSpeciality || t('requests.unknownSpecialty')} • {request.doctorId?.businessAddress || t('requests.privatePractice')}</p>
+                    <p className="text-xs text-slate-500 capitalize">{getTranslatedSpecialtyName(request.doctorSpeciality) || t('requests.unknownSpecialty')} • {request.doctorId?.businessAddress || t('requests.privatePractice')}</p>
                     <p className="text-[11px] font-mono text-primary mt-1">{t('requests.rppsLabel')}: {request.doctorId?.rppsNumber || t('requests.notAvailable')}</p>
                   </div>
                 </div>
@@ -401,7 +406,7 @@ export const RequestDetailModal: React.FC<RequestDetailModalProps> = ({
                   <div className="flex items-center justify-between mb-3">
                     <div className="flex items-center gap-3">
                       <i className="fa-solid fa-file-waveform text-primary"></i>
-                      <h3 className="text-sm font-bold text-slate-800">{t('requests.form')}: Laboratory Prescription V2.1</h3>
+                      <h3 className="text-sm font-bold text-slate-800">{t('requests.form')}: {t('requests.laboratoryPrescription')}</h3>
                     </div>
                     <div className="flex gap-2">
                       <button onClick={handleZoom} className="p-2 hover:bg-slate-200 rounded-lg text-slate-400 transition-all" title={t('common.zoom') || 'Zoom'}>
@@ -461,7 +466,7 @@ export const RequestDetailModal: React.FC<RequestDetailModalProps> = ({
                     ) : pdfBlobUrl ? (
                       <iframe
                         src={`${pdfBlobUrl}#toolbar=0&zoom=page-fit`}
-                        title="Signed Form PDF"
+                        title={t('requests.signedFormPdf')}
                         className="w-full h-full min-h-[600px] border border-slate-200 rounded-lg bg-white"
                       />
                     ) : (
