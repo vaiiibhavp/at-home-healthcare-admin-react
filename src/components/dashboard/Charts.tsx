@@ -73,9 +73,7 @@ const Charts: React.FC = () => {
     yaxis: {
       gridcolor: '#F1F5F9',
       zeroline: false,
-      fixedrange: true,
-      tickformat: ',.0f',
-      dtick: 1
+      fixedrange: true
     },
     paper_bgcolor: 'rgba(0,0,0,0)',
     plot_bgcolor: 'rgba(0,0,0,0)',
