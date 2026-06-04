@@ -170,6 +170,40 @@ const getServiceColor = (status: string): string => {
   return colorMap[status as keyof typeof colorMap] || 'gray';
 };
 
+// API function to reset request status
+export const resetRequestStatus = async (requestId: string, newStatus: string, reason: string) => {
+  try {
+    const token = localStorage.getItem('authToken');
+    if (!token) {
+      console.error('No auth token found');
+      return { success: false, message: 'No auth token found' };
+    }
+
+    const headers = {
+      'Content-Type': 'application/json',
+      'Authorization': `Bearer ${token}`
+    };
+    
+    const response = await fetch(`${process.env.REACT_APP_API_BASE_URL}/admin/requests/${requestId}/reset-status`, {
+      method: 'PUT',
+      headers,
+      body: JSON.stringify({ newStatus, reason })
+    });
+    
+    const data = await response.json();
+    
+    if (data.status === 200) {
+      return { success: true, message: data.message || 'Request status reset successfully' };
+    } else {
+      console.error('API Error:', data.message);
+      return { success: false, message: data.message || 'Failed to reset request status' };
+    }
+  } catch (error) {
+    console.error('Fetch Error:', error);
+    return { success: false, message: 'Failed to reset request status' };
+  }
+};
+
 // Helper function to get form status based on request data
 const getFormStatus = (request: any): string => {
   if (request.status === 'returned' || request.formStatus?.toLowerCase().replace(/[_\s]/g, '') === 'cancelled') {
