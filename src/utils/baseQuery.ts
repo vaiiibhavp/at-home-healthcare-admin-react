@@ -3,7 +3,7 @@ import { RootState } from '../store/store';
 import { logout } from '../store/authSlice';
 
 const baseQuery = fetchBaseQuery({
-  baseUrl: process.env.REACT_APP_API_BASE_URL || 'http://163.227.92.122:3047',
+  baseUrl: (process.env.REACT_APP_API_BASE_URL || 'http://163.227.92.122:3047').replace(/\/+$/, ''),
   prepareHeaders: (headers, { getState }) => {
     const token = (getState() as RootState).auth.token || localStorage.getItem('authToken');
     if (token) {
@@ -32,7 +32,7 @@ export const baseQueryWithAuth: BaseQueryFn = async (args, api, extraOptions) =>
 
 export const baseQueryWithAuthNoBaseUrl: BaseQueryFn = async (args, api, extraOptions) => {
   const baseQueryNoBaseUrl = fetchBaseQuery({
-    baseUrl: process.env.REACT_APP_API_BASE_URL || '',
+    baseUrl: (process.env.REACT_APP_API_BASE_URL || '').replace(/\/+$/, ''),
     prepareHeaders: (headers, { getState }) => {
       const token = (getState() as RootState).auth.token || localStorage.getItem('authToken');
       if (token) {
