@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
 import { Service } from './FormTypes';
 
@@ -23,6 +23,18 @@ export const ServiceListPanel: React.FC<ServiceListPanelProps> = ({
 }) => {
   const { t } = useTranslation();
 
+  // Filter services based on search term
+  const filteredServices = useMemo(() => {
+    if (!searchTerm) return services || [];
+    
+    const searchLower = searchTerm.toLowerCase();
+    return (services || []).filter(service =>
+      service.name.toLowerCase().includes(searchLower) ||
+      (service.description && service.description.toLowerCase().includes(searchLower)) ||
+      (service.formName && service.formName.toLowerCase().includes(searchLower))
+    );
+  }, [services, searchTerm]);
+
   const getStatusBadge = (status: string) => {
     if (status === 'mapped') {
       return (
@@ -45,7 +57,7 @@ export const ServiceListPanel: React.FC<ServiceListPanelProps> = ({
         <div className="flex items-center justify-between">
           <h3 className="text-sm font-bold text-slate-800">{t('forms.services')}</h3>
           <span className="text-[10px] font-bold text-slate-400 bg-slate-100 px-2 py-1 rounded">
-            {(services || []).length} {t('forms.total')}
+            {filteredServices.length} {t('forms.total')}
           </span>
         </div>
         <div className="flex gap-2">
@@ -93,7 +105,7 @@ export const ServiceListPanel: React.FC<ServiceListPanelProps> = ({
       </div>
       <div className="flex-1 overflow-y-auto">
         <div className="divide-y divide-slate-50">
-            {(services || []).map((service) => (
+            {filteredServices.map((service) => (
               <div
                 key={service.id}
                 onClick={() => onServiceSelect(service)}

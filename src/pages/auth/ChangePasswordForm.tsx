@@ -126,7 +126,6 @@ const ChangePasswordForm: React.FC = () => {
               value={formData.currentPassword}
               onChange={handleInputChange}
               placeholder="&#8226;&#8226;&#8226;&#8226;&#8226;&#8226;&#8226;&#8226;"
-              required
               className="tradingview-input w-full h-12 pl-11 pr-12 bg-white border border-border rounded-xl text-sm transition-all outline-none"
             />
             <button
@@ -167,7 +166,6 @@ const ChangePasswordForm: React.FC = () => {
               value={formData.newPassword}
               onChange={handleInputChange}
               placeholder="&#8226;&#8226;&#8226;&#8226;&#8226;&#8226;&#8226;&#8226;"
-              required
               className="tradingview-input w-full h-12 pl-11 pr-12 bg-white border border-border rounded-xl text-sm transition-all outline-none"
             />
             <button
@@ -208,7 +206,6 @@ const ChangePasswordForm: React.FC = () => {
               value={formData.confirmPassword}
               onChange={handleInputChange}
               placeholder="&#8226;&#8226;&#8226;&#8226;&#8226;&#8226;&#8226;&#8226;"
-              required
               className="tradingview-input w-full h-12 pl-11 pr-12 bg-white border border-border rounded-xl text-sm transition-all outline-none"
             />
             <button
