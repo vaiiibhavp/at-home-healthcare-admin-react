@@ -26,7 +26,7 @@ const Dashboard: React.FC = () => {
     try {
       setIsExporting(true);
       const token = localStorage.getItem('authToken');
-      const baseUrl = process.env.REACT_APP_API_BASE_URL || 'http://163.227.92.122:3047';
+      const baseUrl = (process.env.REACT_APP_API_BASE_URL || 'http://163.227.92.122:3047').replace(/\/+$/, '');
       
       const response = await fetch(`${baseUrl}/export?entityType=dashboard&format=csv`, {
         method: 'GET',

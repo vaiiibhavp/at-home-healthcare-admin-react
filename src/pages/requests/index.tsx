@@ -130,7 +130,7 @@ const Requests: React.FC = () => {
       const headers: HeadersInit = { 'Content-Type': 'application/json' };
       if (token) headers['Authorization'] = `Bearer ${token}`;
 
-      const response = await fetch(`${process.env.REACT_APP_API_BASE_URL || ''}/services?page=1&size=100`, {
+      const response = await fetch(`${(process.env.REACT_APP_API_BASE_URL || '').replace(/\/+$/, '')}/services?page=1&size=100`, {
         method: 'GET',
         headers
       });
@@ -175,7 +175,7 @@ const Requests: React.FC = () => {
         headers['Authorization'] = `Bearer ${token}`;
       }
       
-      const response = await fetch(`${process.env.REACT_APP_API_BASE_URL || ''}/admin/requests?${params}`, {
+      const response = await fetch(`${(process.env.REACT_APP_API_BASE_URL || '').replace(/\/+$/, '')}/admin/requests?${params}`, {
         method: 'GET',
         headers
       });
@@ -268,7 +268,7 @@ const Requests: React.FC = () => {
         'Authorization': `Bearer ${token}`
       };
       
-      const response = await fetch(`${process.env.REACT_APP_API_BASE_URL || ''}/admin/requests/${requestId}`, {
+      const response = await fetch(`${(process.env.REACT_APP_API_BASE_URL || '').replace(/\/+$/, '')}/admin/requests/${requestId}`, {
         method: 'GET',
         headers
       });
@@ -299,7 +299,7 @@ const Requests: React.FC = () => {
         'Authorization': `Bearer ${token}`
       };
       
-      const response = await fetch(`${process.env.REACT_APP_API_BASE_URL || ''}/admin/requests/${requestId}/audit-logs`, {
+      const response = await fetch(`${(process.env.REACT_APP_API_BASE_URL || '').replace(/\/+$/, '')}/admin/requests/${requestId}/audit-logs`, {
         method: 'GET',
         headers
       });
@@ -422,7 +422,7 @@ const Requests: React.FC = () => {
     try {
       const token = localStorage.getItem('authToken');
       const response = await fetch(
-        `${process.env.REACT_APP_API_BASE_URL || ''}/admin/requests/${request.id}`,
+        `${(process.env.REACT_APP_API_BASE_URL || '').replace(/\/+$/, '')}/admin/requests/${request.id}`,
         {
           method: 'DELETE',
           headers: token ? { Authorization: `Bearer ${token}` } : {}
@@ -524,7 +524,7 @@ const Requests: React.FC = () => {
       });
 
       const response = await fetch(
-        `${process.env.REACT_APP_API_BASE_URL || ''}/export?${params}`,
+        `${(process.env.REACT_APP_API_BASE_URL || '').replace(/\/+$/, '')}/export?${params}`,
         {
           method: 'GET',
           headers: token ? { Authorization: `Bearer ${token}` } : {}

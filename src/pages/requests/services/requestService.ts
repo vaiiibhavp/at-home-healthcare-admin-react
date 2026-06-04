@@ -19,7 +19,7 @@ export const fetchRequests = async (page: number = 1, size: number = 10, status?
       headers['Authorization'] = `Bearer ${token}`;
     }
     
-    const response = await fetch(`${process.env.REACT_APP_API_BASE_URL}/admin/requests?${params}`, {
+    const response = await fetch(`${(process.env.REACT_APP_API_BASE_URL || '').replace(/\/+$/, '')}/admin/requests?${params}`, {
       method: 'GET',
       headers
     });
@@ -106,7 +106,7 @@ export const fetchRequestDetails = async (requestId: string): Promise<RequestDat
       'Authorization': `Bearer ${token}`
     };
     
-    const response = await fetch(`${process.env.REACT_APP_API_BASE_URL}/admin/requests/${requestId}`, {
+    const response = await fetch(`${(process.env.REACT_APP_API_BASE_URL || '').replace(/\/+$/, '')}/admin/requests/${requestId}`, {
       method: 'GET',
       headers
     });
@@ -139,7 +139,7 @@ export const fetchAuditLogs = async (requestId: string): Promise<any[] | null> =
       'Authorization': `Bearer ${token}`
     };
     
-    const response = await fetch(`${process.env.REACT_APP_API_BASE_URL}/admin/requests/${requestId}/audit-logs`, {
+    const response = await fetch(`${(process.env.REACT_APP_API_BASE_URL || '').replace(/\/+$/, '')}/admin/requests/${requestId}/audit-logs`, {
       method: 'GET',
       headers
     });
@@ -184,7 +184,7 @@ export const resetRequestStatus = async (requestId: string, newStatus: string, r
       'Authorization': `Bearer ${token}`
     };
     
-    const response = await fetch(`${process.env.REACT_APP_API_BASE_URL}/admin/requests/${requestId}/reset-status`, {
+    const response = await fetch(`${(process.env.REACT_APP_API_BASE_URL || '').replace(/\/+$/, '')}/admin/requests/${requestId}/reset-status`, {
       method: 'PUT',
       headers,
       body: JSON.stringify({ newStatus, reason })
