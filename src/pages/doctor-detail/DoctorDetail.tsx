@@ -230,12 +230,12 @@ const DoctorDetail: React.FC<DoctorDetailProps> = ({ isApproved: propIsApproved 
   return (
     <div className="flex h-screen overflow-hidden">
       <Sidebar />
-      <main className="flex-1 flex flex-col min-w-0 bg-slate-50 overflow-y-auto">
+      <div className="flex-1 flex flex-col min-w-0 bg-slate-50 overflow-hidden">
         {/* Header */}
-        <header className="h-16 bg-white border-b border-slate-200 flex items-center justify-between px-8 sticky top-0 z-20 pt-10 pb-10">
+        <header className="h-16 bg-white border-b border-slate-200 flex items-center justify-between px-8 flex-shrink-0 z-20 pt-10 pb-10">
           <div className="flex items-center gap-4">
             <Link to={`/doctors?approved=${originalApprovedParam}`} className="inline-block">
-              <button 
+              <button
                 className="text-slate-400 hover:text-primary transition-colors"
               >
                 <i className="fa-solid fa-arrow-left"></i>
@@ -245,23 +245,24 @@ const DoctorDetail: React.FC<DoctorDetailProps> = ({ isApproved: propIsApproved 
           </div>
           <div className="flex items-center gap-4">
             <div className={`flex items-center gap-2 px-3 py-1 rounded-full text-xs font-bold ${
-              isApproved 
-                ? 'bg-emerald-50 text-emerald-700 border border-emerald-100' 
+              isApproved
+                ? 'bg-emerald-50 text-emerald-700 border border-emerald-100'
                 : isInactive
                 ? 'bg-slate-50 text-slate-700 border border-slate-100'
                 : 'bg-amber-50 text-amber-700 border border-amber-100'
             }`}>
               <i className={`fa-solid ${
-                isApproved ? 'fa-check' : 
-                isInactive ? 'fa-pause' : 
+                isApproved ? 'fa-check' :
+                isInactive ? 'fa-pause' :
                 'fa-clock'
-              }`}></i> 
+              }`}></i>
               {isApproved ? t('doctors.approved') : isInactive ? t('common.inactive') : t('doctors.pendingApproval')}
             </div>
           </div>
         </header>
 
-        <div className="p-8 flex flex-col lg:flex-row gap-8">
+        <main className="flex-1 overflow-y-auto">
+          <div className="p-8 flex flex-col lg:flex-row gap-8">
           {/* Left Column: Profile Details */}
           <section className="lg:w-2/3 space-y-6">
             <div className="bg-white rounded-2xl border border-slate-200 tradingview-shadow overflow-hidden h-full">
@@ -472,6 +473,7 @@ const DoctorDetail: React.FC<DoctorDetailProps> = ({ isApproved: propIsApproved 
             </div>
           </section>
         </div>
+        </main>
 
         {/* Modals */}
         {modalState.type === 'approve' && (
@@ -553,7 +555,7 @@ const DoctorDetail: React.FC<DoctorDetailProps> = ({ isApproved: propIsApproved 
           show={toast.show}
           onClose={hideToast}
         />
-      </main>
+      </div>
     </div>
   );
 };
