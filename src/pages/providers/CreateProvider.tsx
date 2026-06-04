@@ -231,9 +231,9 @@ const CreateProvider: React.FC = () => {
   // Show loading state while fetching services data
   if (isLoadingServices) {
     return (
-      <div className="min-h-screen bg-slate-50 flex">
+      <div className="flex h-screen overflow-hidden">
         <Sidebar />
-        <div className="flex-1 flex items-center justify-center">
+        <div className="flex-1 flex items-center justify-center bg-slate-50">
           <div className="flex items-center gap-3">
             <div className="w-6 h-6 border-2 border-primary border-t-transparent rounded-full animate-spin"></div>
             <span className="text-sm text-slate-500">{t('providers.loadingServices')}</span>
@@ -246,9 +246,9 @@ const CreateProvider: React.FC = () => {
   // Show loading state while fetching provider data in edit mode
   if (isEditMode && isLoadingProvider) {
     return (
-      <div className="min-h-screen bg-slate-50 flex">
+      <div className="flex h-screen overflow-hidden">
         <Sidebar />
-        <div className="flex-1 flex items-center justify-center">
+        <div className="flex-1 flex items-center justify-center bg-slate-50">
           <div className="flex items-center gap-3">
             <div className="w-6 h-6 border-2 border-primary border-t-transparent rounded-full animate-spin"></div>
             <span className="text-sm text-slate-500">{t('providers.loadingProviderData')}</span>
@@ -259,11 +259,11 @@ const CreateProvider: React.FC = () => {
   }
 
   return (
-    <div className="flex h-[1024px] overflow-hidden">
+    <div className="flex h-screen overflow-hidden">
       <Sidebar />
-      <main className="flex-1 flex flex-col min-w-0 bg-slate-50 overflow-y-auto">
+      <div className="flex-1 flex flex-col min-w-0 bg-slate-50">
         {/* Topbar */}
-        <header className="h-16 bg-white border-b border-slate-200 flex items-center justify-between px-8 sticky top-0 z-20 pt-10 pb-10">
+        <header className="h-16 bg-white border-b border-slate-200 flex items-center justify-between px-8 sticky top-0 z-20 pt-10 pb-10 flex-shrink-0">
           <div className="flex items-center gap-4">
             <button 
               onClick={handleCancel}
@@ -305,7 +305,8 @@ const CreateProvider: React.FC = () => {
           </div>
         </header>
 
-        <div className="p-8 max-w-4xl mx-auto w-full space-y-8">
+        <main className="flex-1 overflow-y-auto">
+          <div className="p-8 max-w-4xl mx-auto w-full space-y-8">
           {/* Section 1: Basic Information */}
           <section className="bg-white rounded-2xl border border-slate-200 shadow-sm overflow-hidden">
             <div className="p-6 border-b border-slate-50 bg-slate-50/30 flex items-center justify-between">
@@ -534,7 +535,8 @@ const CreateProvider: React.FC = () => {
             </div>
           </section> */}
         </div>
-      </main>
+        </main>
+      </div>
 
       {/* Unsaved Changes Modal */}
       {showConfirmModal && (
