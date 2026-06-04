@@ -63,7 +63,7 @@ export const RequestDetailModal: React.FC<RequestDetailModalProps> = ({
   // Fetch signed PDF with auth headers and create blob URL
   React.useEffect(() => {
     const fetchPdf = async () => {
-      if (!request || request.formStatus?.toLowerCase() !== 'signed' || !request.signedPdfUrl) {
+      if (!request || request.formStatus?.toLowerCase().replace(/[_\s]/g, '') !== 'signed' || !request.signedPdfUrl) {
         setPdfBlobUrl(null);
         return;
       }
@@ -280,7 +280,7 @@ export const RequestDetailModal: React.FC<RequestDetailModalProps> = ({
                 </div>
               </div>
               <div className="flex items-center gap-3">
-                {(request.status === 'completed' || request.formStatus?.toLowerCase() === 'signed') && (
+                {(request.status === 'completed' || request.formStatus?.toLowerCase().replace(/[_\s]/g, '') === 'signed') && (
                   <button
                     onClick={handleExportPdf}
                     className="px-4 py-2 bg-white border border-slate-200 rounded-xl text-sm font-bold text-slate-600 hover:bg-slate-50 flex items-center gap-2"
@@ -416,16 +416,26 @@ export const RequestDetailModal: React.FC<RequestDetailModalProps> = ({
                     <div className="flex items-center gap-2">
                       <span className="text-[10px] font-bold text-slate-400 uppercase">{t('requests.formStatusLabel')}:</span>
                       <span className={`px-2 py-1 text-[10px] font-bold rounded-lg ${
-                        request.formStatus?.toLowerCase() === 'signed' ? 'bg-emerald-50 text-emerald-600 border border-emerald-200' :
-                        request.formStatus?.toLowerCase() === 'awaitingsignature' ? 'bg-blue-50 text-blue-600 border border-blue-200' :
-                        request.formStatus?.toLowerCase() === 'submitted' ? 'bg-amber-50 text-amber-600 border border-amber-200' :
-                        request.formStatus?.toLowerCase() === 'draft' ? 'bg-gray-50 text-gray-600 border border-gray-200' :
+                        request.formStatus?.toLowerCase().replace(/[_\s]/g, '') === 'signed' ? 'bg-emerald-50 text-emerald-600 border border-emerald-200' :
+                        request.formStatus?.toLowerCase().replace(/[_\s]/g, '') === 'awaitingsignature' ? 'bg-blue-50 text-blue-600 border border-blue-200' :
+                        request.formStatus?.toLowerCase().replace(/[_\s]/g, '') === 'submitted' ? 'bg-amber-50 text-amber-600 border border-amber-200' :
+                        request.formStatus?.toLowerCase().replace(/[_\s]/g, '') === 'draft' ? 'bg-gray-50 text-gray-600 border border-gray-200' :
+                        request.formStatus?.toLowerCase().replace(/[_\s]/g, '') === 'notstarted' ? 'bg-slate-50 text-slate-600 border border-slate-200' :
+                        request.formStatus?.toLowerCase().replace(/[_\s]/g, '') === 'cancelled' ? 'bg-red-50 text-red-600 border border-red-200' :
                         'bg-slate-50 text-slate-600 border border-slate-200'
                       }`}>
-                        {request.formStatus?.toLowerCase() === 'signed' ? t('requests.signed').toUpperCase() :
-                         request.formStatus?.toLowerCase() === 'awaitingsignature' ? t('requests.awaitingSignature').toUpperCase() :
-                         request.formStatus?.toLowerCase() === 'submitted' ? t('requests.submitted').toUpperCase() :
-                         request.formStatus?.toLowerCase() === 'draft' ? t('requests.draft').toUpperCase() : (request.formStatus || t('requests.unknown'))}
+                        {(() => {
+                          const normalizedStatus = request.formStatus?.toLowerCase().replace(/[_\s]/g, '');
+                          const statusMap: Record<string, string> = {
+                            signed: t('requests.signed').toUpperCase(),
+                            awaitingsignature: t('requests.awaitingSignature').toUpperCase(),
+                            submitted: t('requests.submitted').toUpperCase(),
+                            draft: t('requests.draft').toUpperCase(),
+                            notstarted: t('requests.notStarted').toUpperCase(),
+                            cancelled: t('requests.cancelled').toUpperCase(),
+                          };
+                          return statusMap[normalizedStatus] || (request.formStatus || t('requests.unknown'));
+                        })()}
                       </span>
                     </div>
                     <div className="flex items-center gap-3 text-[10px] text-slate-500">
@@ -442,7 +452,7 @@ export const RequestDetailModal: React.FC<RequestDetailModalProps> = ({
                   </div>
                 </div>
                 <div className="p-8 bg-slate-100/30 flex-1 min-h-[500px] overflow-auto">
-                  {request.formStatus?.toLowerCase() === 'signed' && request.signedPdfUrl ? (
+                  {request.formStatus?.toLowerCase().replace(/[_\s]/g, '') === 'signed' && request.signedPdfUrl ? (
                     loadingPdf ? (
                       <div className="flex items-center justify-center h-full min-h-[500px]">
                         <i className="fa-solid fa-spinner fa-spin text-primary text-xl mr-3"></i>
@@ -844,7 +854,7 @@ export const RequestDetailModal: React.FC<RequestDetailModalProps> = ({
               </button>
             </div>
             <div className="flex-1 overflow-y-auto p-8 bg-slate-100/30">
-              {request.formStatus?.toLowerCase() === 'signed' && request.signedPdfUrl ? (
+              {request.formStatus?.toLowerCase().replace(/[_\s]/g, '') === 'signed' && request.signedPdfUrl ? (
                 loadingPdf ? (
                   <div className="flex items-center justify-center h-full min-h-[500px]">
                     <i className="fa-solid fa-spinner fa-spin text-primary text-xl mr-3"></i>
