@@ -4,7 +4,7 @@ import { LoginRequest, LoginResponse, ForgotPasswordRequest, ForgotPasswordRespo
 export const api = createApi({
   reducerPath: 'api',
   baseQuery: fetchBaseQuery({
-    baseUrl: process.env.REACT_APP_API_BASE_URL || (process.env.NODE_ENV === 'production' ? '' : ''),
+    baseUrl: (process.env.REACT_APP_API_BASE_URL || (process.env.NODE_ENV === 'production' ? '' : '')).replace(/\/+$/, ''),
     prepareHeaders: (headers) => {
       const token = localStorage.getItem('authToken');
       if (token) {
