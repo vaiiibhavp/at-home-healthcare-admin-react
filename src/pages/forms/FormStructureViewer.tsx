@@ -626,7 +626,7 @@ const GenericForm: React.FC = () => {
       <div className="space-y-4">
         <h3 className="font-bold text-sm">{t('forms.formsFor')}</h3>
         
-        <div className="border-2 border-slate-300 rounded-lg p-4">
+        <div>
           <h4 className="font-bold text-sm mb-4">{t('forms.freeZoneTexte')}</h4>
           
           <div className="space-y-4">
