@@ -108,14 +108,17 @@ const Requests: React.FC = () => {
   // Helper function to format form status from API response
   const formatFormStatus = useCallback((status?: string): string => {
     if (!status) return t('requests.pending').toUpperCase();
+    // Normalize status to lowercase for consistent mapping
+    const normalizedStatus = status.toLowerCase().replace(/[_\s]/g, '');
     const statusMap: Record<string, string> = {
       draft: t('requests.draft').toUpperCase(),
       signed: t('requests.signed').toUpperCase(),
       submitted: t('requests.submitted').toUpperCase(),
-      awaitingSignature: t('requests.awaitingSignature').toUpperCase(),
+      awaitingsignature: t('requests.awaitingSignature').toUpperCase(),
       cancelled: t('requests.cancelled').toUpperCase(),
+      notstarted: t('requests.notStarted').toUpperCase(),
     };
-    return statusMap[status] || status.toUpperCase();
+    return statusMap[normalizedStatus] || status.toUpperCase();
   }, [t]);
 
   // API function to fetch services for filter dropdown
@@ -156,7 +159,7 @@ const Requests: React.FC = () => {
         ...(apiStatus && { status: apiStatus }),
         ...(startDate && { startDate }),
         ...(endDate && { endDate }),
-        ...(service && { service }),
+        ...(service && { serviceId: service }),
         ...(search && { search })
       });
       
@@ -653,7 +656,7 @@ const Requests: React.FC = () => {
               >
                 <option value="">{t('requests.allServices')}</option>
                 {servicesList.map((svc) => (
-                  <option key={svc.id} value={svc.serviceName}>{getTranslatedServiceName(svc.serviceName)}</option>
+                  <option key={svc.id} value={svc.id}>{getTranslatedServiceName(svc.serviceName)}</option>
                 ))}
               </select>
             </div>
