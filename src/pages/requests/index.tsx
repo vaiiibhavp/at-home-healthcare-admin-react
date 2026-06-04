@@ -2,6 +2,7 @@ import React, { useState, useEffect, useCallback, useRef } from 'react';
 import { useTranslation } from 'react-i18next';
 import { RequestDetailModal } from './RequestDetailModal';
 import { RequestData } from './RequestTypes';
+import { resetRequestStatus } from './services/requestService';
 import LanguageSwitcher from '../../components/LanguageSwitcher';
 import Sidebar from '../../components/dashboard/Sidebar';
 import NotificationDropdown from '../../components/common/NotificationDropdown';
@@ -33,6 +34,7 @@ const Requests: React.FC = () => {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [showResetModal, setShowResetModal] = useState(false);
   const [selectedRequestForReset, setSelectedRequestForReset] = useState<RequestData | null>(null);
+  const [resetReason, setResetReason] = useState('');
   const [showToast, setShowToast] = useState(false);
   const [toastMessage, setToastMessage] = useState('');
   
@@ -412,6 +414,7 @@ const Requests: React.FC = () => {
 
   const handleResetRequest = (request: RequestData) => {
     setSelectedRequestForReset(request);
+    setResetReason('');
     setShowResetModal(true);
   };
 
@@ -448,23 +451,44 @@ const Requests: React.FC = () => {
     }
   };
 
-  const handleResetStatus = () => {
-    // Update the request status from inprogress to submitted
-    if (selectedRequestForReset) {
-      setRequestsData(prevData =>
-        prevData.map(req =>
-          req.id === selectedRequestForReset.id
-            ? { ...req, status: 'pending', serviceColor: 'amber' } // 'pending' corresponds to 'submitted' status
-            : req
-        )
-      );
+  const handleResetStatus = async () => {
+    if (!selectedRequestForReset || !resetReason.trim()) {
+      setToastMessage(t('requests.pleaseProvideReason'));
+      setShowToast(true);
+      setTimeout(() => setShowToast(false), 3000);
+      return;
     }
 
-    setToastMessage(t('requests.requestStatusResetSuccess'));
-    setShowToast(true);
-    setShowResetModal(false);
-    setSelectedRequestForReset(null);
-    setTimeout(() => setShowToast(false), 3000);
+    try {
+      const result = await resetRequestStatus(selectedRequestForReset.id, 'submitted', resetReason);
+
+      if (result.success) {
+        // Update the request status from inprogress to submitted
+        setRequestsData(prevData =>
+          prevData.map(req =>
+            req.id === selectedRequestForReset.id
+              ? { ...req, status: 'pending', serviceColor: 'amber' } // 'pending' corresponds to 'submitted' status
+              : req
+          )
+        );
+
+        setToastMessage(t('requests.requestStatusResetSuccess'));
+        setShowToast(true);
+        setShowResetModal(false);
+        setSelectedRequestForReset(null);
+        setResetReason('');
+        setTimeout(() => setShowToast(false), 3000);
+      } else {
+        setToastMessage(result.message || t('requests.failedToResetRequest'));
+        setShowToast(true);
+        setTimeout(() => setShowToast(false), 3000);
+      }
+    } catch (error) {
+      console.error('Reset Status Error:', error);
+      setToastMessage(t('requests.failedToResetRequest'));
+      setShowToast(true);
+      setTimeout(() => setShowToast(false), 3000);
+    }
   };
 
   const handleExport = async () => {
@@ -826,9 +850,11 @@ const Requests: React.FC = () => {
               </div>
               <div className="space-y-2">
                 <label className="text-sm font-medium text-slate-700">{t('requests.reasonForReset')}</label>
-                <input 
+                <input
                   type="text"
-                  placeholder="" 
+                  placeholder={t('requests.enterReason')}
+                  value={resetReason}
+                  onChange={(e) => setResetReason(e.target.value)}
                   className="w-full bg-white border border-slate-200 rounded-lg px-3 py-2 text-sm outline-none focus:ring-2 focus:ring-primary/20"
                 />
               </div>
