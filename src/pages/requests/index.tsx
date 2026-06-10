@@ -8,6 +8,9 @@ import Sidebar from '../../components/dashboard/Sidebar';
 import NotificationDropdown from '../../components/common/NotificationDropdown';
 import PaginationComponent from '../../components/ui/PaginationComponent';
 import { resolveImageUrl } from '../../utils/resolveImageUrl';
+import DatePicker from 'react-datepicker';
+import { fr, enUS } from 'date-fns/locale';
+import 'react-datepicker/dist/react-datepicker.css';
 
 interface ApiResponse {
   status: number;
@@ -45,8 +48,8 @@ const Requests: React.FC = () => {
   // Filter state
   const [statusFilter, setStatusFilter] = useState<string>('');
   const [serviceFilter, setServiceFilter] = useState<string>('');
-  const [startDate, setStartDate] = useState<string>('');
-  const [endDate, setEndDate] = useState<string>('');
+  const [startDate, setStartDate] = useState<Date | null>(null);
+  const [endDate, setEndDate] = useState<Date | null>(null);
   const [showDatePicker, setShowDatePicker] = useState(false);
   const datePickerRef = useRef<HTMLDivElement>(null);
   
@@ -325,7 +328,9 @@ const Requests: React.FC = () => {
 
   // Fetch data on component mount and when pagination/filters change
   useEffect(() => {
-    fetchRequests(currentPage, itemsPerPage, statusFilter, startDate, endDate, serviceFilter, searchQuery);
+    const startDateStr = startDate ? startDate.toISOString().split('T')[0] : '';
+    const endDateStr = endDate ? endDate.toISOString().split('T')[0] : '';
+    fetchRequests(currentPage, itemsPerPage, statusFilter, startDateStr, endDateStr, serviceFilter, searchQuery);
   }, [currentPage, itemsPerPage, statusFilter, startDate, endDate, serviceFilter, searchQuery, fetchRequests]);
 
   // Pagination handlers
@@ -511,8 +516,8 @@ const Requests: React.FC = () => {
       };
       const filters: Record<string, string> = {};
       if (statusFilter) filters.status = statusMap[statusFilter] || statusFilter.toUpperCase();
-      if (startDate) filters.startDate = startDate;
-      if (endDate) filters.endDate = endDate;
+      if (startDate) filters.startDate = startDate.toISOString().split('T')[0];
+      if (endDate) filters.endDate = endDate.toISOString().split('T')[0];
       if (serviceFilter) filters.serviceName = serviceFilter;
 
       const fields = 'requestId,status,patientName,doctorName,serviceName,formStatus,createdAt,updatedAt';
@@ -628,7 +633,7 @@ const Requests: React.FC = () => {
               >
                 <i className="fa-solid fa-calendar text-slate-400 text-xs"></i>
                 <span className="text-xs font-medium text-slate-600">
-                  {startDate && endDate ? `${startDate} - ${endDate}` : t('requests.dateRange')}
+                  {startDate && endDate ? `${startDate.toLocaleDateString(dateLocale)} - ${endDate.toLocaleDateString(dateLocale)}` : t('requests.dateRange')}
                 </span>
                 <i className="fa-solid fa-chevron-down text-slate-400 text-[10px] ml-2"></i>
               </div>
@@ -638,27 +643,31 @@ const Requests: React.FC = () => {
                   <div className="space-y-3">
                     <div>
                       <label className="text-xs font-medium text-slate-700 block mb-1">{t('requests.startDate')}</label>
-                      <input
-                        type="date"
-                        value={startDate}
-                        onChange={(e) => setStartDate(e.target.value)}
+                      <DatePicker
+                        selected={startDate}
+                        onChange={(date) => setStartDate(date)}
+                        locale={i18n.language === 'fr' ? fr : enUS}
+                        dateFormat="dd/MM/yyyy"
                         className="w-full bg-slate-50 border border-slate-200 rounded-lg px-3 py-2 text-xs outline-none focus:ring-2 focus:ring-primary/20"
+                        placeholderText={t('requests.startDate')}
                       />
                     </div>
                     <div>
                       <label className="text-xs font-medium text-slate-700 block mb-1">{t('requests.endDate')}</label>
-                      <input
-                        type="date"
-                        value={endDate}
-                        onChange={(e) => setEndDate(e.target.value)}
+                      <DatePicker
+                        selected={endDate}
+                        onChange={(date) => setEndDate(date)}
+                        locale={i18n.language === 'fr' ? fr : enUS}
+                        dateFormat="dd/MM/yyyy"
                         className="w-full bg-slate-50 border border-slate-200 rounded-lg px-3 py-2 text-xs outline-none focus:ring-2 focus:ring-primary/20"
+                        placeholderText={t('requests.endDate')}
                       />
                     </div>
                     <div className="flex gap-2 pt-2">
                       <button
                         onClick={() => {
-                          setStartDate('');
-                          setEndDate('');
+                          setStartDate(null);
+                          setEndDate(null);
                           setShowDatePicker(false);
                         }}
                         className="flex-1 px-3 py-2 border border-slate-200 rounded-lg text-xs font-medium text-slate-600 hover:bg-slate-50 transition-all"
