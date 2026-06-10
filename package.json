@@ -9,11 +9,13 @@
     "@types/plotly.js": "^3.0.10",
     "@types/react-helmet": "^6.1.11",
     "@types/react-plotly.js": "^2.6.4",
+    "date-fns": "^4.4.0",
     "i18next": "^26.0.4",
     "i18next-browser-languagedetector": "^8.2.1",
     "plotly.js": "^3.5.0",
     "plotly.js-dist-min": "^3.5.0",
     "react": "^18.2.0",
+    "react-datepicker": "^9.1.0",
     "react-dom": "^18.2.0",
     "react-helmet": "^6.1.0",
     "react-i18next": "^17.0.2",
@@ -23,9 +25,9 @@
     "react-scripts": "5.0.1"
   },
   "scripts": {
-    "start": "react-scripts start",
-    "build": "react-scripts build",
-    "test": "react-scripts test",
+    "start": "react-app-rewired start",
+    "build": "react-app-rewired build",
+    "test": "react-app-rewired test",
     "eject": "react-scripts eject"
   },
   "eslintConfig": {
@@ -47,11 +49,18 @@
     ]
   },
   "devDependencies": {
+    "@craco/craco": "^7.1.0",
     "@types/node": "^16.18.0",
     "@types/react": "^18.2.0",
+    "@types/react-datepicker": "^6.2.0",
     "@types/react-dom": "^18.2.0",
+    "assert": "^2.1.0",
     "autoprefixer": "^10.4.27",
+    "buffer": "^6.0.3",
+    "customize-cra": "^1.0.0",
     "postcss": "^8.5.9",
+    "react-app-rewired": "^2.2.1",
+    "stream-browserify": "^3.0.0",
     "tailwindcss": "^3.4.0",
     "typescript": "^5.7.3"
   }
