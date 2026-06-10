@@ -15,6 +15,7 @@ interface Provider {
   name: string;
   email: string;
   phone: string;
+  country?: string;
   services: string[];
   status: 'active' | 'inactive';
   initials: string;
@@ -108,6 +109,7 @@ const Providers: React.FC = () => {
       name: toTitleCase(apiProvider.providerName),
       email: apiProvider.email,
       phone: apiProvider.phoneNumber,
+      country: apiProvider.country,
       services: [], // Will be populated from serviceDetails if available
       status: apiProvider.status === 'approved' ? 'active' : 'inactive',
       initials: initials.toUpperCase(),
@@ -127,6 +129,7 @@ const Providers: React.FC = () => {
       name: toTitleCase(apiProvider.providerName),
       email: apiProvider.email,
       phone: apiProvider.phoneNumber,
+      country: apiProvider.country,
       services: apiProvider.serviceDetails.map(service => service.serviceName),
       status: apiProvider.status === 'approved' ? 'active' : 'inactive',
       initials: initials.toUpperCase(),
@@ -609,7 +612,9 @@ const Providers: React.FC = () => {
                         </td>
                         <td className="px-6 py-4">
                           <p className="text-sm text-slate-700">{provider.email}</p>
-                          <p className="text-[11px] text-slate-500">{provider.phone}</p>
+                          <p className="text-[11px] text-slate-500">
+                            {provider.country ? `${provider.country}: ${provider.phone}` : provider.phone}
+                          </p>
                         </td>
                         <td className="px-6 py-4">
                           <div className="flex flex-wrap gap-1">

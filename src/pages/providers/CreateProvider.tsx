@@ -27,7 +27,7 @@ const CreateProvider: React.FC = () => {
     providerName: '',
     email: '',
     phoneNumber: '',
-    countryCode: '+33',
+    country: 'US',
     registrationId: '',
     emailNotificationsEnabled: true,
     assignedServices: [] as string[]
@@ -72,7 +72,7 @@ const CreateProvider: React.FC = () => {
         providerName: provider.providerName || '',
         email: provider.email || '',
         phoneNumber: provider.phoneNumber || '',
-        countryCode: provider.countryCode || '+33',
+        country: provider.country || 'US',
         registrationId: provider.registrationId || '',
         emailNotificationsEnabled: provider.emailNotificationsEnabled ?? true,
         assignedServices: provider.assignedServices || []
@@ -152,7 +152,7 @@ const CreateProvider: React.FC = () => {
           body: {
             providerName: formData.providerName,
             phoneNumber: normalizedPhoneNumber,
-            countryCode: formData.countryCode,
+            country: formData.country,
             registrationId: formData.registrationId,
             emailNotificationsEnabled: formData.emailNotificationsEnabled
           }
@@ -163,7 +163,7 @@ const CreateProvider: React.FC = () => {
           providerName: formData.providerName,
           email: formData.email,
           phoneNumber: normalizedPhoneNumber,
-          countryCode: formData.countryCode,
+          country: formData.country,
           registrationId: formData.registrationId,
           assignedServices: formData.assignedServices
         }).unwrap();
@@ -363,27 +363,27 @@ const CreateProvider: React.FC = () => {
                 <div className="flex gap-2">
                   <div className="relative w-28">
                     <select
-                      name="countryCode"
-                      value={formData.countryCode}
+                      name="country"
+                      value={formData.country}
                       onChange={handleInputChange}
                       className="w-full pl-3 pr-8 py-3 bg-slate-50 border border-slate-200 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-primary/20 transition-all appearance-none cursor-pointer"
                     >
-                      <option value="+33">+33</option>
-                      <option value="+1">+1</option>
-                      <option value="+44">+44</option>
-                      <option value="+91">+91</option>
-                      <option value="+49">+49</option>
-                      <option value="+39">+39</option>
-                      <option value="+34">+34</option>
-                      <option value="+31">+31</option>
-                      <option value="+41">+41</option>
-                      <option value="+46">+46</option>
-                      <option value="+47">+47</option>
-                      <option value="+358">+358</option>
-                      <option value="+351">+351</option>
-                      <option value="+32">+32</option>
-                      <option value="+43">+43</option>
-                      <option value="+45">+45</option>
+                      <option value="US">US</option>
+                      <option value="FR">FR</option>
+                      <option value="GB">GB</option>
+                      <option value="IN">IN</option>
+                      <option value="DE">DE</option>
+                      <option value="IT">IT</option>
+                      <option value="ES">ES</option>
+                      <option value="NL">NL</option>
+                      <option value="CH">CH</option>
+                      <option value="SE">SE</option>
+                      <option value="NO">NO</option>
+                      <option value="FI">FI</option>
+                      <option value="PT">PT</option>
+                      <option value="BE">BE</option>
+                      <option value="AT">AT</option>
+                      <option value="DK">DK</option>
                     </select>
                     <i className="fa-solid fa-chevron-down absolute right-3 top-1/2 -translate-y-1/2 text-slate-400 text-xs pointer-events-none"></i>
                   </div>
