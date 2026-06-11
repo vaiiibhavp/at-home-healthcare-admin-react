@@ -19,6 +19,7 @@
     "react-dom": "^18.2.0",
     "react-helmet": "^6.1.0",
     "react-i18next": "^17.0.2",
+    "react-international-phone": "^4.8.0",
     "react-plotly.js": "^2.6.0",
     "react-redux": "^9.2.0",
     "react-router-dom": "^6.20.1",
