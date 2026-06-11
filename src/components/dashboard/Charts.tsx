@@ -78,9 +78,11 @@ const Charts: React.FC = () => {
       gridcolor: '#F1F5F9',
       zeroline: false,
       fixedrange: true,
+      autorange: false as const,
       tickmode: 'linear' as const,
       tick0: 0,
       dtick: yTickStep,
+      tickformat: 'd',
       range: [0, yRangeMax]
     },
     paper_bgcolor: 'rgba(0,0,0,0)',
