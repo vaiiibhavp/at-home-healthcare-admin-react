@@ -154,7 +154,7 @@ export const Services: React.FC = () => {
           </div>
         </header>
 
-        <main className="flex-1 overflow-y-auto">
+        <main className="flex-1 pt-5 overflow-y-auto">
           <div className="p-8 space-y-6">
           {/* Stats Section */}
           <section className="grid grid-cols-1 md:grid-cols-1 gap-4">
