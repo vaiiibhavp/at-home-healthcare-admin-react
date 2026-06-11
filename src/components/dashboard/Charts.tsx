@@ -57,6 +57,10 @@ const Charts: React.FC = () => {
     }
   ] : [];
 
+  const maxRequestCount = requestsData?.data.reduce((max, item) => Math.max(max, item.count), 0) ?? 0;
+  const yTickStep = Math.max(1, Math.ceil(maxRequestCount / 5));
+  const yRangeMax = Math.max(maxRequestCount + yTickStep, 5);
+
   const lineLayout = {
     margin: {
       t: 10,
@@ -73,7 +77,11 @@ const Charts: React.FC = () => {
     yaxis: {
       gridcolor: '#F1F5F9',
       zeroline: false,
-      fixedrange: true
+      fixedrange: true,
+      tickmode: 'linear' as const,
+      tick0: 0,
+      dtick: yTickStep,
+      range: [0, yRangeMax]
     },
     paper_bgcolor: 'rgba(0,0,0,0)',
     plot_bgcolor: 'rgba(0,0,0,0)',
