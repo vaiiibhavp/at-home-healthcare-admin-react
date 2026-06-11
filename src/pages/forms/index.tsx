@@ -168,7 +168,7 @@ const Forms: React.FC = () => {
         </header>
 
         {/* Main Content Area */}
-        <div className="p-8 flex-1 flex gap-6 overflow-hidden">
+        <div className="pt-5 flex-1 flex gap-6 overflow-hidden">
           {isLoading ? (
             <div className="flex-1 flex items-center justify-center">
               <div className="text-center">
