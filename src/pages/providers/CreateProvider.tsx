@@ -5,6 +5,8 @@ import Sidebar from '../../components/dashboard/Sidebar';
 import LanguageSwitcher from '../../components/LanguageSwitcher';
 import { useCreateProviderMutation, useUpdateProviderMutation, useGetProviderByIdQuery } from '../../services/providersApi';
 import { useGetServicesQuery } from '../../services/servicesApi';
+import { PhoneInput } from 'react-international-phone';
+import 'react-international-phone/style.css';
 
 interface Service {
   id: string;
@@ -26,8 +28,8 @@ const CreateProvider: React.FC = () => {
   const [formData, setFormData] = useState({
     providerName: '',
     email: '',
-    phoneNumber: '',
-    country: 'US',
+    phone: '',
+    country: 'us',
     registrationId: '',
     emailNotificationsEnabled: true,
     assignedServices: [] as string[]
@@ -38,6 +40,8 @@ const CreateProvider: React.FC = () => {
   const [toastMessage, setToastMessage] = useState('');
   const [toastType, setToastType] = useState<'success' | 'error' | 'info'>('success');
   const [showAllServices, setShowAllServices] = useState(false);
+  const [phoneInputKey, setPhoneInputKey] = useState(0);
+  const [isFormInitialized, setIsFormInitialized] = useState(!isEditMode);
 
   // Helper to translate service names from API
   const getTranslatedServiceName = (name: string): string => {
@@ -67,16 +71,24 @@ const CreateProvider: React.FC = () => {
   useEffect(() => {
     if (isEditMode && providerData?.data) {
       const provider = providerData.data;
-      
+      // Add + prefix to phone number if not already present (required by PhoneInput component)
+      const phoneNumber = provider.phoneNumber 
+        ? (provider.phoneNumber.startsWith('+') ? provider.phoneNumber : '+' + provider.phoneNumber)
+        : '';
       setFormData({
         providerName: provider.providerName || '',
         email: provider.email || '',
-        phoneNumber: provider.phoneNumber || '',
-        country: provider.country || 'US',
+        phone: phoneNumber,
+        country: provider.country?.toLowerCase() || 'us',
         registrationId: provider.registrationId || '',
         emailNotificationsEnabled: provider.emailNotificationsEnabled ?? true,
         assignedServices: provider.assignedServices || []
       });
+      
+      // Force PhoneInput to re-mount with new data
+      setPhoneInputKey(prev => prev + 1);
+      // mark form initialized so UI shows populated values
+      setIsFormInitialized(true);
     }
   }, [isEditMode, providerData, providerError]);
 
@@ -128,7 +140,7 @@ const CreateProvider: React.FC = () => {
       return;
     }
 
-    if (!formData.phoneNumber) {
+    if (!formData.phone) {
       showToastMessage(t('providers.phoneRequired'), 'error');
       return;
     }
@@ -140,8 +152,8 @@ const CreateProvider: React.FC = () => {
       return;
     }
 
-    // Normalize phone number: remove + prefix and any non-numeric characters except spaces
-    const normalizedPhoneNumber = formData.phoneNumber.replace(/[^\d\s]/g, '').replace(/\s/g, '');
+    // PhoneInput already provides formatted phone number, extract just the digits
+    const normalizedPhoneNumber = formData.phone.replace(/\D/g, '');
 
     try {
       let response;
@@ -152,7 +164,7 @@ const CreateProvider: React.FC = () => {
           body: {
             providerName: formData.providerName,
             phoneNumber: normalizedPhoneNumber,
-            country: formData.country,
+            country: formData.country.toUpperCase(),
             registrationId: formData.registrationId,
             emailNotificationsEnabled: formData.emailNotificationsEnabled
           }
@@ -163,7 +175,7 @@ const CreateProvider: React.FC = () => {
           providerName: formData.providerName,
           email: formData.email,
           phoneNumber: normalizedPhoneNumber,
-          country: formData.country,
+          country: formData.country.toUpperCase(),
           registrationId: formData.registrationId,
           assignedServices: formData.assignedServices
         }).unwrap();
@@ -257,7 +269,7 @@ const CreateProvider: React.FC = () => {
       </div>
     );
   }
-
+  
   return (
     <div className="flex h-screen overflow-hidden">
       <Sidebar />
@@ -307,6 +319,9 @@ const CreateProvider: React.FC = () => {
 
         <main className="flex-1 overflow-y-auto">
           <div className="p-8 max-w-4xl mx-auto w-full space-y-8">
+          {/* Only show form once it's initialized (create mode is initialized by default) */}
+          {isFormInitialized && (
+            <>
           {/* Section 1: Basic Information */}
           <section className="bg-white rounded-2xl border border-slate-200 shadow-sm overflow-hidden">
             <div className="p-6 border-b border-slate-50 bg-slate-50/30 flex items-center justify-between">
@@ -360,45 +375,35 @@ const CreateProvider: React.FC = () => {
               </div>
               <div className="space-y-2">
                 <label className="text-[11px] font-bold text-slate-400 uppercase tracking-widest">{t('providers.contactNumber')}</label>
-                <div className="flex gap-2">
-                  <div className="relative w-28">
-                    <select
-                      name="country"
-                      value={formData.country}
-                      onChange={handleInputChange}
-                      className="w-full pl-3 pr-8 py-3 bg-slate-50 border border-slate-200 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-primary/20 transition-all appearance-none cursor-pointer"
-                    >
-                      <option value="US">US</option>
-                      <option value="FR">FR</option>
-                      <option value="GB">GB</option>
-                      <option value="IN">IN</option>
-                      <option value="DE">DE</option>
-                      <option value="IT">IT</option>
-                      <option value="ES">ES</option>
-                      <option value="NL">NL</option>
-                      <option value="CH">CH</option>
-                      <option value="SE">SE</option>
-                      <option value="NO">NO</option>
-                      <option value="FI">FI</option>
-                      <option value="PT">PT</option>
-                      <option value="BE">BE</option>
-                      <option value="AT">AT</option>
-                      <option value="DK">DK</option>
-                    </select>
-                    <i className="fa-solid fa-chevron-down absolute right-3 top-1/2 -translate-y-1/2 text-slate-400 text-xs pointer-events-none"></i>
-                  </div>
-                  <div className="relative flex-1">
-                    <i className="fa-solid fa-phone absolute left-4 top-1/2 -translate-y-1/2 text-slate-300"></i>
-                    <input
-                      type="text"
-                      name="phoneNumber"
-                      value={formData.phoneNumber}
-                      onChange={handleInputChange}
-                      placeholder="e.g. 677889900"
-                      className="w-full pl-11 pr-4 py-3 bg-slate-50 border border-slate-200 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-primary/20 transition-all placeholder:text-slate-300"
-                    />
-                  </div>
-                </div>
+                <PhoneInput
+                  key={`phone-input-${phoneInputKey}`}
+                  defaultCountry={formData.country}
+                  value={formData.phone}
+                  onChange={(phone, country) => {
+                    setFormData(prev => ({ ...prev, phone, country: country.country.iso2 }));
+                  }}
+                  inputStyle={{
+                    width: '100%',
+                    height: '48px',
+                    fontSize: '14px',
+                    paddingLeft: '48px',
+                    paddingRight: '16px',
+                    borderRadius: '12px',
+                    border: '1px solid #e2e8f0',
+                    backgroundColor: '#f8fafc',
+                    color: '#1e293b',
+                    fontFamily: 'inherit'
+                  }}
+                  countrySelectorStyleProps={{
+                    buttonStyle: {
+                      height: '48px',
+                      borderRadius: '12px',
+                      border: '1px solid #e2e8f0',
+                      backgroundColor: '#f8fafc',
+                      marginRight: '8px'
+                    }
+                  }}
+                />
               </div>
               <div className="space-y-2">
                 <label className="text-[11px] font-bold text-slate-400 uppercase tracking-widest">{t('providers.registrationId')}</label>
@@ -534,6 +539,8 @@ const CreateProvider: React.FC = () => {
               </div>
             </div>
           </section> */}
+            </>
+          )}
         </div>
         </main>
       </div>
