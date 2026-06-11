@@ -45,6 +45,7 @@ export interface RequestData {
     practiceType: string;
     fName: string;
     lName: string;
+    profileImg?: string | null;
   };
   patientId?: {
     _id: string;

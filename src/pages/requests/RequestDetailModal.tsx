@@ -21,6 +21,11 @@ export const RequestDetailModal: React.FC<RequestDetailModalProps> = ({
   const { t, i18n } = useTranslation();
   const dateLocale = i18n.language === 'fr' ? 'fr-FR' : 'en-US';
 
+  const resolvedDoctorProfileImage = resolveImageUrl(
+    request?.doctorProfileImage || request?.doctorId?.profileImg,
+    'https://storage.googleapis.com/uxpilot-auth.appspot.com/avatars/avatar-3.jpg'
+  );
+
   const getDoctorInitials = (firstName?: string, lastName?: string, fallbackName?: string): string => {
     const primary = `${firstName || ''} ${lastName || ''}`.trim();
     const fullName = primary.includes(' ') ? primary : (fallbackName || primary);
@@ -769,7 +774,7 @@ export const RequestDetailModal: React.FC<RequestDetailModalProps> = ({
             <div className="p-6 space-y-6">
               <div className="flex items-center gap-4">
                 <img
-                  src={request.doctorProfileImage || "https://storage.googleapis.com/uxpilot-auth.appspot.com/avatars/avatar-3.jpg"}
+                  src={resolvedDoctorProfileImage}
                   alt={`${`${request.doctorFirstName || ''} ${request.doctorLastName || ''}`.trim() || request.doctorName || t('requests.unknownDoctor')} - Doctor Avatar`}
                   className="w-16 h-16 rounded-xl object-cover"
                 />
