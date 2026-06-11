@@ -435,7 +435,7 @@ const Providers: React.FC = () => {
           </div>
         </header>
 
-        <main className="flex-1 overflow-y-auto">
+        <main className="flex-1 pt-5 overflow-y-auto">
           <div className="p-8 space-y-6">
           {/* Filters Bar */}
           <section className="flex flex-wrap items-center justify-between gap-4">
